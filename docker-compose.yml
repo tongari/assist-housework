@@ -1,0 +1,13 @@
+version: '3'
+services:
+  web:
+    container_name: assistant-housework
+    build: .
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./app:/usr/src/app
+    ports:
+      - "3000:3000"
+      - "5000:5000"
+      - "9005:9005"
