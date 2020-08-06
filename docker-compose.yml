@@ -6,8 +6,8 @@ services:
     stdin_open: true
     tty: true
     volumes:
-      - ./app:/usr/src/app
-      - node_modules_volume:/usr/src/app/node_modules 
+      - ./:/usr/src/
+      - node_modules_volume:/usr/src/node_modules
     ports:
       - "3000:3000"
       - "5000:5000"
