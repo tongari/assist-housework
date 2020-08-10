@@ -1,4 +1,5 @@
 import React from 'react'
+import * as firebase from 'firebase/app'
 import logo from './logo.svg'
 import './App.css'
 
@@ -20,6 +21,15 @@ function App(): React.ReactElement {
         >
           Learn React
         </a>
+        <button
+          type="button"
+          onClick={() => {
+            firebase.auth().signOut()
+            window.location.href = '/'
+          }}
+        >
+          logout
+        </button>
       </header>
     </div>
   )

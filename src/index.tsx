@@ -1,9 +1,9 @@
 import * as firebase from 'firebase/app'
 import * as firebaseui from 'firebaseui'
 import 'firebaseui/dist/firebaseui.css'
-// import React from 'react'
-// import ReactDOM from 'react-dom'
-// import App from 'components/App'
+import React from 'react'
+import ReactDOM from 'react-dom'
+import App from 'components/App'
 import './index.css'
 
 const firebaseConfig = {
@@ -22,9 +22,7 @@ const ui = new firebaseui.auth.AuthUI(firebase.auth())
 
 const uiConfig = {
   callbacks: {
-    signInSuccessWithAuthResult: () => {
-      return true
-    },
+    signInSuccessWithAuthResult: () => false,
     uiShown: () => {
       const loaderEl = document.getElementById('loader')
       if (loaderEl) {
@@ -32,9 +30,8 @@ const uiConfig = {
       }
     },
   },
-  // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
   signInFlow: 'popup',
-  signInSuccessUrl: '/',
+  // signInSuccessUrl: '/',
   signInOptions: [
     {
       provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
@@ -44,11 +41,15 @@ const uiConfig = {
   ],
 }
 
-ui.start('#firebaseui-auth-container', uiConfig)
-
-// ReactDOM.render(
-//   <React.StrictMode>
-//     <App />
-//   </React.StrictMode>,
-//   document.getElementById('root')
-// )
+firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    ReactDOM.render(
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>,
+      document.getElementById('root')
+    )
+  } else {
+    ui.start('#firebaseui-auth-container', uiConfig)
+  }
+})
