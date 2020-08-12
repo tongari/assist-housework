@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { Redirect } from 'react-router-dom'
 import * as firebase from 'firebase/app'
-import 'firebase/auth'
 import * as firebaseui from 'firebaseui'
 import 'firebaseui/dist/firebaseui.css'
+import { useOnAuthStateChanged } from 'hooks/useAuthState'
 
 const uiConfig = {
   callbacks: {
@@ -20,26 +20,22 @@ const uiConfig = {
 }
 
 const LoginPage: React.FC = () => {
-  const [isLoginChecked, setIsLoginCheck] = useState(false)
-  const [signedIn, setSignedIn] = useState(false)
+  const { isAuthStateChanged, isLoggedIn } = useOnAuthStateChanged()
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        setSignedIn(true)
-      } else {
+      if (!user) {
         const ui = new firebaseui.auth.AuthUI(firebase.auth())
         ui.start('#firebaseui-auth-container', uiConfig)
       }
-      setIsLoginCheck(true)
     })
   }, [])
 
-  if (!isLoginChecked) {
+  if (!isAuthStateChanged) {
     return <div>loading...</div>
   }
 
-  if (signedIn) {
+  if (isLoggedIn) {
     // TODO: 状態によって変更？
     return <Redirect to="/register-approver" />
   }
