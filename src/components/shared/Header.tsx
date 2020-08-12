@@ -1,6 +1,5 @@
 import React from 'react'
 import * as firebase from 'firebase/app'
-import 'firebase/auth'
 
 const Header: React.FC = () => {
   return (
