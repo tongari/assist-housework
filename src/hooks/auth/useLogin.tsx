@@ -18,8 +18,7 @@ const uiConfig = {
   ],
 }
 
-// eslint-disable-next-line import/prefer-default-export
-export const useLogin = (): [
+const useLogin = (): [
   firebase.User | undefined,
   boolean,
   firebase.auth.Error | undefined
@@ -43,3 +42,5 @@ export const useLogin = (): [
 
   return [user, isLoading, error]
 }
+
+export default useLogin

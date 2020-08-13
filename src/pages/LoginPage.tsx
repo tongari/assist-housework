@@ -1,6 +1,6 @@
 import React from 'react'
 import { Redirect } from 'react-router-dom'
-import { useLogin } from 'hooks/auth/useLogin'
+import useLogin from 'hooks/auth/useLogin'
 
 const LoginPage: React.FC = () => {
   const [user, isLoading, error] = useLogin()
