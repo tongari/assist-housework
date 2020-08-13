@@ -1,14 +1,20 @@
 import React from 'react'
 import { RouteProps, Redirect } from 'react-router-dom'
-import { useOnAuthStateChanged } from 'hooks/useAuthState'
+import * as firebase from 'firebase/app'
+import { useAuthState } from 'react-firebase-hooks/auth'
 
 const Auth: React.FC<RouteProps> = ({ children, location }) => {
-  const { isAuthStateChanged, isLoggedIn } = useOnAuthStateChanged()
+  const [user, isLoading, error] = useAuthState(firebase.auth())
 
-  if (!isAuthStateChanged) {
+  if (isLoading) {
     return <div>loading...</div>
   }
-  if (isLoggedIn) {
+
+  if (error) {
+    return <div>happen error...</div>
+  }
+
+  if (user) {
     // TODO: 状態によって変更？
     if (location?.pathname === '/') {
       return <Redirect to="/register-approver" />

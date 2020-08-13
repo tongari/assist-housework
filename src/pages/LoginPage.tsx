@@ -1,46 +1,24 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Redirect } from 'react-router-dom'
-import * as firebase from 'firebase/app'
-import * as firebaseui from 'firebaseui'
-import 'firebaseui/dist/firebaseui.css'
-import { useOnAuthStateChanged } from 'hooks/useAuthState'
-
-const uiConfig = {
-  callbacks: {
-    signInSuccessWithAuthResult: () => false,
-  },
-  signInFlow: 'popup',
-  signInOptions: [
-    {
-      provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
-      signInMethod: firebase.auth.EmailAuthProvider.EMAIL_LINK_SIGN_IN_METHOD,
-    },
-    firebase.auth.PhoneAuthProvider.PROVIDER_ID,
-  ],
-}
+import { useLogin } from 'hooks/auth/useLogin'
 
 const LoginPage: React.FC = () => {
-  const { isAuthStateChanged, isLoggedIn } = useOnAuthStateChanged()
+  const [user, isLoading, error] = useLogin()
 
-  useEffect(() => {
-    firebase.auth().onAuthStateChanged((user) => {
-      if (!user) {
-        const ui = new firebaseui.auth.AuthUI(firebase.auth())
-        ui.start('#firebaseui-auth-container', uiConfig)
-      }
-    })
-  }, [])
-
-  if (!isAuthStateChanged) {
+  if (isLoading) {
     return <div>loading...</div>
   }
 
-  if (isLoggedIn) {
+  if (error) {
+    return <div>happen error...</div>
+  }
+
+  if (user) {
     // TODO: 状態によって変更？
     return <Redirect to="/register-approver" />
   }
 
-  return <div className="firebaseui-auth-container" />
+  return null
 }
 
 export default LoginPage
