@@ -35,7 +35,7 @@ describe('firestore rules', () => {
       test("Unauthorized user can't read role", async () => {
         const db = authorizedApp()
         const adminRole = db.collection('roles').doc()
-        await firebase.assertFails(adminRole.get())
+        await firebase.assertSucceeds(adminRole.get())
       })
     })
   })
