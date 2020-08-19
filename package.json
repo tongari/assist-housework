@@ -24,10 +24,10 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "firebase emulators:exec --only firestore 'react-scripts test --watchAll=false'",
+    "test:watch": "firebase emulators:exec --only firestore 'react-scripts test'",
     "eject": "react-scripts eject",
-    "serve": "firebase serve --only hosting -p 5000 -o 0.0.0.0",
-    "firestore" :"firebase emulators:start --only firestore"
+    "serve": "firebase serve --only hosting -p 5000 -o 0.0.0.0"
   },
   "husky": {
     "hooks": {
@@ -53,6 +53,7 @@
     ]
   },
   "devDependencies": {
+    "@firebase/testing": "^0.20.11",
     "@types/react-router-dom": "^5.1.5",
     "@types/styled-components": "^5.1.2",
     "@typescript-eslint/eslint-plugin": "^3.8.0",

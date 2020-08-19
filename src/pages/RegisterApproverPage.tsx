@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import { createTest } from 'domain/firestore'
 import * as firebase from 'firebase/app'
-import { useCollection } from 'react-firebase-hooks/firestore'
+import { useCollection, useDocument } from 'react-firebase-hooks/firestore'
 
 const RegisterApproverPage: React.FC = () => {
+  // TODO: 以下に散らばっているサンプルコードは後ほど削除
   const [cnt, setCnt] = useState(1)
   const [value, loading, error] = useCollection(
     firebase
@@ -15,6 +16,9 @@ const RegisterApproverPage: React.FC = () => {
       snapshotListenOptions: { includeMetadataChanges: true },
     }
   )
+  const [adminRole] = useDocument(firebase.firestore().doc('roles/1'), {
+    snapshotListenOptions: { includeMetadataChanges: true },
+  })
 
   const onSave: React.FormEventHandler = (e) => {
     e.preventDefault()
@@ -37,9 +41,18 @@ const RegisterApproverPage: React.FC = () => {
     }
   }
 
+  // firebase.rulesでwire拒否しているため失敗する
+  const onCreateRole: React.UIEventHandler = (e) => {
+    e.preventDefault()
+    firebase.firestore().collection('roles').doc('2').set({
+      role: 'approver',
+    })
+  }
+
   return (
     <div>
       <h1>お手伝いをお願いしよう。</h1>
+      {adminRole && <p>role: {adminRole.get('role')}</p>}
       <form>
         <label>
           <p>ニックネーム（50文字以内）</p>
@@ -54,6 +67,9 @@ const RegisterApproverPage: React.FC = () => {
         </button>
         <button type="button" onClick={onDelete}>
           Delete last document
+        </button>
+        <button type="button" onClick={onCreateRole}>
+          create role
         </button>
       </form>
       <div>
