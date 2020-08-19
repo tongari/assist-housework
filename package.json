@@ -24,10 +24,10 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "firebase emulators:exec --only firestore 'react-scripts test --watchAll=false'",
+    "test:watch": "firebase emulators:exec --only firestore 'react-scripts test'",
     "eject": "react-scripts eject",
-    "serve": "firebase serve --only hosting -p 5000 -o 0.0.0.0",
-    "emulators:firestore": "firebase emulators:start --only firestore"
+    "serve": "firebase serve --only hosting -p 5000 -o 0.0.0.0"
   },
   "husky": {
     "hooks": {
