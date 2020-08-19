@@ -31,7 +31,7 @@ jobs:
     - name: Install Dependencies
       run: yarn install
     - name: emulators:firestore 
-      run: yarn run firestore
+      run: yarn run emulators:firestore
     - name: yarn run test
       run: yarn run test
     # TODO: 後ほど、buildは追記改修  
