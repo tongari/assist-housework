@@ -15,14 +15,17 @@ jobs:
     strategy:
       matrix:
         node-version: [10.x]
+        java-version: [13.x64]
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: java install
-      run: apt-get install -y openjdk-8-jre
+    - name: Use java ${{ matrix.java-version }}
+      - uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.java-version }}
     - name: Install Firebase
       run: npm install -g firebase-tools
     - name: Install Dependencies
