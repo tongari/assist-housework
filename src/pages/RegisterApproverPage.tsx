@@ -1,12 +1,16 @@
 import React, { useState } from 'react'
-import { testSave } from 'domain/firestore'
+import { createTest } from 'domain/firestore'
 import * as firebase from 'firebase/app'
 import { useCollection } from 'react-firebase-hooks/firestore'
 
 const RegisterApproverPage: React.FC = () => {
   const [cnt, setCnt] = useState(1)
   const [value, loading, error] = useCollection(
-    firebase.firestore().collection('test').orderBy('created_at', 'desc'),
+    firebase
+      .firestore()
+      .collection('tests')
+      .orderBy('created_at', 'desc')
+      .limit(3),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
     }
@@ -15,8 +19,22 @@ const RegisterApproverPage: React.FC = () => {
   const onSave: React.FormEventHandler = (e) => {
     e.preventDefault()
     // TODO: ちょっと模索中
-    testSave(cnt)
+    createTest(cnt)
     setCnt(cnt + 1)
+  }
+
+  const onDelete: React.UIEventHandler = (e) => {
+    e.preventDefault()
+    if (value) {
+      const testRef = firebase
+        .firestore()
+        .collection('test')
+        .doc(value.docs[value.docs.length - 1].id)
+
+      testRef.update({
+        cnt: firebase.firestore.FieldValue.delete(),
+      })
+    }
   }
 
   return (
@@ -34,6 +52,9 @@ const RegisterApproverPage: React.FC = () => {
         <button type="submit" onClick={onSave}>
           登録
         </button>
+        <button type="button" onClick={onDelete}>
+          Delete last document
+        </button>
       </form>
       <div>
         {error && <p>Error: {JSON.stringify(error)}</p>}
@@ -43,10 +64,16 @@ const RegisterApproverPage: React.FC = () => {
             <p>Collection:</p>
             <ul>
               {value.docs.map((doc) => {
+                const date = doc.get('created_at')
+                const isWrittenLocal = doc.metadata.hasPendingWrites
+
                 return (
                   <React.Fragment key={doc.id}>
                     <li>docID: {doc.id}</li>
                     <li>cnt: {doc.get('cnt')}</li>
+                    <li>
+                      date: {isWrittenLocal ? '' : date.toDate().toString()}
+                    </li>
                   </React.Fragment>
                 )
               })}
