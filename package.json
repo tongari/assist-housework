@@ -27,7 +27,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "serve": "firebase serve --only hosting -p 5000 -o 0.0.0.0",
-    "firestore": "firebase emulators:start --only firestore"
+    "emulators:firestore": "firebase emulators:start --only firestore"
   },
   "husky": {
     "hooks": {
