@@ -1,0 +1,51 @@
+roles: 
+  documentId: 1
+  role: string
+
+users:
+  documentId: uid
+  userId: string(uid) # 一応持たせる
+  nickName: string
+  assistantUserIds: array(string) # アシスタントユーザIDの一覧
+  role: Ref/Role.documentId
+
+  ## アシストしてるユーザ一覧
+  assistToUsers:
+    documentId: string(assistToUserId)
+    assistToUserId: string # 一応持たせる
+    nickName: string
+    createdAt: Date
+    updatedAt: Date
+
+      items:
+        documentId: auto
+        itemId: string(documentId)
+        name: string
+        price: number
+        createdAt: Date
+        updatedAt: Date
+
+      budgets:
+        documentId: auto
+        year: number
+        month: number
+        budget: number
+        createdAt: Date
+        updatedAt: Date
+
+      deals:
+        documentId: auto
+        fullDate: Date
+        year: number
+        month: number
+        date: number
+        day: number（曜日）
+        itemId: string(items-itemId) 
+        itemName: string(items-name)
+        price: number
+        createdAt: Date
+        updatedAt: Date
+
+    
+    
+
