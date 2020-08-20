@@ -1,5 +1,5 @@
 roles: 
-  documentId: 1
+  documentId: string
   role: string
 
 users:
