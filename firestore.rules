@@ -4,15 +4,26 @@ service cloud.firestore {
     function isAnyAuthenticated() {
       return request.auth != null;
     }
-    function isUserAuthenticated(userID) {
-      return isAnyAuthenticated() && userID == request.auth.uid;
+    
+    function isUserAuthenticated(userId) {
+      return isAnyAuthenticated() && userId == request.auth.uid;
     }
+
     function documentPath(paths) { // paths must be array of string
       return path([['databases', database, 'documents'].join('/'), paths.join('/')].join('/'));
+    }
+
+    function getUser(userId) {
+      return get(documentPath(['users', userId]));
     }
     
     match /roles/{roleId} {
       allow read: if isAnyAuthenticated()
+    }
+    
+    match /users/{userId} {
+      allow read: if userId in getUser(request.auth.uid).data.assistantUserIds && get(getUser(request.auth.uid).data.roleRef).id == '2'
+       || isUserAuthenticated(userId);
     }
   }
 }
