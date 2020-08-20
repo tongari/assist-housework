@@ -97,28 +97,50 @@ describe('firestore rules', () => {
 
   describe('users collection tests', () => {
     describe('read', () => {
-      test('My account can read', async () => {
-        const db = authorizedApp({ uid: 'approver_1' })
-        const approverUser = db.collection('users').doc('approver_1')
-        await firebase.assertSucceeds(approverUser.get())
+      describe('Approval user', () => {
+        test('can read my data', async () => {
+          const db = authorizedApp({ uid: 'approver_1' })
+          const approverUser = db.collection('users').doc('approver_1')
+          await firebase.assertSucceeds(approverUser.get())
+        })
+
+        test('can read my assistant', async () => {
+          const db = authorizedApp({ uid: 'approver_1' })
+          const assistantUser = db.collection('users').doc('assistant_1')
+          await firebase.assertSucceeds(assistantUser.get())
+        })
+
+        test('can not read other assistant', async () => {
+          const db = authorizedApp({ uid: 'approver_2' })
+          const assistantUser = db.collection('users').doc('assistant_1')
+          await firebase.assertFails(assistantUser.get())
+        })
+
+        test('can not read other approver', async () => {
+          const db = authorizedApp({ uid: 'approver_1' })
+          const approverUser = db.collection('users').doc('approver_2')
+          await firebase.assertFails(approverUser.get())
+        })
       })
 
-      test('Approval user can read my assistant', async () => {
-        const db = authorizedApp({ uid: 'approver_1' })
-        const assistantUser = db.collection('users').doc('assistant_1')
-        await firebase.assertSucceeds(assistantUser.get())
-      })
+      describe('Assistant user', () => {
+        test('can read my data', async () => {
+          const db = authorizedApp({ uid: 'assistant_1' })
+          const approverUser = db.collection('users').doc('assistant_1')
+          await firebase.assertSucceeds(approverUser.get())
+        })
 
-      test('Approval user can not read other assistant', async () => {
-        const db = authorizedApp({ uid: 'approver_2' })
-        const assistantUser = db.collection('users').doc('assistant_1')
-        await firebase.assertFails(assistantUser.get())
-      })
+        test('can not read other assistant', async () => {
+          const db = authorizedApp({ uid: 'assistant_1' })
+          const approverUser = db.collection('users').doc('assistant_2')
+          await firebase.assertFails(approverUser.get())
+        })
 
-      test('Assistant user can not read approver', async () => {
-        const db = authorizedApp({ uid: 'assistant_1' })
-        const approverUser = db.collection('users').doc('approver_1')
-        await firebase.assertFails(approverUser.get())
+        test('can not read approver', async () => {
+          const db = authorizedApp({ uid: 'assistant_1' })
+          const approverUser = db.collection('users').doc('approver_1')
+          await firebase.assertFails(approverUser.get())
+        })
       })
 
       test('Unauthorized user can not read assistant', async () => {
