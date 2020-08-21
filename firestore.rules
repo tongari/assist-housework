@@ -16,14 +16,22 @@ service cloud.firestore {
     function getUser(userId) {
       return get(documentPath(['users', userId]));
     }
+
+    function isApprover(userId) {
+      return get(getUser(request.auth.uid).data.roleRef).id == '2'
+    }
     
     match /roles/{roleId} {
       allow read: if isAnyAuthenticated()
     }
     
     match /users/{userId} {
-      allow read: if userId in getUser(request.auth.uid).data.assistantUserIds && get(getUser(request.auth.uid).data.roleRef).id == '2'
+      allow read: if userId in getUser(request.auth.uid).data.assistantUserIds && isApprover(request.auth.uid)
        || isUserAuthenticated(userId);
+
+      match /assistToApprovers/{assistToApproverId}/{document=**} {
+        allow read: if request.auth.uid == assistToApproverId || isUserAuthenticated(userId)
+      }
     }
   }
 }

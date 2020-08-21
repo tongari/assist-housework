@@ -2,6 +2,8 @@ import * as firebase from '@firebase/testing'
 import * as fs from 'fs'
 import { PROJECT_ID, RULES_PATH } from './config'
 import { rolesSeed } from './seeds/roles'
+import { usersSeed } from './seeds/users'
+import { userAssistToApproversSeed } from './seeds/assistToApprovers'
 
 export const authorizedApp = (auth?: {
   uid: string
@@ -19,6 +21,8 @@ export const setup = (): void => {
 
   beforeEach(async () => {
     await rolesSeed()
+    await usersSeed()
+    await userAssistToApproversSeed()
   })
 
   afterEach(async () => {
