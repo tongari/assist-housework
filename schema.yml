@@ -13,7 +13,6 @@ users:
   assistToUsers:
     documentId: string(assistToUserId)
     assistToUserId: string # 一応持たせる
-    nickName: string
     createdAt: Date
     updatedAt: Date
 
