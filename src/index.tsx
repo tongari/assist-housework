@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { GlobalStyle } from 'styles/index'
-import initializeFirebase from 'settings/firebase'
+import initializeFirebase from 'config/firebase'
 import App from './App'
 
 initializeFirebase()

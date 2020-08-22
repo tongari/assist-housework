@@ -1,19 +1,35 @@
 import * as firebase from 'firebase/app'
 
-// TODO: ちょっと模索中
+// TODO: 模索中(firestoreを直接叩く場合は、redux-toolkit必要ないか？)
 
-type CreateTestResultType = firebase.firestore.DocumentReference<
-  firebase.firestore.DocumentData
->
-// eslint-disable-next-line import/prefer-default-export
-export const createTest = async (
-  cnt: number
-): Promise<CreateTestResultType> => {
+export const createUserDoc = (): void => {
   const db = firebase.firestore()
-  const result = await db.collection('tests').add({
-    cnt,
-    created_at: firebase.firestore.FieldValue.serverTimestamp(),
-    updated_at: firebase.firestore.FieldValue.serverTimestamp(),
-  })
-  return result
+  const rolesRef = db.collection('roles')
+  const userId = firebase.auth().currentUser?.uid
+  db.collection('users')
+    .doc(userId)
+    .set({
+      userId,
+      nickName: '',
+      inviteAddress: null,
+      assistantUserIds: [],
+      roleRef: rolesRef.doc('2'),
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    })
+}
+
+export const registerUser = (
+  nickName: string,
+  inviteAddress: string
+): Promise<void> => {
+  const db = firebase.firestore()
+  return db.collection('users').doc(firebase.auth().currentUser?.uid).set(
+    {
+      nickName,
+      inviteAddress,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    },
+    { merge: true }
+  )
 }

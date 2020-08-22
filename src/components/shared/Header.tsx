@@ -1,5 +1,6 @@
 import React from 'react'
 import * as firebase from 'firebase/app'
+import { Paths } from 'config/paths'
 
 const Header: React.FC = () => {
   return (
@@ -8,7 +9,7 @@ const Header: React.FC = () => {
         type="button"
         onClick={() => {
           firebase.auth().signOut()
-          window.location.href = '/login'
+          window.location.href = Paths.Login
         }}
       >
         logout
