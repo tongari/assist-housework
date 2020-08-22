@@ -1,5 +1,5 @@
 import * as firebase from '@firebase/testing'
-import { PROJECT_ID } from '../config'
+import { PROJECT_ID } from '../../config'
 
 // eslint-disable-next-line import/prefer-default-export
 export const usersSeed = async (): Promise<void> => {

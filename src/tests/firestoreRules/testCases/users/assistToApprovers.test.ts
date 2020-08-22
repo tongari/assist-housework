@@ -1,7 +1,7 @@
 import * as firebase from '@firebase/testing'
 import { authorizedApp, setup } from '../../setting'
 
-describe('firestore rules users/{docID}/assistToUsers', () => {
+describe('firestore rules users/{userId}/assistToApprovers', () => {
   setup()
 
   describe('read', () => {

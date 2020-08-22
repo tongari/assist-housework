@@ -1,33 +1,39 @@
 import * as firebase from '@firebase/testing'
-import { PROJECT_ID } from '../config'
+import { PROJECT_ID } from '../../config'
 
 // eslint-disable-next-line import/prefer-default-export
-export const userAssistToApproversSeed = async (): Promise<void> => {
+export const userBudgetsSeed = async (): Promise<void> => {
   const adminDb = (): firebase.firestore.Firestore =>
     firebase.initializeAdminApp({ projectId: PROJECT_ID }).firestore()
 
   await adminDb()
-    .collection('users/assistant_1/assistToApprovers')
-    .doc('approver_1')
+    .collection('users/assistant_1/assistToApprovers/approver_1/budgets')
+    .doc('1')
     .set({
-      assistToApproverId: 'approver_1',
+      year: 2020,
+      month: 8,
+      budget: 3000,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     })
   await adminDb()
-    .collection('users/assistant_1/assistToApprovers')
-    .doc('approver_11')
+    .collection('users/assistant_1/assistToApprovers/approver_11/budgets')
+    .doc('1')
     .set({
-      assistToApproverId: 'approver_11',
+      year: 2020,
+      month: 8,
+      budget: 3000,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     })
 
   await adminDb()
-    .collection('users/assistant_2/assistToApprovers')
-    .doc('approver_2')
+    .collection('users/assistant_2/assistToApprovers/approver_2/budgets')
+    .doc('1')
     .set({
-      assistToApproverId: 'approver_2',
+      year: 2020,
+      month: 8,
+      budget: 3000,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     })
