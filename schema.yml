@@ -5,14 +5,13 @@ roles:
 users:
   documentId: uid
   userId: string(uid) # 一応持たせる
-  nickName: string
   assistantUserIds: array(string) # アシスタントユーザIDの一覧
-  role: Ref/Role.documentId
+  roleRef: Ref/Role.documentId
 
-  ## アシストしてるユーザ一覧
-  assistToUsers:
-    documentId: string(assistToUserId)
-    assistToUserId: string # 一応持たせる
+  ## アシストしてる承認者一覧
+  assistToApprovers:
+    documentId: string(assistToApproverId)
+    assistToApproverId: string # 一応持たせる
     createdAt: Date
     updatedAt: Date
 
