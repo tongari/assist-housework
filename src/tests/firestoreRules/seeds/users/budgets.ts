@@ -1,12 +1,12 @@
 import * as firebase from '@firebase/testing'
 import { PROJECT_ID } from '../../config'
 
-// eslint-disable-next-line import/prefer-default-export
 export const userBudgetsSeed = async (): Promise<void> => {
-  const adminDb = (): firebase.firestore.Firestore =>
-    firebase.initializeAdminApp({ projectId: PROJECT_ID }).firestore()
+  const adminDb = firebase
+    .initializeAdminApp({ projectId: PROJECT_ID })
+    .firestore()
 
-  await adminDb()
+  await adminDb
     .collection('users/assistant_1/assistToApprovers/approver_1/budgets')
     .doc('1')
     .set({
@@ -16,7 +16,7 @@ export const userBudgetsSeed = async (): Promise<void> => {
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     })
-  await adminDb()
+  await adminDb
     .collection('users/assistant_1/assistToApprovers/approver_11/budgets')
     .doc('1')
     .set({
@@ -27,7 +27,7 @@ export const userBudgetsSeed = async (): Promise<void> => {
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     })
 
-  await adminDb()
+  await adminDb
     .collection('users/assistant_2/assistToApprovers/approver_2/budgets')
     .doc('1')
     .set({

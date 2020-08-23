@@ -1,6 +1,7 @@
 import React from 'react'
 import { Redirect } from 'react-router-dom'
 import useLogin from 'hooks/auth/useLogin'
+import { Paths } from 'config/paths'
 
 const LoginPage: React.FC = () => {
   const [user, isLoading, error] = useLogin()
@@ -15,7 +16,7 @@ const LoginPage: React.FC = () => {
 
   if (user) {
     // TODO: 状態によって変更？
-    return <Redirect to="/register-approver" />
+    return <Redirect to={Paths.RegisterApprover} />
   }
 
   return null

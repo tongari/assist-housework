@@ -1,102 +1,65 @@
-import React, { useState } from 'react'
-import { createTest } from 'domain/firestore'
+import React, { useState, useEffect } from 'react'
 import * as firebase from 'firebase/app'
-import { useCollection, useDocument } from 'react-firebase-hooks/firestore'
+import { useDocument } from 'react-firebase-hooks/firestore'
+import { useHistory } from 'react-router-dom'
+import { registerUser } from 'domain/firestore'
+import { Paths } from 'config/paths'
 
 const RegisterApproverPage: React.FC = () => {
-  // TODO: 以下に散らばっているサンプルコードは後ほど削除
-  const [cnt, setCnt] = useState(1)
-  const [value, loading, error] = useCollection(
-    firebase
-      .firestore()
-      .collection('tests')
-      .orderBy('created_at', 'desc')
-      .limit(3),
+  const [userDoc] = useDocument(
+    firebase.firestore().doc(`users/${firebase.auth().currentUser?.uid}`),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
     }
   )
-  const [adminRole] = useDocument(firebase.firestore().doc('roles/1'), {
-    snapshotListenOptions: { includeMetadataChanges: true },
-  })
 
-  const onSave: React.FormEventHandler = (e) => {
-    e.preventDefault()
-    // TODO: ちょっと模索中
-    createTest(cnt)
-    setCnt(cnt + 1)
-  }
+  const history = useHistory()
+  const [nickName, setNickName] = useState('')
+  const [inviteAddress, setInviteAddress] = useState('')
 
-  const onDelete: React.UIEventHandler = (e) => {
-    e.preventDefault()
-    if (value) {
-      const testRef = firebase
-        .firestore()
-        .collection('test')
-        .doc(value.docs[value.docs.length - 1].id)
-
-      testRef.update({
-        cnt: firebase.firestore.FieldValue.delete(),
-      })
+  useEffect(() => {
+    if (history && userDoc?.get('inviteAddress')) {
+      history.push(Paths.PendingRegisterAssistant)
     }
-  }
-
-  // firebase.rulesでwire拒否しているため失敗する
-  const onCreateRole: React.UIEventHandler = (e) => {
-    e.preventDefault()
-    firebase.firestore().collection('roles').doc('2').set({
-      role: 'approver',
-    })
-  }
+  }, [userDoc, history])
 
   return (
     <div>
       <h1>お手伝いをお願いしよう。</h1>
-      {adminRole && <p>role: {adminRole.get('role')}</p>}
       <form>
         <label>
           <p>ニックネーム（50文字以内）</p>
-          <input type="text" maxLength={50} />
+          <input
+            type="text"
+            maxLength={50}
+            value={nickName}
+            onChange={(e) => {
+              setNickName(e.target.value)
+            }}
+          />
         </label>
         <label>
           <p>お手伝いをお願いする人のメールアドレスまたは、電話番号</p>
-          <input type="text" />
+          <input
+            type="text"
+            value={inviteAddress}
+            onChange={(e) => {
+              setInviteAddress(e.target.value)
+            }}
+          />
         </label>
-        <button type="submit" onClick={onSave}>
+        <button
+          type="submit"
+          onClick={(e) => {
+            e.preventDefault()
+            registerUser(nickName, inviteAddress).then(() => {
+              history.push(Paths.PendingRegisterAssistant)
+            })
+          }}
+        >
           登録
         </button>
-        <button type="button" onClick={onDelete}>
-          Delete last document
-        </button>
-        <button type="button" onClick={onCreateRole}>
-          create role
-        </button>
       </form>
-      <div>
-        {error && <p>Error: {JSON.stringify(error)}</p>}
-        {loading && <p>Collection: Loading...</p>}
-        {value && (
-          <>
-            <p>Collection:</p>
-            <ul>
-              {value.docs.map((doc) => {
-                const date = doc.get('created_at')
-                const isWrittenLocal = doc.metadata.hasPendingWrites
-
-                return (
-                  <React.Fragment key={doc.id}>
-                    <li>docID: {doc.id}</li>
-                    <li>cnt: {doc.get('cnt')}</li>
-                    <li>
-                      date: {isWrittenLocal ? '' : date.toDate().toString()}
-                    </li>
-                  </React.Fragment>
-                )
-              })}
-            </ul>
-          </>
-        )}
-      </div>
     </div>
   )
 }

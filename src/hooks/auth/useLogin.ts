@@ -3,10 +3,18 @@ import * as firebase from 'firebase/app'
 import * as firebaseui from 'firebaseui'
 import 'firebaseui/dist/firebaseui.css'
 import { useAuthState } from 'react-firebase-hooks/auth'
+import { createUserDoc } from 'domain/firestore'
 
 const uiConfig = {
   callbacks: {
-    signInSuccessWithAuthResult: () => false,
+    signInSuccessWithAuthResult: (authResult: {
+      additionalUserInfo: { isNewUser: string }
+    }) => {
+      if (authResult.additionalUserInfo.isNewUser) {
+        createUserDoc()
+      }
+      return false
+    },
   },
   signInFlow: 'popup',
   signInOptions: [

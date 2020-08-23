@@ -29,6 +29,8 @@ service cloud.firestore {
       allow read: if userId in getUser(request.auth.uid).data.assistantUserIds && isApprover(request.auth.uid)
        || isUserAuthenticated(userId);
 
+      allow write: if isUserAuthenticated(userId);
+
       match /assistToApprovers/{assistToApproverId}/{document=**} {
         allow read: if request.auth.uid == assistToApproverId || isUserAuthenticated(userId)
       }
