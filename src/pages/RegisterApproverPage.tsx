@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import * as firebase from 'firebase/app'
 import { useDocument } from 'react-firebase-hooks/firestore'
 import { useHistory } from 'react-router-dom'
-import { registerUser } from 'domain/firestore'
+import { registerApprovalUser } from 'domain/firestore'
 import { Paths } from 'config/paths'
 
 const RegisterApproverPage: React.FC = () => {
@@ -52,7 +52,7 @@ const RegisterApproverPage: React.FC = () => {
           type="submit"
           onClick={(e) => {
             e.preventDefault()
-            registerUser(nickName, inviteAddress)
+            registerApprovalUser(nickName, inviteAddress)
           }}
         >
           登録
