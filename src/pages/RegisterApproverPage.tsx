@@ -39,7 +39,7 @@ const RegisterApproverPage: React.FC = () => {
           />
         </label>
         <label>
-          <p>お手伝いをお願いする人のメールアドレスまたは、電話番号</p>
+          <p>お手伝いをお願いする人のメールアドレス</p>
           <input
             type="text"
             value={inviteAddress}
@@ -52,9 +52,7 @@ const RegisterApproverPage: React.FC = () => {
           type="submit"
           onClick={(e) => {
             e.preventDefault()
-            registerUser(nickName, inviteAddress).then(() => {
-              history.push(Paths.PendingRegisterAssistant)
-            })
+            registerUser(nickName, inviteAddress)
           }}
         >
           登録

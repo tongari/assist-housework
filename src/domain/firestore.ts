@@ -19,12 +19,12 @@ export const createUserDoc = (): void => {
     })
 }
 
-export const registerUser = (
+export const registerUser = async (
   nickName: string,
   inviteAddress: string
-): Promise<void> => {
+): Promise<firebase.functions.HttpsCallableResult> => {
   const db = firebase.firestore()
-  return db.collection('users').doc(firebase.auth().currentUser?.uid).set(
+  await db.collection('users').doc(firebase.auth().currentUser?.uid).set(
     {
       nickName,
       inviteAddress,
@@ -32,4 +32,11 @@ export const registerUser = (
     },
     { merge: true }
   )
+
+  const sendAssistantInviteMail = firebase
+    .functions()
+    .httpsCallable('sendAssistantInviteMail')
+
+  const result = await sendAssistantInviteMail({ inviteAddress, nickName })
+  return result
 }
