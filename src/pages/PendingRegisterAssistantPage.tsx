@@ -20,15 +20,6 @@ const PendingRegisterAssistantPage: React.FC = () => {
     }
   }, [userDoc, history])
 
-  // TODO: テストコード。後で消す
-  const onClick: React.UIEventHandler = async (e) => {
-    e.preventDefault()
-    const addMessage = firebase.functions().httpsCallable('addMessage')
-    const response = await addMessage({ text: 'click!?' })
-    // eslint-disable-next-line no-console
-    console.log(response.data)
-  }
-
   if (!userDoc) return null
   return (
     <div>
@@ -39,9 +30,6 @@ const PendingRegisterAssistantPage: React.FC = () => {
         <br />
         さんの登録待ちです。
       </p>
-      <button type="button" onClick={onClick}>
-        get functions data
-      </button>
     </div>
   )
 }

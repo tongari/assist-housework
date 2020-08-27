@@ -3,7 +3,7 @@ import * as firebase from 'firebase/app'
 import * as firebaseui from 'firebaseui'
 import 'firebaseui/dist/firebaseui.css'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { createUserDoc } from 'domain/firestore'
+import { createApprovalUserDoc, createAssistantUserDoc } from 'domain/firestore'
 
 const uiConfig = {
   callbacks: {
@@ -11,7 +11,14 @@ const uiConfig = {
       additionalUserInfo: { isNewUser: string }
     }) => {
       if (authResult.additionalUserInfo.isNewUser) {
-        createUserDoc()
+        const searchParams = new URLSearchParams(window.location.search)
+        const assistToApproverId = searchParams.get('invite_assistant')
+
+        if (assistToApproverId) {
+          createAssistantUserDoc(assistToApproverId)
+          return false
+        }
+        createApprovalUserDoc()
       }
       return false
     },

@@ -33,6 +33,7 @@ service cloud.firestore {
 
       match /assistToApprovers/{assistToApproverId}/{document=**} {
         allow read: if request.auth.uid == assistToApproverId || isUserAuthenticated(userId)
+        // TODO: wirte権限の記載
       }
     }
   }

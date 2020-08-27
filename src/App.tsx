@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import LoginPage from 'pages/LoginPage'
 import RegisterApproverPage from 'pages/RegisterApproverPage'
 import PendingRegisterAssistantPage from 'pages/PendingRegisterAssistantPage'
+import RegisterAssistantPage from 'pages/RegisterAssistantPage'
 
 import Auth from 'components/shared/Auth'
 import Header from 'components/shared/Header'
@@ -26,6 +27,11 @@ const App: React.FC = () => {
               exact
               path={Paths.PendingRegisterAssistant}
               component={PendingRegisterAssistantPage}
+            />
+            <Route
+              exact
+              path={Paths.RegisterAssistant}
+              component={RegisterAssistantPage}
             />
             <Route
               path="*"

@@ -4,39 +4,65 @@ import * as sendGrid from '@sendgrid/mail'
 
 admin.initializeApp()
 
-exports.makeUppercase = functions.firestore
-  .document('/messages/{documentId}')
-  .onCreate((snap, context) => {
-    const originalData = snap.data().original
-    functions.logger.log('Uppercasing', context.params.documentId, originalData)
-    const uppercase = originalData.toUpperCase()
-    return snap.ref.set({ uppercase }, { merge: true })
-  })
+const success = {
+  message: 'success',
+}
 
-exports.addMessage = functions.https.onCall(async (data) => {
-  const original = data.text
-  const writeResult = await admin
-    .firestore()
-    .collection('messages')
-    .add({ original })
+const fail = {
+  message: 'fail',
+}
 
-  return {
-    result: `Message with ID: ${writeResult.id} added.`,
+interface SendAssistantInviteMailProps {
+  inviteAddress: string
+  nickName: string
+}
+exports.sendAssistantInviteMail = functions.https.onCall(
+  async (
+    { inviteAddress, nickName }: SendAssistantInviteMailProps,
+    context
+  ) => {
+    const apiKey = functions.config().send_grid.key
+    const fromAddress = functions.config().send_grid.from_address
+    sendGrid.setApiKey(apiKey)
+
+    const host = context.rawRequest.headers.origin
+    const msg = {
+      to: inviteAddress,
+      from: fromAddress,
+      subject: `${nickName}さんからお手伝いのお願いがきています`,
+      html: `
+          <p>${nickName}さんからお手伝いのお願いがきています</p>
+          <p>以下、URLより登録してください。</p>
+          <p>${host}/login?invite_assistant=${context.auth?.uid}</p>
+        `,
+    }
+    const result = await sendGrid.send(msg)
+    functions.logger.info('sendAssistantInviteMail', result)
+    return success
   }
-})
+)
 
-// TODO: テストコードのため後で最適化
-export const sendMail = functions.https.onRequest(async (_, response) => {
-  const apiKey = functions.config().send_grid.key
-  const fromAddress = functions.config().send_grid.from_address
-  sendGrid.setApiKey(apiKey)
-  const msg = {
-    to: '',
-    from: fromAddress,
-    subject: 'assistant-work-try-mail',
-    text: 'Try assistant work mail.',
+interface AddAssistantUserIds {
+  approverId: string
+}
+exports.addAssistantUserIds = functions.https.onCall(
+  async ({ approverId }: AddAssistantUserIds, context) => {
+    const assistantId = context.auth?.uid
+    if (!approverId || !assistantId) return fail
+
+    const approver = admin.firestore().collection('users').doc(approverId)
+    const approverDoc = await approver.get()
+    const approverRoleRef = await approverDoc.get('roleRef').get()
+
+    // TODO: フロントと共通のenumを使うなどを考慮
+    if (approverRoleRef.id !== '2') return fail
+
+    const result = await approver.update({
+      assistantUserIds: admin.firestore.FieldValue.arrayUnion(assistantId),
+    })
+
+    functions.logger.info('addAssistantUserIds', result)
+
+    return success
   }
-  const result = await sendGrid.send(msg)
-  functions.logger.info('sendMail', result)
-  response.send('complete')
-})
+)

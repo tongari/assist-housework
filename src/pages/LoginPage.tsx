@@ -15,7 +15,16 @@ const LoginPage: React.FC = () => {
   }
 
   if (user) {
-    // TODO: 状態によって変更？
+    const searchParams = new URLSearchParams(window.location.search)
+    const isAssistant = searchParams.has('invite_assistant')
+    if (isAssistant) {
+      const addParams = searchParams.get('invite_assistant')
+      return (
+        <Redirect
+          to={`${Paths.RegisterAssistant}/?invite_assistant=${addParams}`}
+        />
+      )
+    }
     return <Redirect to={Paths.RegisterApprover} />
   }
 
