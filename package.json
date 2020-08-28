@@ -29,7 +29,7 @@
     "test": "firebase emulators:exec --only firestore 'react-scripts test --watchAll=false --verbose --coverage'",
     "test:watch": "firebase emulators:exec --only firestore 'react-scripts test --verbose'",
     "eject": "react-scripts eject",
-    "em:export": "firebase emulators:export ./.emulators_data",
+    "em:export": "firebase emulators:export --force ./.emulators_data",
     "em:start": "firebase emulators:start --import=./.emulators_data"
   },
   "husky": {

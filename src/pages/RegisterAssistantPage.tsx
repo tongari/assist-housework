@@ -25,7 +25,10 @@ const RegisterAssistantPage: React.FC = () => {
             e.preventDefault()
             const searchParams = new URLSearchParams(window.location.search)
             const assistToApproverId = searchParams.get('invite_assistant')
-            registerAssistantUser(nickName, assistToApproverId)
+            registerAssistantUser(nickName, assistToApproverId).catch((err) => {
+              // eslint-disable-next-line no-alert
+              window.alert(err.message)
+            })
           }}
         >
           登録
