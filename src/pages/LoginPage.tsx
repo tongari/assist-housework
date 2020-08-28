@@ -18,10 +18,9 @@ const LoginPage: React.FC = () => {
     const searchParams = new URLSearchParams(window.location.search)
     const isAssistant = searchParams.has('invite_assistant')
     if (isAssistant) {
-      const addParams = searchParams.get('invite_assistant')
       return (
         <Redirect
-          to={`${Paths.RegisterAssistant}/?invite_assistant=${addParams}`}
+          to={`${Paths.RegisterAssistant}/?${searchParams.toString()}`}
         />
       )
     }

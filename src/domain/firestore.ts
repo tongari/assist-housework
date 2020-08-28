@@ -23,11 +23,14 @@ export const createApprovalUserDoc = (): void => {
 export const createAssistantUserDoc = async (
   assistToApproverId: string | null
 ): Promise<void> => {
-  if (assistToApproverId === null) {
-    // eslint-disable-next-line no-alert
-    window.alert('招待されたメールのURLから登録してください')
-    return
-  }
+  const addAssistantUserIds = firebase
+    .functions()
+    .httpsCallable('addAssistantUserIds')
+
+  await addAssistantUserIds({ approverId: assistToApproverId }).catch((err) => {
+    throw err
+  })
+
   const db = firebase.firestore()
   const rolesRef = db.collection('roles')
   const userId = firebase.auth().currentUser?.uid
@@ -41,12 +44,6 @@ export const createAssistantUserDoc = async (
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     })
-
-  const addAssistantUserIds = firebase
-    .functions()
-    .httpsCallable('addAssistantUserIds')
-
-  addAssistantUserIds({ approverId: assistToApproverId })
 }
 
 export const registerApprovalUser = async (
@@ -73,10 +70,14 @@ export const registerAssistantUser = async (
   assistToApproverId: string | null
 ): Promise<void> => {
   if (assistToApproverId === null) {
-    // eslint-disable-next-line no-alert
-    window.alert('招待されたメールのURLから登録してください')
-    return
+    throw new Error('招待されたメールのURLから登録してください')
   }
+
+  const isRegisterAssistantUser = firebase
+    .functions()
+    .httpsCallable('isRegisterAssistantUser')
+
+  await isRegisterAssistantUser({ approverId: assistToApproverId })
 
   const db = firebase.firestore()
   const userId = firebase.auth().currentUser?.uid
