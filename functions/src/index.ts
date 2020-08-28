@@ -1,3 +1,5 @@
+import * as qs from 'querystring'
+
 import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
 import * as sendGrid from '@sendgrid/mail'
@@ -30,7 +32,9 @@ exports.sendAssistantInviteMail = functions.https.onCall(
       html: `
           <p>${nickName}さんからお手伝いのお願いがきています</p>
           <p>以下、URLより登録してください。</p>
-          <p>${host}/login?invite_assistant=${context.auth?.uid}</p>
+          <p>${host}/login?invite_assistant=${
+        context.auth?.uid
+      }&approver_nick_name=${qs.escape(nickName)}</p>
         `,
     }
     const result = await sendGrid.send(msg)
@@ -78,6 +82,33 @@ exports.addAssistantUserIds = functions.https.onCall(
 
     functions.logger.info('addAssistantUserIds', result)
 
+    return success
+  }
+)
+
+interface isRegisterAssistantUserProps {
+  approverId: string
+}
+exports.isRegisterAssistantUser = functions.https.onCall(
+  async ({ approverId }: isRegisterAssistantUserProps, context) => {
+    if (!approverId) {
+      throw new HttpsError(
+        'invalid-argument',
+        '招待されたメールのURLから登録してください'
+      )
+    }
+
+    const approver = admin.firestore().collection('users').doc(approverId)
+    const approverDoc = await approver.get()
+    const assistantUserIds = approverDoc.get('assistantUserIds')
+    const assistantId = context.auth?.uid
+
+    if (assistantId !== assistantUserIds.includes(assistantId)) {
+      throw new HttpsError(
+        'invalid-argument',
+        '招待されたメールアドレスでログインしてください。'
+      )
+    }
     return success
   }
 )

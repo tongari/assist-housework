@@ -73,10 +73,11 @@ export const registerAssistantUser = async (
     throw new Error('招待されたメールのURLから登録してください')
   }
 
-  // TODO:
-  // (1) functionsで「assistToApproverId」から承認者のユーザ情報を取得
-  // (2) 承認者のユーザで保持している、assistantUserIdsにリクエスト側のuidがマッチするかを確認
-  // (3) マッチしていなければエラーを返す
+  const isRegisterAssistantUser = firebase
+    .functions()
+    .httpsCallable('isRegisterAssistantUser')
+
+  await isRegisterAssistantUser({ approverId: assistToApproverId })
 
   const db = firebase.firestore()
   const userId = firebase.auth().currentUser?.uid
@@ -85,7 +86,6 @@ export const registerAssistantUser = async (
     updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
   })
 
-  // TODO: rulesのwrite権限の制御
   db.collection(`users/${userId}/assistToApprovers`)
     .doc(assistToApproverId)
     .set({

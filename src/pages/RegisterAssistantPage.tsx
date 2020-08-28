@@ -1,12 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { registerAssistantUser } from 'domain/firestore'
 
 const RegisterAssistantPage: React.FC = () => {
   const [nickName, setNickName] = useState('')
+  const [approverNickName, setApproverNickName] = useState('')
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search)
+    setApproverNickName(searchParams.get('approver_nick_name') ?? '')
+  }, [])
 
   return (
     <div>
-      <h1>○○さんのお手伝いしてみよう。</h1>
+      <h1>{approverNickName}さんのお手伝いをしてみよう。</h1>
       <form>
         <label>
           <p>ニックネーム（50文字以内）</p>
