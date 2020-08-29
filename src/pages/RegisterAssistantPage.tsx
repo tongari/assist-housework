@@ -1,46 +1,48 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
+import * as firebase from 'firebase/app'
 import { registerAssistantUser } from 'domain/firestore'
+import { useDocument } from 'react-firebase-hooks/firestore'
+import RegisterAssistant from 'components/templates/RegisterAssistant'
+import PendingRegisterAssistant from 'components/templates/RegisterAssistant/pending'
 
 const RegisterAssistantPage: React.FC = () => {
-  const [nickName, setNickName] = useState('')
-  const [approverNickName, setApproverNickName] = useState('')
+  const searchParams = new URLSearchParams(window.location.search)
+  const assistToApproverId = searchParams.get('invite_assistant')
+  const approverNickName = searchParams.get('approver_nick_name') ?? ''
 
-  useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search)
-    setApproverNickName(searchParams.get('approver_nick_name') ?? '')
-  }, [])
+  const [assistToApprovers] = useDocument(
+    firebase
+      .firestore()
+      .doc(
+        `users/${
+          firebase.auth().currentUser?.uid
+        }/assistToApprovers/${assistToApproverId}`
+      ),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  )
+
+  const registerAssistantUserHandler = (nickName: string) => {
+    registerAssistantUser(nickName, assistToApproverId).catch((err) => {
+      // eslint-disable-next-line no-alert
+      window.alert(err.message)
+    })
+  }
+
+  if (!assistToApprovers) return null
 
   return (
-    <div>
-      <h1>{approverNickName}さんのお手伝いをしてみよう。</h1>
-      <form>
-        <label>
-          <p>ニックネーム（50文字以内）</p>
-          <input
-            type="text"
-            maxLength={50}
-            value={nickName}
-            onChange={(e) => {
-              setNickName(e.target.value)
-            }}
-          />
-        </label>
-        <button
-          type="submit"
-          onClick={(e) => {
-            e.preventDefault()
-            const searchParams = new URLSearchParams(window.location.search)
-            const assistToApproverId = searchParams.get('invite_assistant')
-            registerAssistantUser(nickName, assistToApproverId).catch((err) => {
-              // eslint-disable-next-line no-alert
-              window.alert(err.message)
-            })
-          }}
-        >
-          登録
-        </button>
-      </form>
-    </div>
+    <>
+      {assistToApprovers.data() ? (
+        <PendingRegisterAssistant approverNickName={approverNickName} />
+      ) : (
+        <RegisterAssistant
+          approverNickName={approverNickName}
+          registerAssistantUserHandler={registerAssistantUserHandler}
+        />
+      )}
+    </>
   )
 }
 

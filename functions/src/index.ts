@@ -103,7 +103,7 @@ exports.isRegisterAssistantUser = functions.https.onCall(
     const assistantUserIds = approverDoc.get('assistantUserIds')
     const assistantId = context.auth?.uid
 
-    if (assistantId !== assistantUserIds.includes(assistantId)) {
+    if (!assistantUserIds.includes(assistantId)) {
       throw new HttpsError(
         'invalid-argument',
         '招待されたメールアドレスでログインしてください。'

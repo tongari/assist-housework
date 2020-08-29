@@ -2,14 +2,14 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { GlobalStyle } from 'styles/index'
 import initializeFirebase from 'config/firebase'
-import App from './App'
+import RootPage from './pages/RootPage'
 
 initializeFirebase()
 
 ReactDOM.render(
   <React.StrictMode>
     <GlobalStyle />
-    <App />
+    <RootPage />
   </React.StrictMode>,
   document.getElementById('root')
 )
