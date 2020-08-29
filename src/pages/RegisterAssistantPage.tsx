@@ -8,6 +8,7 @@ import PendingRegisterAssistant from 'components/templates/RegisterAssistant/pen
 const RegisterAssistantPage: React.FC = () => {
   const searchParams = new URLSearchParams(window.location.search)
   const assistToApproverId = searchParams.get('invite_assistant')
+  const approverNickName = searchParams.get('approver_nick_name') ?? ''
 
   const [assistToApprovers] = useDocument(
     firebase
@@ -29,15 +30,15 @@ const RegisterAssistantPage: React.FC = () => {
     })
   }
 
+  if (!assistToApprovers) return null
+
   return (
     <>
-      {assistToApprovers?.get('assistToApproverId') ? (
-        <PendingRegisterAssistant
-          approverNickName={searchParams.get('approver_nick_name') ?? ''}
-        />
+      {assistToApprovers.data() ? (
+        <PendingRegisterAssistant approverNickName={approverNickName} />
       ) : (
         <RegisterAssistant
-          approverNickName={searchParams.get('approver_nick_name') ?? ''}
+          approverNickName={approverNickName}
           registerAssistantUserHandler={registerAssistantUserHandler}
         />
       )}
