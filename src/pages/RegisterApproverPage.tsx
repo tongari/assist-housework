@@ -18,7 +18,7 @@ const RegisterApproverPage: React.FC = () => {
 
   return (
     <>
-      {userDoc?.get('inviteAddress') ? (
+      {userDoc.data() ? (
         <PendingRegisterApprover
           inviteAddress={userDoc?.get('inviteAddress')}
         />

@@ -12,7 +12,7 @@ const PendingRegisterAssistant: React.FC<Props> = ({ approverNickName }) => {
         <br />
         <strong>{approverNickName}</strong>
         <br />
-        さんの登録待ちです。
+        さんの承認待ちです。
       </p>
     </div>
   )

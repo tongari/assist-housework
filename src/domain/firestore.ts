@@ -3,34 +3,10 @@ import { Roles } from 'config/roles'
 
 // NOTE: 模索中(firestoreを直接叩く場合は、redux-toolkit必要ないか？)
 
-export const createApprovalUserDoc = (): void => {
-  const db = firebase.firestore()
-  const rolesRef = db.collection('roles')
-  const userId = firebase.auth().currentUser?.uid
-  db.collection('users')
-    .doc(userId)
-    .set({
-      userId,
-      nickName: '',
-      inviteAddress: null,
-      assistantUserIds: [],
-      roleRef: rolesRef.doc(Roles.Approver),
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-    })
-}
-
-export const createAssistantUserDoc = async (
-  assistToApproverId: string | null
-): Promise<void> => {
-  const addAssistantUserIds = firebase
-    .functions()
-    .httpsCallable('addAssistantUserIds')
-
-  await addAssistantUserIds({ approverId: assistToApproverId }).catch((err) => {
-    throw err
-  })
-
+export const registerApprovalUser = async (
+  nickName: string,
+  inviteAddress: string
+): Promise<firebase.functions.HttpsCallableResult> => {
   const db = firebase.firestore()
   const rolesRef = db.collection('roles')
   const userId = firebase.auth().currentUser?.uid
@@ -39,23 +15,13 @@ export const createAssistantUserDoc = async (
     .doc(userId)
     .set({
       userId,
-      nickName: '',
-      roleRef: rolesRef.doc(Roles.Assistant),
+      nickName,
+      inviteAddress,
+      assistantUserIds: [],
+      roleRef: rolesRef.doc(Roles.Approver),
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     })
-}
-
-export const registerApprovalUser = async (
-  nickName: string,
-  inviteAddress: string
-): Promise<firebase.functions.HttpsCallableResult> => {
-  const db = firebase.firestore()
-  await db.collection('users').doc(firebase.auth().currentUser?.uid).update({
-    nickName,
-    inviteAddress,
-    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-  })
 
   const sendAssistantInviteMail = firebase
     .functions()
@@ -73,18 +39,27 @@ export const registerAssistantUser = async (
     throw new Error('招待されたメールのURLから登録してください')
   }
 
-  const isRegisterAssistantUser = firebase
+  const addAssistantUserIds = firebase
     .functions()
-    .httpsCallable('isRegisterAssistantUser')
+    .httpsCallable('addAssistantUserIds')
 
-  await isRegisterAssistantUser({ approverId: assistToApproverId })
+  await addAssistantUserIds({ approverId: assistToApproverId }).catch((err) => {
+    throw err
+  })
 
   const db = firebase.firestore()
+  const rolesRef = db.collection('roles')
   const userId = firebase.auth().currentUser?.uid
-  await db.collection('users').doc(userId).update({
-    nickName,
-    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-  })
+  await db
+    .collection('users')
+    .doc(userId)
+    .set({
+      userId,
+      nickName,
+      roleRef: rolesRef.doc(Roles.Assistant),
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    })
 
   db.collection(`users/${userId}/assistToApprovers`)
     .doc(assistToApproverId)
