@@ -58,7 +58,6 @@ exports.addAssistantUserIds = functions.https.onCall(
 
     const approver = admin.firestore().collection('users').doc(approverId)
     const approverDoc = await approver.get()
-    const approverRoleRef = await approverDoc.get('roleRef').get()
     const assistantAddress = context.auth?.token.email
 
     if (assistantAddress !== approverDoc.get('inviteAddress')) {
@@ -68,6 +67,7 @@ exports.addAssistantUserIds = functions.https.onCall(
       )
     }
 
+    const approverRoleRef = await approverDoc.get('roleRef').get()
     // TODO: フロントと共通のenumを使うなどを考慮
     if (approverRoleRef.id !== '2') {
       throw new HttpsError(
@@ -82,33 +82,6 @@ exports.addAssistantUserIds = functions.https.onCall(
 
     functions.logger.info('addAssistantUserIds', result)
 
-    return success
-  }
-)
-
-interface isRegisterAssistantUserProps {
-  approverId: string
-}
-exports.isRegisterAssistantUser = functions.https.onCall(
-  async ({ approverId }: isRegisterAssistantUserProps, context) => {
-    if (!approverId) {
-      throw new HttpsError(
-        'invalid-argument',
-        '招待されたメールのURLから登録してください'
-      )
-    }
-
-    const approver = admin.firestore().collection('users').doc(approverId)
-    const approverDoc = await approver.get()
-    const assistantUserIds = approverDoc.get('assistantUserIds')
-    const assistantId = context.auth?.uid
-
-    if (!assistantUserIds.includes(assistantId)) {
-      throw new HttpsError(
-        'invalid-argument',
-        '招待されたメールアドレスでログインしてください。'
-      )
-    }
     return success
   }
 )
