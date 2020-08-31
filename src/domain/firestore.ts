@@ -61,11 +61,49 @@ export const registerAssistantUser = async (
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     })
 
-  db.collection(`users/${userId}/assistToApprovers`)
+  await db
+    .collection(`users/${userId}/assistToApprovers`)
     .doc(assistToApproverId)
     .set({
       assistToApproverId,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    })
+
+  const sendApproveAssistantToApprover = firebase
+    .functions()
+    .httpsCallable('sendApproveAssistantToApprover')
+
+  await sendApproveAssistantToApprover({
+    approverId: assistToApproverId,
+  }).catch((err) => {
+    throw err
+  })
+}
+
+export const hasAssistantUserIds = async (
+  assistantId: string | null
+): Promise<boolean> => {
+  if (!assistantId) return false
+
+  const db = firebase.firestore()
+  const approver = db.collection('users').doc(firebase.auth().currentUser?.uid)
+  const approverDoc = await approver.get()
+  const assistantUserIds = approverDoc.get('assistantUserIds')
+
+  const result = assistantUserIds.includes(assistantId)
+  return result
+}
+
+export const setApprovedAssistant = (
+  assistantId: string | null
+): Promise<void> => {
+  const db = firebase.firestore()
+  return db
+    .collection(`users/${assistantId}/assistToApprovers`)
+    .doc(firebase.auth().currentUser?.uid)
+    .update({
+      approved: true,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     })
 }

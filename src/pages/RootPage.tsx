@@ -8,6 +8,7 @@ import LoginPage from 'pages/LoginPage'
 import AuthorizedPage from 'pages/AuthorizedPage'
 import RegisterApproverPage from 'pages/RegisterApproverPage'
 import RegisterAssistantPage from 'pages/RegisterAssistantPage'
+import ApproveAssistantPage from 'pages/ApproveAssistantPage'
 
 const App: React.FC = () => {
   return (
@@ -26,6 +27,11 @@ const App: React.FC = () => {
               exact
               path={Paths.RegisterAssistant}
               component={RegisterAssistantPage}
+            />
+            <Route
+              exact
+              path={Paths.ApproveAssistant}
+              component={ApproveAssistantPage}
             />
             <Route
               path="*"
