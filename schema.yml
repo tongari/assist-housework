@@ -2,19 +2,28 @@ roles:
   documentId: string
   role: string
 
+status: 
+  documentId: string
+  state: string(register | setting | running | calculation)
+
 users:
   documentId: uid
   userId: string(uid) # 一応持たせる
   nickName: string
-  assistantUserIds: array(string) # アシスタントユーザIDの一覧
   roleRef: Ref/Role.documentId
-  inviteAddress: string
+  watchId: string | null
+  inviteAddress: string #認証後削除
+  
+  assistantUserIds: # アシスタントユーザIDの一覧
+    documentId: string(assistantUserId)
+    assistantUserId: string # 一応持たせる
+    statusRef: Ref/status.documentId
 
   ## アシストしてる承認者一覧
   assistToApprovers:
     documentId: string(assistToApproverId)
     assistToApproverId: string # 一応持たせる
-    approved: boolean
+    statusRef: Ref/status.documentId
     createdAt: Date
     updatedAt: Date
 
