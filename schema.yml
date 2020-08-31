@@ -8,6 +8,7 @@ users:
   nickName: string
   assistantUserIds: array(string) # アシスタントユーザIDの一覧
   roleRef: Ref/Role.documentId
+  inviteAddress: string
 
   ## アシストしてる承認者一覧
   assistToApprovers:
