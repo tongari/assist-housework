@@ -5,6 +5,7 @@ roles:
 users:
   documentId: uid
   userId: string(uid) # 一応持たせる
+  nickName: string
   assistantUserIds: array(string) # アシスタントユーザIDの一覧
   roleRef: Ref/Role.documentId
 
@@ -12,6 +13,7 @@ users:
   assistToApprovers:
     documentId: string(assistToApproverId)
     assistToApproverId: string # 一応持たせる
+    approved: boolean
     createdAt: Date
     updatedAt: Date
 

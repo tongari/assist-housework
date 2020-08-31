@@ -33,7 +33,8 @@ service cloud.firestore {
 
       match /assistToApprovers/{assistToApproverId}/{document=**} {
         allow get: if request.auth.uid == assistToApproverId || isUserAuthenticated(userId);
-        allow write: if isUserAuthenticated(userId);
+        allow write: if userId in getUser(request.auth.uid).data.assistantUserIds && isApprover(request.auth.uid)
+       || isUserAuthenticated(userId);
       }
     }
   }
