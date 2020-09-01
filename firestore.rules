@@ -20,22 +20,33 @@ service cloud.firestore {
     function isApprover(userId) {
       return get(getUser(request.auth.uid).data.roleRef).id == '2'
     }
+
+    function hasAssistToApproverId(userId, assistToApproverId) {
+      return get(documentPath(['users', userId, 'assistToApprovers', assistToApproverId])).data.assistToApproverId == request.auth.uid
+    }
     
     match /roles/{roleId} {
       allow read: if isAnyAuthenticated()
     }
+
+    match /status/{stateId} {
+      allow read: if isAnyAuthenticated()
+    }
     
     match /users/{userId} {
-      allow get: if userId in getUser(request.auth.uid).data.assistantUserIds && isApprover(request.auth.uid)
-       || isUserAuthenticated(userId);
-
+      allow get: if isUserAuthenticated(userId)
+       || hasAssistToApproverId(userId, request.auth.uid) && isApprover(request.auth.uid);
       allow write: if isUserAuthenticated(userId);
-
-      match /assistToApprovers/{assistToApproverId}/{document=**} {
-        allow get: if request.auth.uid == assistToApproverId || isUserAuthenticated(userId);
-        allow write: if userId in getUser(request.auth.uid).data.assistantUserIds && isApprover(request.auth.uid)
-       || isUserAuthenticated(userId);
+      
+      match /assistantUserIds/{assistantUserId}/{document=**} {
+        allow get: if isUserAuthenticated(userId) && isApprover(request.auth.uid)
+        allow write: if isUserAuthenticated(userId) && isApprover(request.auth.uid)
       }
+      
+      match /assistToApprovers/{assistToApproverId}/{document=**} {
+        allow read: if request.auth.uid == assistToApproverId || isUserAuthenticated(userId);
+        allow write: if request.auth.uid == assistToApproverId || isUserAuthenticated(userId); 
+      }      
     }
   }
 }

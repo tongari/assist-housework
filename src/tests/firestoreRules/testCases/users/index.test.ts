@@ -68,7 +68,6 @@ describe('firestore rules users collection', () => {
         .set({
           userId: 'approver_999',
           nickName: 'approver_999 san',
-          assistantUserIds: ['assistant_999'],
           roleRef: rolesRef.doc('2'),
         })
       const user = db.collection('users').doc('approver_999')
@@ -91,7 +90,6 @@ describe('firestore rules users collection', () => {
         .set({
           userId: 'assistant_999',
           nickName: 'assistant_999 san',
-          assistantUserIds: [],
           roleRef: rolesRef.doc('3'),
         })
       const user = db.collection('users').doc('assistant_999')

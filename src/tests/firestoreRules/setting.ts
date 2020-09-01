@@ -2,6 +2,7 @@ import * as firebase from '@firebase/testing'
 import * as fs from 'fs'
 import { PROJECT_ID, RULES_PATH } from './config'
 import { rolesSeed } from './seeds/roles'
+import { statusSeed } from './seeds/status'
 import { usersSeed } from './seeds/users'
 import { userAssistToApproversSeed } from './seeds/users/assistToApprovers'
 
@@ -21,6 +22,7 @@ export const setup = (): void => {
 
   beforeEach(async () => {
     await rolesSeed()
+    await statusSeed()
     await usersSeed()
     await userAssistToApproversSeed()
   })
