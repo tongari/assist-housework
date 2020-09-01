@@ -13,11 +13,15 @@ users:
   roleRef: Ref/Role.documentId
   watchId: string | null
   inviteAddress: string #認証後削除
+  createdAt: Date
+  updatedAt: Date
   
   assistantUserIds: # アシスタントユーザIDの一覧
     documentId: string(assistantUserId)
     assistantUserId: string # 一応持たせる
     statusRef: Ref/status.documentId
+    createdAt: Date
+    updatedAt: Date
 
   ## アシストしてる承認者一覧
   assistToApprovers:
