@@ -1,37 +1,66 @@
 import React, { useEffect, useState } from 'react'
-import { hasAssistantUserIds, setApprovedAssistant } from 'domain/firestore'
+import { Redirect } from 'react-router-dom'
+import * as firebase from 'firebase/app'
+import { useCollection, useDocument } from 'react-firebase-hooks/firestore'
+
+import { setApprovedAssistant, fetchNickName } from 'domain/firestore'
 import ApproveAssistant from 'components/templates/ApproveAssistant'
 
+import { Roles } from 'config/roles'
+import { Status } from 'config/status'
+import { Paths } from 'config/paths'
+
 const ApproveAssistantPage: React.FC = () => {
-  const [validPage, setValidPage] = useState<null | boolean>(null)
-  const [assistantNickName, setAssistantNickName] = useState<string>('')
-  const [assistantId, setAssistantId] = useState<string>('')
+  const [isRender, setIsRender] = useState<boolean | null>(null)
+  const [assistantNickName, setAssistantNickName] = useState('')
 
-  const setupPage = async () => {
-    const searchParams = new URLSearchParams(window.location.search)
-    setAssistantNickName(searchParams.get('assistant_nick_name') ?? '')
+  const [userDoc] = useDocument(
+    firebase.firestore().doc(`users/${firebase.auth().currentUser?.uid}`)
+  )
 
-    const id = searchParams.get('assistant') ?? ''
-    setAssistantId(id)
-    const valid = await hasAssistantUserIds(id)
-    setValidPage(valid)
-  }
+  const [assistantUserIds] = useCollection(
+    firebase
+      .firestore()
+      .collection(`users/${firebase.auth().currentUser?.uid}/assistantUserIds`)
+  )
 
   useEffect(() => {
-    setupPage()
-  }, [])
+    if (!userDoc) return
+
+    const roleRef = userDoc.get('roleRef')
+    const watchId = userDoc.get('watchId')
+
+    if (roleRef?.id !== Roles.Approver || !watchId) {
+      setIsRender(false)
+      return
+    }
+
+    const assistantUserIdsDoc = assistantUserIds?.docs.find((doc) => {
+      return doc.id === watchId
+    })
+    if (assistantUserIdsDoc?.get('statusRef').id === Status.Register) {
+      setIsRender(true)
+    }
+
+    fetchNickName(watchId).then((v) => {
+      setAssistantNickName(v.data.nickName)
+    })
+  }, [userDoc, assistantUserIds])
 
   const setApprovedAssistantHandler = () => {
-    setApprovedAssistant(assistantId)
+    setApprovedAssistant(userDoc?.get('watchId'))
   }
 
-  if (validPage === null) return null
+  if (!userDoc || isRender === null) return null
+
+  if (!isRender) {
+    return <Redirect to={Paths.NotFound} />
+  }
 
   return (
     <>
       <ApproveAssistant
         assistantNickName={assistantNickName}
-        validPage={validPage}
         setApprovedAssistantHandler={setApprovedAssistantHandler}
       />
     </>

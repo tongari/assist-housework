@@ -1,5 +1,6 @@
 import * as firebase from 'firebase/app'
 import { Roles } from 'config/roles'
+import { Status } from 'config/status'
 
 // NOTE: 模索中(firestoreを直接叩く場合は、redux-toolkit必要ないか？)
 
@@ -49,6 +50,7 @@ export const registerAssistantUser = async (
 
   const db = firebase.firestore()
   const rolesRef = db.collection('roles')
+  const statusRef = db.collection('status')
   const userId = firebase.auth().currentUser?.uid
   await db
     .collection('users')
@@ -57,6 +59,7 @@ export const registerAssistantUser = async (
       userId,
       nickName,
       roleRef: rolesRef.doc(Roles.Assistant),
+      watchId: assistToApproverId,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     })
@@ -66,6 +69,7 @@ export const registerAssistantUser = async (
     .doc(assistToApproverId)
     .set({
       assistToApproverId,
+      statusRef: statusRef.doc(Status.Register),
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     })
@@ -81,29 +85,29 @@ export const registerAssistantUser = async (
   })
 }
 
-export const hasAssistantUserIds = async (
-  assistantId: string | null
-): Promise<boolean> => {
-  if (!assistantId) return false
-
+export const setApprovedAssistant = (assistantId: string): Promise<void> => {
   const db = firebase.firestore()
-  const approver = db.collection('users').doc(firebase.auth().currentUser?.uid)
-  const approverDoc = await approver.get()
-  const assistantUserIds = approverDoc.get('assistantUserIds')
+  const status = db.collection('status')
 
-  const result = assistantUserIds.includes(assistantId)
-  return result
-}
+  db.collection(`users/${firebase.auth().currentUser?.uid}/assistantUserIds`)
+    .doc(assistantId)
+    .update({
+      statusRef: status.doc(Status.Setting),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    })
 
-export const setApprovedAssistant = (
-  assistantId: string | null
-): Promise<void> => {
-  const db = firebase.firestore()
   return db
     .collection(`users/${assistantId}/assistToApprovers`)
     .doc(firebase.auth().currentUser?.uid)
     .update({
-      approved: true,
+      statusRef: status.doc(Status.Setting),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     })
+}
+
+export const fetchNickName = async (
+  userId: string
+): Promise<firebase.functions.HttpsCallableResult> => {
+  const getNickName = firebase.functions().httpsCallable('getNickName')
+  return getNickName({ userId })
 }
