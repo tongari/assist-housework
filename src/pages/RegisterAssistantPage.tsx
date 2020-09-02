@@ -1,27 +1,39 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { Redirect } from 'react-router-dom'
 import * as firebase from 'firebase/app'
-import { registerAssistantUser } from 'domain/firestore'
 import { useDocument } from 'react-firebase-hooks/firestore'
+import { registerAssistantUser, fetchNickName } from 'domain/firestore'
+
+import { Roles } from 'config/roles'
+import { Status } from 'config/status'
+import { Paths } from 'config/paths'
+
 import RegisterAssistant from 'components/templates/RegisterAssistant'
 import PendingRegisterAssistant from 'components/templates/RegisterAssistant/pending'
 
 const RegisterAssistantPage: React.FC = () => {
   const searchParams = new URLSearchParams(window.location.search)
-  const assistToApproverId = searchParams.get('invite_assistant')
-  const approverNickName = searchParams.get('approver_nick_name') ?? ''
+  const assistToApproverId = searchParams.get('invite_assistant') ?? null
 
-  const [assistToApprovers] = useDocument(
-    firebase
-      .firestore()
-      .doc(
-        `users/${
-          firebase.auth().currentUser?.uid
-        }/assistToApprovers/${assistToApproverId}`
-      ),
-    {
-      snapshotListenOptions: { includeMetadataChanges: true },
-    }
+  const [approverNickName, setApproverNickName] = useState<string>('')
+  const [isRender, setIsRender] = useState<boolean | null>(null)
+
+  const [userDoc] = useDocument(
+    firebase.firestore().doc(`users/${firebase.auth().currentUser?.uid}`)
   )
+
+  // TODO: リファクタ
+  const settingStatus = async (approverId: string) => {
+    const assistToApprovers = firebase
+      .firestore()
+      .collection(`users/${firebase.auth().currentUser?.uid}/assistToApprovers`)
+      .doc(approverId)
+
+    const assistToApproversDoc = await assistToApprovers.get()
+    if (assistToApproversDoc.get('statusRef').id === Status.Register) {
+      setIsRender(true)
+    }
+  }
 
   const registerAssistantUserHandler = (nickName: string) => {
     registerAssistantUser(nickName, assistToApproverId).catch((err) => {
@@ -30,11 +42,39 @@ const RegisterAssistantPage: React.FC = () => {
     })
   }
 
-  if (!assistToApprovers) return null
+  useEffect(() => {
+    const roleRef = userDoc?.get('roleRef')
+    if (roleRef && roleRef.id !== Roles.Assistant) {
+      setIsRender(false)
+      return
+    }
+
+    if (assistToApproverId) {
+      setIsRender(true)
+      fetchNickName(assistToApproverId).then((v) => {
+        setApproverNickName(v.data.nickName)
+      })
+      return
+    }
+
+    const watchId = userDoc?.get('watchId')
+    if (watchId) {
+      settingStatus(watchId)
+      fetchNickName(watchId).then((v) => {
+        setApproverNickName(v.data.nickName)
+      })
+    }
+  }, [userDoc, assistToApproverId])
+
+  if (!userDoc || isRender === null) return null
+
+  if (!isRender) {
+    return <Redirect to={Paths.NotFound} />
+  }
 
   return (
     <>
-      {assistToApprovers.data() ? (
+      {userDoc.data() ? (
         <PendingRegisterAssistant approverNickName={approverNickName} />
       ) : (
         <RegisterAssistant

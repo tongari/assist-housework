@@ -1,5 +1,3 @@
-import * as qs from 'querystring'
-
 import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
 import * as sendGrid from '@sendgrid/mail'
@@ -32,9 +30,7 @@ exports.sendAssistantInviteMail = functions.https.onCall(
       html: `
           <p>${nickName}さんからお手伝いのお願いがきています</p>
           <p>以下、URLより登録してください。</p>
-          <p>${host}/login?invite_assistant=${
-        context.auth?.uid
-      }&approver_nick_name=${qs.escape(nickName)}</p>
+          <p>${host}/login?invite_assistant=${context.auth?.uid}</p>
         `,
     }
     const result = await sendGrid.send(msg)
@@ -71,9 +67,7 @@ exports.sendApproveAssistantToApprover = functions.https.onCall(
       html: `
           <p>${assistantNickName}さんから承認のお願いがきています</p>
           <p>以下、URLより承認してください。</p>
-          <p>${host}/approve-assistant?assistant=${assistantId}&assistant_nick_name=${qs.escape(
-        assistantNickName
-      )}</p>
+          <p>${host}/approve-assistant</p>
         `,
     }
     const result = await sendGrid.send(msg)
@@ -116,13 +110,41 @@ exports.addAssistantUserIds = functions.https.onCall(
       )
     }
 
-    const result = await approver.update({
-      assistantUserIds: admin.firestore.FieldValue.arrayUnion(assistantId),
+    await approver.update({
+      watchId: assistantId,
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     })
+
+    const statusRef = admin.firestore().collection('status')
+    const result = await approver
+      .collection('/assistantUserIds')
+      .doc(assistantId)
+      .set({
+        assistantUserId: assistantId,
+        statusRef: statusRef.doc('1'), // TODO: フロントと共通のenumを使うなどを考慮
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      })
 
     functions.logger.info('addAssistantUserIds', result)
 
     return success
+  }
+)
+
+interface GetNickName {
+  userId: string | null
+}
+exports.getNickName = functions.https.onCall(
+  async ({ userId }: GetNickName) => {
+    if (!userId) {
+      throw new HttpsError('invalid-argument', 'nothing userId')
+    }
+    const user = admin.firestore().collection('users').doc(userId)
+    functions.logger.info('getNickName', user)
+    const userDoc = await user.get()
+    return {
+      nickName: userDoc.get('nickName'),
+    }
   }
 )
