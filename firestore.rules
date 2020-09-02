@@ -17,7 +17,7 @@ service cloud.firestore {
       return get(documentPath(['users', userId]));
     }
 
-    function isApprover(userId) {
+    function isApprover() {
       return get(getUser(request.auth.uid).data.roleRef).id == '2'
     }
 
@@ -35,12 +35,12 @@ service cloud.firestore {
     
     match /users/{userId} {
       allow get: if isUserAuthenticated(userId)
-       || hasAssistToApproverId(userId, request.auth.uid) && isApprover(request.auth.uid);
+       || hasAssistToApproverId(userId, request.auth.uid) && isApprover();
       allow write: if isUserAuthenticated(userId);
       
       match /assistantUserIds/{assistantUserId}/{document=**} {
-        allow get: if isUserAuthenticated(userId) && isApprover(request.auth.uid)
-        allow write: if isUserAuthenticated(userId) && isApprover(request.auth.uid)
+        allow read: if isUserAuthenticated(userId) && isApprover()
+        allow write: if isUserAuthenticated(userId) && isApprover()
       }
       
       match /assistToApprovers/{assistToApproverId}/{document=**} {

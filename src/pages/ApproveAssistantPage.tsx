@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { Redirect } from 'react-router-dom'
 import * as firebase from 'firebase/app'
-import { useDocument } from 'react-firebase-hooks/firestore'
+import { useCollection, useDocument } from 'react-firebase-hooks/firestore'
 
-import {
-  getAssistantUserIdsDoc,
-  setApprovedAssistant,
-  fetchNickName,
-} from 'domain/firestore'
+import { setApprovedAssistant, fetchNickName } from 'domain/firestore'
 import ApproveAssistant from 'components/templates/ApproveAssistant'
 
 import { Roles } from 'config/roles'
@@ -22,6 +18,12 @@ const ApproveAssistantPage: React.FC = () => {
     firebase.firestore().doc(`users/${firebase.auth().currentUser?.uid}`)
   )
 
+  const [assistantUserIds] = useCollection(
+    firebase
+      .firestore()
+      .collection(`users/${firebase.auth().currentUser?.uid}/assistantUserIds`)
+  )
+
   useEffect(() => {
     if (!userDoc) return
 
@@ -33,19 +35,17 @@ const ApproveAssistantPage: React.FC = () => {
       return
     }
 
-    getAssistantUserIdsDoc(watchId)
-      .then((doc) => {
-        if (doc.get('statusRef').id === Status.Register) {
-          setIsRender(true)
-        }
-      })
-      .catch(() => {
-        setIsRender(false)
-      })
+    const assistantUserIdsDoc = assistantUserIds?.docs.find((doc) => {
+      return doc.id === watchId
+    })
+    if (assistantUserIdsDoc?.get('statusRef').id === Status.Register) {
+      setIsRender(true)
+    }
+
     fetchNickName(watchId).then((v) => {
       setAssistantNickName(v.data.nickName)
     })
-  }, [userDoc])
+  }, [userDoc, assistantUserIds])
 
   const setApprovedAssistantHandler = () => {
     setApprovedAssistant(userDoc?.get('watchId'))

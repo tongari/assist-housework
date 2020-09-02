@@ -85,28 +85,6 @@ export const registerAssistantUser = async (
   })
 }
 
-export const getAssistantUserIdsDoc = async (
-  assistantId: string | null
-): Promise<
-  firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>
-> => {
-  if (!assistantId) throw new Error()
-
-  const db = firebase.firestore()
-  const approver = db.collection('users').doc(firebase.auth().currentUser?.uid)
-  const approverDoc = await approver.get()
-  const assistantUserIds = approverDoc.ref
-    .collection('assistantUserIds')
-    .doc(assistantId)
-
-  const assistantUserIdsDoc = await assistantUserIds.get()
-
-  if (assistantUserIdsDoc.id === null) {
-    throw new Error()
-  }
-  return assistantUserIdsDoc
-}
-
 export const setApprovedAssistant = (assistantId: string): Promise<void> => {
   const db = firebase.firestore()
   const status = db.collection('status')

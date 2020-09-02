@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Redirect } from 'react-router-dom'
 import * as firebase from 'firebase/app'
-import { useDocument } from 'react-firebase-hooks/firestore'
+import { useCollection, useDocument } from 'react-firebase-hooks/firestore'
 import { registerAssistantUser, fetchNickName } from 'domain/firestore'
 
 import { Roles } from 'config/roles'
@@ -22,18 +22,11 @@ const RegisterAssistantPage: React.FC = () => {
     firebase.firestore().doc(`users/${firebase.auth().currentUser?.uid}`)
   )
 
-  // TODO: リファクタ
-  const settingStatus = async (approverId: string) => {
-    const assistToApprovers = firebase
+  const [assistToApprovers] = useCollection(
+    firebase
       .firestore()
       .collection(`users/${firebase.auth().currentUser?.uid}/assistToApprovers`)
-      .doc(approverId)
-
-    const assistToApproversDoc = await assistToApprovers.get()
-    if (assistToApproversDoc.get('statusRef').id === Status.Register) {
-      setIsRender(true)
-    }
-  }
+  )
 
   const registerAssistantUserHandler = (nickName: string) => {
     registerAssistantUser(nickName, assistToApproverId).catch((err) => {
@@ -43,28 +36,32 @@ const RegisterAssistantPage: React.FC = () => {
   }
 
   useEffect(() => {
+    if (!userDoc) return
     const roleRef = userDoc?.get('roleRef')
-    if (roleRef && roleRef.id !== Roles.Assistant) {
+
+    if (roleRef.id !== Roles.Assistant) {
       setIsRender(false)
       return
+    }
+    const watchId = userDoc?.get('watchId')
+    if (assistToApproverId || watchId) {
+      fetchNickName(assistToApproverId || watchId).then((v) => {
+        setApproverNickName(v.data.nickName)
+      })
     }
 
     if (assistToApproverId) {
       setIsRender(true)
-      fetchNickName(assistToApproverId).then((v) => {
-        setApproverNickName(v.data.nickName)
-      })
       return
     }
 
-    const watchId = userDoc?.get('watchId')
-    if (watchId) {
-      settingStatus(watchId)
-      fetchNickName(watchId).then((v) => {
-        setApproverNickName(v.data.nickName)
-      })
+    const assistToApproversDoc = assistToApprovers?.docs.find((doc) => {
+      return doc.id === watchId
+    })
+    if (assistToApproversDoc?.get('statusRef').id === Status.Register) {
+      setIsRender(true)
     }
-  }, [userDoc, assistToApproverId])
+  }, [userDoc, assistToApproverId, assistToApprovers])
 
   if (!userDoc || isRender === null) return null
 
