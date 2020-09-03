@@ -5,7 +5,6 @@ import { useCollection, useDocument } from 'react-firebase-hooks/firestore'
 import { registerAssistantUser, fetchNickName } from 'domain/firestore'
 
 import { Roles, Status, Paths } from 'types'
-
 import RegisterAssistant from 'components/templates/RegisterAssistant'
 import PendingRegisterAssistant from 'components/templates/RegisterAssistant/pending'
 
