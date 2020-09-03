@@ -1,5 +1,5 @@
 import * as firebase from '@firebase/testing'
-import { authorizedApp, setup } from '../../setting'
+import { authorizedApp, setup } from 'tests/setting'
 
 describe('firestore rules users collection', () => {
   setup()

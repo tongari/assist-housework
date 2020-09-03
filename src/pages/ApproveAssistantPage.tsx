@@ -5,10 +5,7 @@ import { useCollection, useDocument } from 'react-firebase-hooks/firestore'
 
 import { setApprovedAssistant, fetchNickName } from 'domain/firestore'
 import ApproveAssistant from 'components/templates/ApproveAssistant'
-
-import { Roles } from 'config/roles'
-import { Status } from 'config/status'
-import { Paths } from 'config/paths'
+import { Roles, Status, Paths } from 'types'
 
 const ApproveAssistantPage: React.FC = () => {
   const [isRender, setIsRender] = useState<boolean | null>(null)

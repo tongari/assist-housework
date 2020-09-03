@@ -1,6 +1,6 @@
 import React from 'react'
 import * as firebase from 'firebase/app'
-import { Paths } from 'config/paths'
+import { Paths } from 'types'
 
 const Header: React.FC = () => {
   return (

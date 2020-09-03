@@ -3,8 +3,7 @@ import { RouteProps, Redirect } from 'react-router-dom'
 import * as firebase from 'firebase/app'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useDocument } from 'react-firebase-hooks/firestore'
-import { Paths } from 'config/paths'
-import { Roles } from 'config/roles'
+import { Paths, Roles } from 'types'
 
 const Auth: React.FC<RouteProps> = ({ children, location }) => {
   const [user, isLoading, error] = useAuthState(firebase.auth())

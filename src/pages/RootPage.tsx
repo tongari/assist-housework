@@ -2,7 +2,7 @@ import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
 import Header from 'components/organisms/Header'
-import { Paths } from 'config/paths'
+import { Paths } from 'types'
 
 import LoginPage from 'pages/LoginPage'
 import AuthorizedPage from 'pages/AuthorizedPage'
