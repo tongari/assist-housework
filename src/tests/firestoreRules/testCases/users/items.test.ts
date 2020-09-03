@@ -1,6 +1,6 @@
 import * as firebase from '@firebase/testing'
-import { authorizedApp, setup } from '../../setting'
-import { userItemsSeed } from '../../seeds/users/items'
+import { authorizedApp, setup } from 'tests/setting'
+import { userItemsSeed } from 'tests/firestoreRules/seeds/users/items'
 
 describe('firestore rules users/{userId}/assistToApprovers/{assistToApproverId}/items', () => {
   setup()

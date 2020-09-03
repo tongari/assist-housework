@@ -1,6 +1,5 @@
 import * as firebase from 'firebase/app'
-import { Roles } from 'config/roles'
-import { Status } from 'config/status'
+import { Roles, Status } from 'types'
 
 // NOTE: 模索中(firestoreを直接叩く場合は、redux-toolkit必要ないか？)
 

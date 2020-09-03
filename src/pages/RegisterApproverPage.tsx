@@ -6,8 +6,7 @@ import { registerApprovalUser } from 'domain/firestore'
 
 import RegisterApprover from 'components/templates/RegisterApprover'
 import PendingRegisterApprover from 'components/templates/RegisterApprover/pending'
-import { Roles } from 'config/roles'
-import { Paths } from 'config/paths'
+import { Roles, Paths } from 'types'
 
 const RegisterApproverPage: React.FC = () => {
   const [userDoc] = useDocument(

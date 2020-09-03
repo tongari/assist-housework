@@ -1,7 +1,6 @@
 import * as firebase from '@firebase/testing'
-import { PROJECT_ID } from '../../config'
-import { Roles } from '../../../../config/roles'
-import { Status } from '../../../../config/status'
+import { PROJECT_ID } from 'tests/config'
+import { Roles, Status } from 'types'
 
 export const usersSeed = async (): Promise<void> => {
   const adminDb = firebase

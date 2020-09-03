@@ -1,5 +1,5 @@
 import * as firebase from '@firebase/testing'
-import { PROJECT_ID } from '../../config'
+import { PROJECT_ID } from 'tests/config'
 
 export const userDealsSeed = async (): Promise<void> => {
   const adminDb = firebase

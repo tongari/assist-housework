@@ -1,10 +1,10 @@
 import * as firebase from '@firebase/testing'
 import * as fs from 'fs'
-import { PROJECT_ID, RULES_PATH } from './config'
-import { rolesSeed } from './seeds/roles'
-import { statusSeed } from './seeds/status'
-import { usersSeed } from './seeds/users'
-import { userAssistToApproversSeed } from './seeds/users/assistToApprovers'
+import { PROJECT_ID, RULES_PATH } from 'tests/config'
+import { rolesSeed } from 'tests/firestoreRules/seeds/roles'
+import { statusSeed } from 'tests/firestoreRules/seeds/status'
+import { usersSeed } from 'tests/firestoreRules/seeds/users'
+import { userAssistToApproversSeed } from 'tests/firestoreRules/seeds/users/assistToApprovers'
 
 export const authorizedApp = (auth?: {
   uid: string
