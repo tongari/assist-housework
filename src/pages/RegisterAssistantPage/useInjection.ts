@@ -7,7 +7,7 @@ import { Roles, Status } from 'types/index'
 
 export type RenderType = 'NotFound' | 'Pending' | 'Register'
 
-const useInitialize = (): {
+const useInjection = (): {
   isLoaded: boolean
   renderType: RenderType
   assistToApproverId: string | null
@@ -92,4 +92,4 @@ const useInitialize = (): {
   }
 }
 
-export default useInitialize
+export default useInjection

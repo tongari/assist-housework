@@ -7,7 +7,7 @@ import { Roles, Status } from 'types/index'
 
 export type RenderType = 'NotFound' | 'Register' | 'Setting'
 
-const useInitialize = (): {
+const useInjection = (): {
   isLoaded: boolean
   renderType: RenderType
   assistantUserId: string | null
@@ -64,7 +64,11 @@ const useInitialize = (): {
 
     const state = assistantUserIdsDoc?.get('statusRef')?.id
 
-    if (assistantUserIdsDoc && state !== Status.Register) {
+    // 使うかもしれないので一応、コメントアウト
+    // if (assistantUserIds?.metadata.hasPendingWrites) {
+    //   return
+    // }
+    if (state && state !== Status.Register) {
       setRenderType('Setting')
     }
   }, [isLoaded, userDoc, assistantUserIds])
@@ -77,4 +81,4 @@ const useInitialize = (): {
   }
 }
 
-export default useInitialize
+export default useInjection

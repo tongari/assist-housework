@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom'
 import { setApprovedAssistant } from 'domain/firestore'
 import ApproveAssistant from 'components/templates/ApproveAssistant'
 import { Paths } from 'types'
-import useInitialize from './useInitialize'
+import useInjection from './useInjection'
 
 const ApproveAssistantPage: React.FC = () => {
   const {
@@ -12,7 +12,7 @@ const ApproveAssistantPage: React.FC = () => {
     renderType,
     assistantUserId,
     assistantNickName,
-  } = useInitialize()
+  } = useInjection()
 
   const setApprovedAssistantHandler = () => {
     if (assistantUserId) {

@@ -10,7 +10,7 @@ export type RenderType =
   | 'ApproveAssistant'
   | 'Register'
 
-const useInitialize = (): {
+const useInjection = (): {
   isLoaded: boolean
   inviteAddress: string
   renderType: RenderType
@@ -57,4 +57,4 @@ const useInitialize = (): {
   }
 }
 
-export default useInitialize
+export default useInjection

@@ -16,7 +16,7 @@ interface User {
   watchId: string | null
 }
 
-const useInitialize = (): {
+const useInjection = (): {
   isLoaded: boolean
   authenticated: firebase.User | undefined
   userData: User | null
@@ -92,4 +92,4 @@ const useInitialize = (): {
   }
 }
 
-export default useInitialize
+export default useInjection

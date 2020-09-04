@@ -1,10 +1,10 @@
 import React from 'react'
 import { RouteProps, Redirect } from 'react-router-dom'
 import { Paths, Roles, Status } from 'types'
-import useInitialize from './useInitialize'
+import useInjection from './useInjection'
 
 const Auth: React.FC<RouteProps> = ({ children, location }) => {
-  const { isLoaded, authenticated, userData, authError } = useInitialize()
+  const { isLoaded, authenticated, userData, authError } = useInjection()
 
   if (authError) {
     return <div>happen error...</div>
