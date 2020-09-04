@@ -4,6 +4,12 @@ import { useDocument } from 'react-firebase-hooks/firestore'
 import { myUserDocument } from 'config/firebase'
 import { Roles } from 'types/index'
 
+export type RenderType =
+  | 'NotFound'
+  | 'Pending'
+  | 'ApproveAssistant'
+  | 'Register'
+
 interface User {
   role: Roles | null
   watchId: string | null
@@ -12,12 +18,14 @@ interface User {
 
 const useInitialize = (): {
   isLoaded: boolean
-  userData: User | null
+  inviteAddress: string
+  renderType: RenderType
 } => {
   const [userDoc, isUserDocLoading] = useDocument(myUserDocument())
 
   const [isLoaded, setIsLoaded] = useState(false)
-  const [userData, setUserData] = useState<User | null>(null)
+  const [renderType, setRenderType] = useState<RenderType>('Register')
+  const [inviteAddress, setInviteAddress] = useState<string>('')
 
   useEffect(() => {
     if (!isUserDocLoading) {
@@ -29,19 +37,29 @@ const useInitialize = (): {
     if (!isLoaded || !userDoc?.exists) return
 
     const roleRef = userDoc?.get('roleRef')
-    const inviteAddress = userDoc?.get('inviteAddress')
+    const address = userDoc?.get('inviteAddress')
     const watchId = userDoc?.get('watchId')
 
-    setUserData({
-      role: roleRef.id,
-      watchId,
-      inviteAddress,
-    })
+    if (roleRef.id !== Roles.Approver) {
+      setRenderType('NotFound')
+      return
+    }
+
+    if (address) {
+      setRenderType('Pending')
+      setInviteAddress(address)
+      return
+    }
+
+    if (watchId) {
+      setRenderType('ApproveAssistant')
+    }
   }, [isLoaded, userDoc])
 
   return {
     isLoaded,
-    userData,
+    renderType,
+    inviteAddress,
   }
 }
 
