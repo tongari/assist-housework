@@ -17,7 +17,6 @@ export const registerApprovalUser = async (
       userId,
       nickName,
       inviteAddress,
-      assistantUserIds: [],
       roleRef: rolesRef.doc(Roles.Approver),
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
