@@ -81,11 +81,14 @@ export const registerAssistantUser = async (
   })
 }
 
-export const setApprovedAssistant = (assistantId: string): Promise<void> => {
+export const setApprovedAssistant = async (
+  assistantId: string
+): Promise<void> => {
   const db = firebase.firestore()
   const status = db.collection('status')
 
-  db.collection(`users/${firebase.auth().currentUser?.uid}/assistantUserIds`)
+  await db
+    .collection(`users/${firebase.auth().currentUser?.uid}/assistantUserIds`)
     .doc(assistantId)
     .update({
       statusRef: status.doc(Status.Setting),

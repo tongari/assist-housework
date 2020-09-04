@@ -64,13 +64,12 @@ const useInitialize = (): {
 
     const roleRef = userDoc?.get('roleRef')
     const watchId = userDoc?.get('watchId')
+    setAssistToApproverId(watchId)
 
-    if (roleRef.id === Roles.Approver) {
+    if (roleRef.id !== Roles.Assistant) {
       setRenderType('NotFound')
       return
     }
-
-    setAssistToApproverId(watchId)
 
     const assistToApproversDoc = assistToApprovers?.docs.find((doc) => {
       return doc.id === watchId

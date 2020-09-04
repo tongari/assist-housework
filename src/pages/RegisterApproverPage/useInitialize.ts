@@ -10,12 +10,6 @@ export type RenderType =
   | 'ApproveAssistant'
   | 'Register'
 
-interface User {
-  role: Roles | null
-  watchId: string | null
-  inviteAddress: string | null
-}
-
 const useInitialize = (): {
   isLoaded: boolean
   inviteAddress: string
