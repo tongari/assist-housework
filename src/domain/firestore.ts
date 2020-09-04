@@ -50,20 +50,18 @@ export const registerAssistantUser = async (
   const rolesRef = db.collection('roles')
   const statusRef = db.collection('status')
   const userId = firebase.auth().currentUser?.uid
-  await db
-    .collection('users')
-    .doc(userId)
-    .set({
-      userId,
-      nickName,
-      roleRef: rolesRef.doc(Roles.Assistant),
-      watchId: assistToApproverId,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-    })
 
-  await db
-    .collection(`users/${userId}/assistToApprovers`)
+  const userDoc = db.collection('users').doc(userId)
+  await userDoc.set({
+    userId,
+    nickName,
+    roleRef: rolesRef.doc(Roles.Assistant),
+    watchId: assistToApproverId,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  })
+  await userDoc
+    .collection('assistToApprovers')
     .doc(assistToApproverId)
     .set({
       assistToApproverId,

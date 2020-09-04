@@ -45,14 +45,14 @@ const useInitialize = (): {
       return
     }
 
-    if (address) {
-      setRenderType('Pending')
-      setInviteAddress(address)
+    if (watchId) {
+      setRenderType('ApproveAssistant')
       return
     }
 
-    if (watchId) {
-      setRenderType('ApproveAssistant')
+    if (address) {
+      setRenderType('Pending')
+      setInviteAddress(address)
     }
   }, [isLoaded, userDoc])
 
