@@ -17,7 +17,6 @@ export const registerApprovalUser = async (
       userId,
       nickName,
       inviteAddress,
-      assistantUserIds: [],
       roleRef: rolesRef.doc(Roles.Approver),
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -51,20 +50,18 @@ export const registerAssistantUser = async (
   const rolesRef = db.collection('roles')
   const statusRef = db.collection('status')
   const userId = firebase.auth().currentUser?.uid
-  await db
-    .collection('users')
-    .doc(userId)
-    .set({
-      userId,
-      nickName,
-      roleRef: rolesRef.doc(Roles.Assistant),
-      watchId: assistToApproverId,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-    })
 
-  await db
-    .collection(`users/${userId}/assistToApprovers`)
+  const userDoc = db.collection('users').doc(userId)
+  await userDoc.set({
+    userId,
+    nickName,
+    roleRef: rolesRef.doc(Roles.Assistant),
+    watchId: assistToApproverId,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  })
+  await userDoc
+    .collection('assistToApprovers')
     .doc(assistToApproverId)
     .set({
       assistToApproverId,
@@ -84,11 +81,14 @@ export const registerAssistantUser = async (
   })
 }
 
-export const setApprovedAssistant = (assistantId: string): Promise<void> => {
+export const setApprovedAssistant = async (
+  assistantId: string
+): Promise<void> => {
   const db = firebase.firestore()
   const status = db.collection('status')
 
-  db.collection(`users/${firebase.auth().currentUser?.uid}/assistantUserIds`)
+  await db
+    .collection(`users/${firebase.auth().currentUser?.uid}/assistantUserIds`)
     .doc(assistantId)
     .update({
       statusRef: status.doc(Status.Setting),

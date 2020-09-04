@@ -29,4 +29,27 @@ const initializeFirebase = (): void => {
   }
 }
 
+export const myUserDocument = (): firebase.firestore.DocumentReference<
+  firebase.firestore.DocumentData
+> => firebase.firestore().doc(`users/${firebase.auth().currentUser?.uid}`)
+
+export const otherUserDocument = (
+  uid: string
+): firebase.firestore.DocumentReference<firebase.firestore.DocumentData> =>
+  firebase.firestore().doc(`users/${uid}`)
+
+export const assistantUserIdsCollection = (): firebase.firestore.CollectionReference<
+  firebase.firestore.DocumentData
+> =>
+  firebase
+    .firestore()
+    .collection(`users/${firebase.auth().currentUser?.uid}/assistantUserIds`)
+
+export const assistToApproversCollection = (): firebase.firestore.CollectionReference<
+  firebase.firestore.DocumentData
+> =>
+  firebase
+    .firestore()
+    .collection(`users/${firebase.auth().currentUser?.uid}/assistToApprovers`)
+
 export default initializeFirebase
