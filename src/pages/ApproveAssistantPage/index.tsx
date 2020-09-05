@@ -20,11 +20,11 @@ const ApproveAssistantPage: React.FC = () => {
     }
   }
 
-  if (!isLoaded || !assistantNickName) return <div>loading...</div>
-
-  if (renderType === 'NotFound') {
+  if (isLoaded && renderType === 'NotFound') {
     return <Redirect to={Paths.NotFound} />
   }
+
+  if (!isLoaded || !assistantNickName) return <div>loading...</div>
 
   if (renderType === 'Setting') {
     return <Redirect to={Paths.SettingApprover} />

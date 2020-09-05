@@ -94,7 +94,9 @@ exports.addAssistantUserIds = functions.https.onCall(
     const approverDoc = await approver.get()
     const assistantAddress = context.auth?.token.email
 
-    if (assistantAddress !== approverDoc.get('inviteAddress')) {
+    if (
+      assistantAddress !== approverDoc.get('currentWatchUser').inviteAddress
+    ) {
       throw new HttpsError(
         'invalid-argument',
         '招待されたメールアドレスでログインしてください。'
@@ -110,21 +112,16 @@ exports.addAssistantUserIds = functions.https.onCall(
       )
     }
 
-    await approver.update({
-      watchId: assistantId,
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-    })
-
-    const statusRef = admin.firestore().collection('status')
-    const result = await approver
-      .collection('/assistantUserIds')
-      .doc(assistantId)
-      .set({
-        assistantUserId: assistantId,
-        statusRef: statusRef.doc('1'), // TODO: フロントと共通のenumを使うなどを考慮
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    const result = await approver.set(
+      {
+        currentWatchUser: {
+          id: assistantId,
+        },
+        assistantUserIds: admin.firestore.FieldValue.arrayUnion(assistantId),
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-      })
+      },
+      { merge: true }
+    )
 
     functions.logger.info('addAssistantUserIds', result)
 
