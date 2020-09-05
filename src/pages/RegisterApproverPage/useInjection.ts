@@ -31,8 +31,8 @@ const useInjection = (): {
     if (!isLoaded || !userDoc?.exists) return
 
     const roleRef = userDoc?.get('roleRef')
-    const address = userDoc?.get('inviteAddress')
-    const watchId = userDoc?.get('watchId')
+    const address = userDoc?.get('currentWatchUser')?.inviteAddress
+    const watchId = userDoc?.get('currentWatchUser')?.id
 
     if (roleRef.id !== Roles.Approver) {
       setRenderType('NotFound')

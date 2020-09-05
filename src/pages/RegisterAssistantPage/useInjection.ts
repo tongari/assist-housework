@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { useCollection, useDocument } from 'react-firebase-hooks/firestore'
+import { useDocument } from 'react-firebase-hooks/firestore'
 import { fetchNickName } from 'domain/firestore'
 
-import { userDocument, assistToApproversCollection } from 'config/firebase'
+import { userDocument } from 'config/firebase'
 import { Roles, Status } from 'types/index'
 
 export type RenderType = 'NotFound' | 'Pending' | 'Register'
@@ -27,19 +27,12 @@ const useInjection = (): {
 
   // fetch data
   const [userDoc, isUserDocLoading] = useDocument(userDocument())
-  const [assistToApprovers, isAssistToApproversLoading] = useCollection(
-    assistToApproversCollection().where(
-      'assistToApproverId',
-      '==',
-      assistToApproverId
-    )
-  )
 
   useEffect(() => {
-    if (!isUserDocLoading || !isAssistToApproversLoading) {
+    if (!isUserDocLoading) {
       setIsLoaded(true)
     }
-  }, [isUserDocLoading, isAssistToApproversLoading])
+  }, [isUserDocLoading])
 
   useEffect(() => {
     if (isLoaded && assistToApproverId) {
@@ -63,7 +56,8 @@ const useInjection = (): {
     }
 
     const roleRef = userDoc?.get('roleRef')
-    const watchId = userDoc?.get('watchId')
+    const watchId = userDoc?.get('currentWatchUser')?.id
+    const state = userDoc?.get('currentWatchUser')?.statusRef?.id
     setAssistToApproverId(watchId)
 
     if (roleRef.id !== Roles.Assistant) {
@@ -71,18 +65,13 @@ const useInjection = (): {
       return
     }
 
-    const assistToApproversDoc = assistToApprovers?.docs.find((doc) => {
-      return doc.id === watchId
-    })
-
-    const state = assistToApproversDoc?.get('statusRef')?.id
-    if (assistToApproversDoc && state !== Status.Register) {
+    if (state && state !== Status.Register) {
       setRenderType('NotFound')
       return
     }
 
     setRenderType('Pending')
-  }, [isLoaded, userDoc, assistToApprovers, inviteAssistantParams])
+  }, [isLoaded, userDoc, inviteAssistantParams])
 
   return {
     isLoaded,

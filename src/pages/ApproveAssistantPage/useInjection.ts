@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { useCollection, useDocument } from 'react-firebase-hooks/firestore'
+import { useDocument } from 'react-firebase-hooks/firestore'
 import { fetchNickName } from 'domain/firestore'
 
-import { userDocument, assistantUserIdsCollection } from 'config/firebase'
+import { userDocument } from 'config/firebase'
 import { Roles, Status } from 'types/index'
 
 export type RenderType = 'NotFound' | 'Register' | 'Setting'
@@ -23,15 +23,12 @@ const useInjection = (): {
 
   // fetch data
   const [userDoc, isUserDocLoading] = useDocument(userDocument())
-  const [assistantUserIds, isAssistantUserIdsLoading] = useCollection(
-    assistantUserIdsCollection().where('assistantUserId', '==', assistantUserId)
-  )
 
   useEffect(() => {
-    if (!isUserDocLoading || !isAssistantUserIdsLoading) {
+    if (!isUserDocLoading) {
       setIsLoaded(true)
     }
-  }, [isUserDocLoading, isAssistantUserIdsLoading])
+  }, [isUserDocLoading])
 
   useEffect(() => {
     if (isLoaded && assistantUserId) {
@@ -50,28 +47,20 @@ const useInjection = (): {
     }
 
     const roleRef = userDoc?.get('roleRef')
-    const watchId = userDoc?.get('watchId')
+    const watchId = userDoc?.get('currentWatchUser')?.id
+    const statusRef = userDoc?.get('currentWatchUser')?.statusRef
     setAssistantUserId(watchId)
 
-    if (roleRef.id !== Roles.Approver) {
+    if (roleRef.id !== Roles.Approver || !watchId) {
       setRenderType('NotFound')
       return
     }
 
-    const assistantUserIdsDoc = assistantUserIds?.docs.find((doc) => {
-      return doc.id === watchId
-    })
-
-    const state = assistantUserIdsDoc?.get('statusRef')?.id
-
-    // 使うかもしれないので一応、コメントアウト
-    // if (assistantUserIds?.metadata.hasPendingWrites) {
-    //   return
-    // }
+    const state = statusRef?.id
     if (state && state !== Status.Register) {
       setRenderType('Setting')
     }
-  }, [isLoaded, userDoc, assistantUserIds])
+  }, [isLoaded, userDoc])
 
   return {
     isLoaded,

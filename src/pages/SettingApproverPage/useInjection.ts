@@ -6,7 +6,6 @@ import { format } from 'date-fns'
 import { useCollection, useDocument } from 'react-firebase-hooks/firestore'
 import {
   userDocument,
-  assistToApproversCollection,
   itemsCollection,
   budgetsCollection,
 } from 'config/firebase'
@@ -41,13 +40,7 @@ const useInjection = (): {
   const [otherUserDoc, isOtherUserDocLoading] = useDocument(
     userDocument(assistantUserId)
   )
-  const [assistToApprovers, isAssistToApproversLoading] = useCollection(
-    assistToApproversCollection(myUserId).where(
-      'assistToApproverId',
-      '==',
-      myUserId
-    )
-  )
+
   const [items, isItemsLoading] = useCollection(
     itemsCollection(assistantUserId, myUserId)
   )
@@ -61,7 +54,6 @@ const useInjection = (): {
     if (
       !isMyUserDocLoading ||
       !isOtherUserDocLoading ||
-      !isAssistToApproversLoading ||
       !isItemsLoading ||
       !isBudgetsLoading
     ) {
@@ -70,7 +62,6 @@ const useInjection = (): {
   }, [
     isMyUserDocLoading,
     isOtherUserDocLoading,
-    isAssistToApproversLoading,
     isItemsLoading,
     isBudgetsLoading,
   ])
@@ -84,15 +75,11 @@ const useInjection = (): {
     }
 
     const roleRef = myUserDoc?.get('roleRef')
-    const watchId = myUserDoc?.get('watchId')
+    const watchId = myUserDoc?.get('currentWatchUser')?.id
+    const status = myUserDoc?.get('currentWatchUser')?.statusRef?.id
     setAssistantUserId(watchId)
 
     setAssistantNickname(otherUserDoc?.get('nickName'))
-
-    const assistToApproversDoc = assistToApprovers?.docs.find((doc) => {
-      return doc.id === myUserId
-    })
-    const status = assistToApproversDoc?.get('statusRef')?.id
 
     if (
       roleRef.id !== Roles.Approver ||
@@ -100,7 +87,7 @@ const useInjection = (): {
     ) {
       setRenderType('NotFound')
     }
-  }, [isLoaded, myUserDoc, otherUserDoc, assistToApprovers, myUserId])
+  }, [isLoaded, myUserDoc, otherUserDoc, myUserId])
 
   return {
     isLoaded,

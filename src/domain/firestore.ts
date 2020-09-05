@@ -9,6 +9,7 @@ export const registerApprovalUser = async (
 ): Promise<firebase.functions.HttpsCallableResult> => {
   const db = firebase.firestore()
   const rolesRef = db.collection('roles')
+  const statusRef = db.collection('status')
   const userId = firebase.auth().currentUser?.uid
   await db
     .collection('users')
@@ -16,7 +17,10 @@ export const registerApprovalUser = async (
     .set({
       userId,
       nickName,
-      inviteAddress,
+      currentWatchUser: {
+        statusRef: statusRef.doc(Status.Register),
+        inviteAddress,
+      },
       roleRef: rolesRef.doc(Roles.Approver),
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -56,19 +60,18 @@ export const registerAssistantUser = async (
     userId,
     nickName,
     roleRef: rolesRef.doc(Roles.Assistant),
-    watchId: assistToApproverId,
+    currentWatchUser: {
+      id: assistToApproverId,
+      statusRef: statusRef.doc(Status.Register),
+    },
     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
   })
-  await userDoc
-    .collection('assistToApprovers')
-    .doc(assistToApproverId)
-    .set({
-      assistToApproverId,
-      statusRef: statusRef.doc(Status.Register),
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-    })
+  await userDoc.collection('assistToApprovers').doc(assistToApproverId).set({
+    assistToApproverId,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  })
 
   const sendApproveAssistantToApprover = firebase
     .functions()
@@ -85,23 +88,33 @@ export const setApprovedAssistant = async (
   assistantId: string
 ): Promise<void> => {
   const db = firebase.firestore()
-  const status = db.collection('status')
 
+  const statusRef = db.collection('status')
   await db
-    .collection(`users/${firebase.auth().currentUser?.uid}/assistantUserIds`)
-    .doc(assistantId)
-    .update({
-      statusRef: status.doc(Status.Setting),
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-    })
+    .collection(`users`)
+    .doc(firebase.auth().currentUser?.uid)
+    .set(
+      {
+        currentWatchUser: {
+          statusRef: statusRef.doc(Status.Setting),
+        },
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    )
 
   return db
-    .collection(`users/${assistantId}/assistToApprovers`)
-    .doc(firebase.auth().currentUser?.uid)
-    .update({
-      statusRef: status.doc(Status.Setting),
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-    })
+    .collection(`users`)
+    .doc(assistantId)
+    .set(
+      {
+        currentWatchUser: {
+          statusRef: statusRef.doc(Status.Setting),
+        },
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    )
 }
 
 export const fetchNickName = async (

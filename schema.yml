@@ -11,15 +11,18 @@ users:
   userId: string(uid) # 一応持たせる
   nickName: string
   roleRef: Ref/Role.documentId
-  watchId: string | null
-  inviteAddress: string #認証後削除
   createdAt: Date
   updatedAt: Date
+
+  currentWatchUser: {
+    id: string | null,
+    statusRef: Ref/status.documentId,
+    inviteAddress: string
+  }
   
   assistantUserIds: # アシスタントユーザIDの一覧
     documentId: string(assistantUserId)
     assistantUserId: string # 一応持たせる
-    statusRef: Ref/status.documentId
     createdAt: Date
     updatedAt: Date
 
@@ -27,7 +30,6 @@ users:
   assistToApprovers:
     documentId: string(assistToApproverId)
     assistToApproverId: string # 一応持たせる
-    statusRef: Ref/status.documentId
     createdAt: Date
     updatedAt: Date
 

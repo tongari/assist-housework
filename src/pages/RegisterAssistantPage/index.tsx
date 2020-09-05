@@ -22,9 +22,11 @@ const RegisterAssistantPage: React.FC = () => {
     })
   }
 
-  if (!isLoaded || !approverNickName) return <div>loading...</div>
+  if (isLoaded && renderType === 'NotFound') {
+    return <Redirect to={Paths.NotFound} />
+  }
 
-  if (renderType === 'NotFound') return <Redirect to={Paths.NotFound} />
+  if (!isLoaded || !approverNickName) return <div>loading...</div>
 
   if (renderType === 'Pending') {
     return <PendingRegisterAssistant approverNickName={approverNickName} />

@@ -20,10 +20,6 @@ service cloud.firestore {
     function isApprover() {
       return get(getUser(request.auth.uid).data.roleRef).id == '2'
     }
-
-    function hasAssistToApproverId(userId, assistToApproverId) {
-      return get(documentPath(['users', userId, 'assistToApprovers', assistToApproverId])).data.assistToApproverId == request.auth.uid
-    }
     
     match /roles/{roleId} {
       allow read: if isAnyAuthenticated()
@@ -34,15 +30,12 @@ service cloud.firestore {
     }
     
     match /users/{userId} {
-      allow get: if isUserAuthenticated(userId)
-       || hasAssistToApproverId(userId, request.auth.uid) && isApprover();
-      allow write: if isUserAuthenticated(userId);
-      
-      match /assistantUserIds/{assistantUserId}/{document=**} {
-        allow read: if isUserAuthenticated(userId) && isApprover()
-        allow write: if isUserAuthenticated(userId) && isApprover()
-      }
-      
+      allow read: if isUserAuthenticated(userId)
+       || userId in getUser(request.auth.uid).data.assistantUserIds && isApprover();
+
+      allow write: if isUserAuthenticated(userId)
+      || userId in getUser(request.auth.uid).data.assistantUserIds && isApprover();
+       
       match /assistToApprovers/{assistToApproverId}/{document=**} {
         allow read: if request.auth.uid == assistToApproverId || isUserAuthenticated(userId);
         allow write: if request.auth.uid == assistToApproverId || isUserAuthenticated(userId); 
