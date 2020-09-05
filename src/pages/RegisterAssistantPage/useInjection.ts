@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useCollection, useDocument } from 'react-firebase-hooks/firestore'
 import { fetchNickName } from 'domain/firestore'
 
-import { myUserDocument, assistToApproversCollection } from 'config/firebase'
+import { userDocument, assistToApproversCollection } from 'config/firebase'
 import { Roles, Status } from 'types/index'
 
 export type RenderType = 'NotFound' | 'Pending' | 'Register'
@@ -26,7 +26,7 @@ const useInjection = (): {
   const [approverNickName, setApproverNickName] = useState<string | null>(null)
 
   // fetch data
-  const [userDoc, isUserDocLoading] = useDocument(myUserDocument())
+  const [userDoc, isUserDocLoading] = useDocument(userDocument())
   const [assistToApprovers, isAssistToApproversLoading] = useCollection(
     assistToApproversCollection().where(
       'assistToApproverId',

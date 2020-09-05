@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useDocument } from 'react-firebase-hooks/firestore'
 
-import { myUserDocument } from 'config/firebase'
+import { userDocument } from 'config/firebase'
 import { Roles } from 'types/index'
 
 export type RenderType =
@@ -15,7 +15,7 @@ const useInjection = (): {
   inviteAddress: string
   renderType: RenderType
 } => {
-  const [userDoc, isUserDocLoading] = useDocument(myUserDocument())
+  const [userDoc, isUserDocLoading] = useDocument(userDocument())
 
   const [isLoaded, setIsLoaded] = useState(false)
   const [renderType, setRenderType] = useState<RenderType>('Register')

@@ -27,7 +27,7 @@ const ApproveAssistantPage: React.FC = () => {
   }
 
   if (renderType === 'Setting') {
-    return <div>セッティング画面へ</div>
+    return <Redirect to={Paths.SettingApprover} />
   }
 
   return (

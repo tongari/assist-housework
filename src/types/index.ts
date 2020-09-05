@@ -3,6 +3,7 @@ export enum Paths {
   RegisterApprover = '/register-approver',
   RegisterAssistant = '/register-assistant',
   ApproveAssistant = '/approve-assistant',
+  SettingApprover = '/setting-approver',
   NotFound = '/404.html',
 }
 

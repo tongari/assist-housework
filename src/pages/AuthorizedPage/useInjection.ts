@@ -4,7 +4,7 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import { useCollection, useDocument } from 'react-firebase-hooks/firestore'
 
 import {
-  myUserDocument,
+  userDocument,
   assistantUserIdsCollection,
   assistToApproversCollection,
 } from 'config/firebase'
@@ -25,7 +25,7 @@ const useInjection = (): {
   const [authenticated, isAuthLoading, authError] = useAuthState(
     firebase.auth()
   )
-  const [userDoc, isUserDocLoading] = useDocument(myUserDocument())
+  const [userDoc, isUserDocLoading] = useDocument(userDocument())
   const [assistantUserIds, isAssistantUserIdsLoading] = useCollection(
     assistantUserIdsCollection()
   )

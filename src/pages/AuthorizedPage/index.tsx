@@ -15,7 +15,9 @@ const Auth: React.FC<RouteProps> = ({ children, location }) => {
   }
 
   const renderApprover = (): React.ReactElement => {
-    // if (userData?.state === Status.Setting) { }
+    if (userData?.state === Status.Setting) {
+      return <Redirect to={Paths.SettingApprover} />
+    }
     if (userData?.state === Status.Register && userData.watchId) {
       return <Redirect to={Paths.ApproveAssistant} />
     }
