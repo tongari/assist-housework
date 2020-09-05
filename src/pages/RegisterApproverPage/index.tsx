@@ -5,10 +5,10 @@ import { registerApprovalUser } from 'domain/firestore'
 import RegisterApprover from 'components/templates/RegisterApprover'
 import PendingRegisterApprover from 'components/templates/RegisterApprover/pending'
 import { Paths } from 'types'
-import useInitialize from './useInitialize'
+import useInjection from './useInjection'
 
 const RegisterApproverPage: React.FC = () => {
-  const { isLoaded, renderType, inviteAddress } = useInitialize()
+  const { isLoaded, renderType, inviteAddress } = useInjection()
 
   if (!isLoaded) {
     return <div>loading...</div>

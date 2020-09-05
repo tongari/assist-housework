@@ -4,7 +4,7 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import { useCollection, useDocument } from 'react-firebase-hooks/firestore'
 
 import {
-  myUserDocument,
+  userDocument,
   assistantUserIdsCollection,
   assistToApproversCollection,
 } from 'config/firebase'
@@ -16,7 +16,7 @@ interface User {
   watchId: string | null
 }
 
-const useInitialize = (): {
+const useInjection = (): {
   isLoaded: boolean
   authenticated: firebase.User | undefined
   userData: User | null
@@ -25,7 +25,7 @@ const useInitialize = (): {
   const [authenticated, isAuthLoading, authError] = useAuthState(
     firebase.auth()
   )
-  const [userDoc, isUserDocLoading] = useDocument(myUserDocument())
+  const [userDoc, isUserDocLoading] = useDocument(userDocument())
   const [assistantUserIds, isAssistantUserIdsLoading] = useCollection(
     assistantUserIdsCollection()
   )
@@ -92,4 +92,4 @@ const useInitialize = (): {
   }
 }
 
-export default useInitialize
+export default useInjection

@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react'
 import { useCollection, useDocument } from 'react-firebase-hooks/firestore'
 import { fetchNickName } from 'domain/firestore'
 
-import { myUserDocument, assistantUserIdsCollection } from 'config/firebase'
+import { userDocument, assistantUserIdsCollection } from 'config/firebase'
 import { Roles, Status } from 'types/index'
 
 export type RenderType = 'NotFound' | 'Register' | 'Setting'
 
-const useInitialize = (): {
+const useInjection = (): {
   isLoaded: boolean
   renderType: RenderType
   assistantUserId: string | null
@@ -22,7 +22,7 @@ const useInitialize = (): {
   )
 
   // fetch data
-  const [userDoc, isUserDocLoading] = useDocument(myUserDocument())
+  const [userDoc, isUserDocLoading] = useDocument(userDocument())
   const [assistantUserIds, isAssistantUserIdsLoading] = useCollection(
     assistantUserIdsCollection().where('assistantUserId', '==', assistantUserId)
   )
@@ -64,7 +64,11 @@ const useInitialize = (): {
 
     const state = assistantUserIdsDoc?.get('statusRef')?.id
 
-    if (assistantUserIdsDoc && state !== Status.Register) {
+    // 使うかもしれないので一応、コメントアウト
+    // if (assistantUserIds?.metadata.hasPendingWrites) {
+    //   return
+    // }
+    if (state && state !== Status.Register) {
       setRenderType('Setting')
     }
   }, [isLoaded, userDoc, assistantUserIds])
@@ -77,4 +81,4 @@ const useInitialize = (): {
   }
 }
 
-export default useInitialize
+export default useInjection

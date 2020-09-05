@@ -29,14 +29,12 @@ const initializeFirebase = (): void => {
   }
 }
 
-export const myUserDocument = (): firebase.firestore.DocumentReference<
-  firebase.firestore.DocumentData
-> => firebase.firestore().doc(`users/${firebase.auth().currentUser?.uid}`)
-
-export const otherUserDocument = (
-  uid: string
-): firebase.firestore.DocumentReference<firebase.firestore.DocumentData> =>
-  firebase.firestore().doc(`users/${uid}`)
+export const userDocument = (
+  uid?: string | null
+): firebase.firestore.DocumentReference<firebase.firestore.DocumentData> => {
+  const id = uid ?? firebase.auth().currentUser?.uid
+  return firebase.firestore().doc(`users/${id}`)
+}
 
 export const assistantUserIdsCollection = (): firebase.firestore.CollectionReference<
   firebase.firestore.DocumentData
@@ -45,11 +43,29 @@ export const assistantUserIdsCollection = (): firebase.firestore.CollectionRefer
     .firestore()
     .collection(`users/${firebase.auth().currentUser?.uid}/assistantUserIds`)
 
-export const assistToApproversCollection = (): firebase.firestore.CollectionReference<
-  firebase.firestore.DocumentData
-> =>
-  firebase
+export const assistToApproversCollection = (
+  uid?: string
+): firebase.firestore.CollectionReference<firebase.firestore.DocumentData> => {
+  const id = uid ?? firebase.auth().currentUser?.uid
+  return firebase.firestore().collection(`users/${id}/assistToApprovers`)
+}
+
+export const itemsCollection = (
+  userId: string | null,
+  approverId: string | undefined
+): firebase.firestore.CollectionReference<firebase.firestore.DocumentData> => {
+  return firebase
     .firestore()
-    .collection(`users/${firebase.auth().currentUser?.uid}/assistToApprovers`)
+    .collection(`users/${userId}/assistToApprovers/${approverId}/items`)
+}
+
+export const budgetsCollection = (
+  userId: string | null,
+  approverId: string | undefined
+): firebase.firestore.CollectionReference<firebase.firestore.DocumentData> => {
+  return firebase
+    .firestore()
+    .collection(`users/${userId}/assistToApprovers/${approverId}/budgets`)
+}
 
 export default initializeFirebase

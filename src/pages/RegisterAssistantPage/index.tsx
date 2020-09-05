@@ -5,7 +5,7 @@ import { registerAssistantUser } from 'domain/firestore'
 import { Paths } from 'types'
 import RegisterAssistant from 'components/templates/RegisterAssistant'
 import PendingRegisterAssistant from 'components/templates/RegisterAssistant/pending'
-import useInitialize from './useInitialize'
+import useInjection from './useInjection'
 
 const RegisterAssistantPage: React.FC = () => {
   const {
@@ -13,7 +13,7 @@ const RegisterAssistantPage: React.FC = () => {
     renderType,
     assistToApproverId,
     approverNickName,
-  } = useInitialize()
+  } = useInjection()
 
   const registerAssistantUserHandler = (nickName: string) => {
     registerAssistantUser(nickName, assistToApproverId).catch((err) => {
