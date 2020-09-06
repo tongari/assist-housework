@@ -51,7 +51,7 @@ export const assistToApproversCollection = (
 }
 
 export const itemsCollection = (
-  userId: string | null,
+  userId: string | null | undefined,
   approverId: string | undefined
 ): firebase.firestore.CollectionReference<firebase.firestore.DocumentData> => {
   return firebase
@@ -60,7 +60,7 @@ export const itemsCollection = (
 }
 
 export const budgetsCollection = (
-  userId: string | null,
+  userId: string | null | undefined,
   approverId: string | undefined
 ): firebase.firestore.CollectionReference<firebase.firestore.DocumentData> => {
   return firebase

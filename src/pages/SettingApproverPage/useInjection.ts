@@ -1,5 +1,4 @@
-import { Roles, Status } from 'types'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import * as firebase from 'firebase/app'
 import { format } from 'date-fns'
 
@@ -9,6 +8,9 @@ import {
   itemsCollection,
   budgetsCollection,
 } from 'config/firebase'
+
+import { Roles, Status } from 'types'
+import { AuthorizedContext } from 'pages/AuthorizedProvider'
 
 export type RenderType = 'NotFound' | 'Setting'
 
@@ -29,68 +31,55 @@ const useInjection = (): {
 } => {
   const myUserId = firebase.auth().currentUser?.uid
 
+  const { isLoaded, userInfo } = useContext(AuthorizedContext)
+
   // local state
-  const [isLoaded, setIsLoaded] = useState(false)
+  const [isScopeLoaded, setIsScopeLoaded] = useState(false)
   const [renderType, setRenderType] = useState<RenderType>('Setting')
-  const [assistantUserId, setAssistantUserId] = useState<string | null>(null)
   const [assistantNickname, setAssistantNickname] = useState<string>('')
 
   // fetch data
-  const [myUserDoc, isMyUserDocLoading] = useDocument(userDocument())
-  const [otherUserDoc, isOtherUserDocLoading] = useDocument(
-    userDocument(assistantUserId)
+  const [assistantUserDoc, isAssistantUserDocLoading] = useDocument(
+    userDocument(userInfo?.watchId)
   )
 
   const [items, isItemsLoading] = useCollection(
-    itemsCollection(assistantUserId, myUserId)
+    itemsCollection(userInfo?.watchId, myUserId)
   )
   const [budgets, isBudgetsLoading] = useCollection(
-    budgetsCollection(assistantUserId, myUserId)
+    budgetsCollection(userInfo?.watchId, myUserId)
       .where('year', '==', year)
       .where('month', '==', month)
   )
 
   useEffect(() => {
     if (
-      !isMyUserDocLoading ||
-      !isOtherUserDocLoading ||
+      isLoaded ||
+      !isAssistantUserDocLoading ||
       !isItemsLoading ||
       !isBudgetsLoading
     ) {
-      setIsLoaded(true)
+      setIsScopeLoaded(true)
     }
-  }, [
-    isMyUserDocLoading,
-    isOtherUserDocLoading,
-    isItemsLoading,
-    isBudgetsLoading,
-  ])
+  }, [isLoaded, isAssistantUserDocLoading, isItemsLoading, isBudgetsLoading])
 
   useEffect(() => {
     if (!isLoaded) return
 
-    if (!myUserDoc?.exists) {
+    if (!userInfo) {
       setRenderType('NotFound')
       return
     }
 
-    const roleRef = myUserDoc?.get('roleRef')
-    const watchId = myUserDoc?.get('currentWatchUser')?.id
-    const status = myUserDoc?.get('currentWatchUser')?.statusRef?.id
-    setAssistantUserId(watchId)
+    setAssistantNickname(assistantUserDoc?.get('nickName'))
 
-    setAssistantNickname(otherUserDoc?.get('nickName'))
-
-    if (
-      roleRef.id !== Roles.Approver ||
-      (status && status !== Status.Setting)
-    ) {
+    if (userInfo.role !== Roles.Approver || userInfo.state !== Status.Setting) {
       setRenderType('NotFound')
     }
-  }, [isLoaded, myUserDoc, otherUserDoc, myUserId])
+  }, [isLoaded, userInfo, assistantUserDoc, myUserId])
 
   return {
-    isLoaded,
+    isLoaded: isScopeLoaded,
     renderType,
     assistantNickname,
     month,
