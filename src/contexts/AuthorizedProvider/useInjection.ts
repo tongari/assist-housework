@@ -35,7 +35,7 @@ const useInjection = (): InjectionResult => {
   const [userDoc, isUserDocLoading] = useDocument(userDocument())
 
   useEffect(() => {
-    if (isAuthLoading && isUserDocLoading) {
+    if (!isAuthLoading && !isUserDocLoading) {
       setIsAuthorizeContextLoaded(true)
     }
   }, [isAuthLoading, isUserDocLoading])

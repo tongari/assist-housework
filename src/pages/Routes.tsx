@@ -4,10 +4,10 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import Header from 'components/organisms/Header'
 import { Paths } from 'types'
 
-import Authorized from 'pages/Authorized'
 import AuthorizedProvider from 'contexts/AuthorizedProvider'
 import ContentsProvider from 'contexts/ContentsProvider'
 
+import Authorized from 'pages/Authorized'
 import RootPage from 'pages/RootPage'
 import LoginPage from 'pages/LoginPage'
 import RegisterApproverPage from 'pages/RegisterApproverPage'
