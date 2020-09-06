@@ -18,7 +18,7 @@ const RegisterApproverPage: React.FC = () => {
     return <Redirect to={Paths.NotFound} />
   }
 
-  if (renderType === 'Pending') {
+  if (renderType === 'Pending' && inviteAddress) {
     return <PendingRegisterApprover inviteAddress={inviteAddress} />
   }
 

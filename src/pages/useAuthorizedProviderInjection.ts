@@ -10,6 +10,7 @@ export interface UserInfo {
   role: Roles | null
   state: Status | null
   watchId: string | null
+  address?: string
 }
 
 const useAuthorizedProviderInjection = (): {
@@ -41,11 +42,13 @@ const useAuthorizedProviderInjection = (): {
     const roleRef = userDoc?.get('roleRef')
     const state = userDoc?.get('currentWatchUser')?.statusRef.id
     const watchId = userDoc?.get('currentWatchUser')?.id
+    const address = userDoc?.get('currentWatchUser')?.inviteAddress
 
     setUserInfo({
       role: roleRef.id,
       state,
       watchId,
+      address,
     })
   }, [isLoaded, userDoc])
 
