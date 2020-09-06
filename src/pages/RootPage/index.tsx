@@ -1,12 +1,12 @@
 import React, { useContext } from 'react'
 import { Redirect } from 'react-router-dom'
 import { Paths, Roles, Status } from 'types'
-import { AuthorizedContext } from 'pages/AuthorizedProvider'
+import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 
 const RootPage: React.FC = () => {
-  const { isLoaded, userInfo } = useContext(AuthorizedContext)
+  const { isAuthorizeContextLoaded, userInfo } = useContext(AuthorizedContext)
 
-  if (!isLoaded) {
+  if (!isAuthorizeContextLoaded) {
     return <div>loading...</div>
   }
 

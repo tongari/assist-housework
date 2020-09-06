@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react'
 import { fetchNickName } from 'domain/firestore'
 
 import { Roles, Status } from 'types/index'
-import { AuthorizedContext } from 'pages/AuthorizedProvider'
+import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 
 export type RenderType = 'NotFound' | 'Register' | 'Setting'
 
@@ -12,7 +12,7 @@ const useInjection = (): {
   assistantNickName: string | null
   assistantUserId?: string | null
 } => {
-  const { isLoaded, userInfo } = useContext(AuthorizedContext)
+  const { isAuthorizeContextLoaded, userInfo } = useContext(AuthorizedContext)
 
   const [renderType, setRenderType] = useState<RenderType>('Register')
   const [assistantNickName, setAssistantNickName] = useState<string | null>(
@@ -28,7 +28,7 @@ const useInjection = (): {
   }, [userInfo])
 
   useEffect(() => {
-    if (!isLoaded) return
+    if (!isAuthorizeContextLoaded) return
 
     if (!userInfo) {
       setRenderType('NotFound')
@@ -43,10 +43,10 @@ const useInjection = (): {
     if (userInfo.state !== Status.Register) {
       setRenderType('Setting')
     }
-  }, [isLoaded, userInfo])
+  }, [isAuthorizeContextLoaded, userInfo])
 
   return {
-    isLoaded,
+    isLoaded: isAuthorizeContextLoaded,
     renderType,
     assistantUserId: userInfo?.watchId,
     assistantNickName,

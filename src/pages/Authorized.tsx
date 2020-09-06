@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { RouteProps, Redirect } from 'react-router-dom'
 import { Paths } from 'types'
-import { AuthorizedContext } from 'pages/AuthorizedProvider'
+import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 
 const Authorized: React.FC<RouteProps> = ({ children }) => {
   const { authenticated, isAuthLoading, authError } = useContext(

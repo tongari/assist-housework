@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react'
 
 import { fetchNickName } from 'domain/firestore'
 import { Roles, Status } from 'types/index'
-import { AuthorizedContext } from 'pages/AuthorizedProvider'
+import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 
 export type RenderType = 'NotFound' | 'Pending' | 'Register'
 
@@ -16,7 +16,7 @@ const useInjection = (): {
   const searchParams = new URLSearchParams(window.location.search)
   const inviteAssistantParams = searchParams.get('invite_assistant') ?? null
 
-  const { isLoaded, userInfo } = useContext(AuthorizedContext)
+  const { isAuthorizeContextLoaded, userInfo } = useContext(AuthorizedContext)
 
   // local state
   const [renderType, setRenderType] = useState<RenderType>('Register')
@@ -26,15 +26,15 @@ const useInjection = (): {
   const [approverNickName, setApproverNickName] = useState<string | null>(null)
 
   useEffect(() => {
-    if (isLoaded && assistToApproverId) {
+    if (isAuthorizeContextLoaded && assistToApproverId) {
       fetchNickName(assistToApproverId).then((v) => {
         setApproverNickName(v.data.nickName)
       })
     }
-  }, [isLoaded, assistToApproverId])
+  }, [isAuthorizeContextLoaded, assistToApproverId])
 
   useEffect(() => {
-    if (!isLoaded) return
+    if (!isAuthorizeContextLoaded) return
 
     if (!userInfo && !inviteAssistantParams) {
       setRenderType('NotFound')
@@ -59,10 +59,10 @@ const useInjection = (): {
     }
 
     setRenderType('Pending')
-  }, [isLoaded, userInfo, inviteAssistantParams])
+  }, [isAuthorizeContextLoaded, userInfo, inviteAssistantParams])
 
   return {
-    isLoaded,
+    isLoaded: isAuthorizeContextLoaded,
     renderType,
     assistToApproverId,
     approverNickName,

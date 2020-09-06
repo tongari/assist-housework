@@ -6,22 +6,26 @@ import { useDocument } from 'react-firebase-hooks/firestore'
 import { userDocument } from 'config/firebase'
 import { Roles, Status } from 'types/index'
 
-export interface UserInfo {
+export interface InjectionResult {
+  isAuthorizeContextLoaded: boolean
+  authenticated: firebase.User | undefined
+  isAuthLoading: boolean
+  authError: firebase.auth.Error | undefined
+  userInfo: UserInfo | null
+}
+
+interface UserInfo {
   role: Roles | null
   state: Status | null
   watchId: string | null
   address?: string
 }
 
-const useAuthorizedProviderInjection = (): {
-  isLoaded: boolean
-  authenticated: firebase.User | undefined
-  isAuthLoading: boolean
-  authError: firebase.auth.Error | undefined
-  userInfo: UserInfo | null
-} => {
+const useInjection = (): InjectionResult => {
   // local state
-  const [isLoaded, setIsLoaded] = useState(false)
+  const [isAuthorizeContextLoaded, setIsAuthorizeContextLoaded] = useState(
+    false
+  )
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null)
 
   // fetch data
@@ -31,13 +35,13 @@ const useAuthorizedProviderInjection = (): {
   const [userDoc, isUserDocLoading] = useDocument(userDocument())
 
   useEffect(() => {
-    if (!isAuthLoading || !isUserDocLoading) {
-      setIsLoaded(true)
+    if (isAuthLoading && isUserDocLoading) {
+      setIsAuthorizeContextLoaded(true)
     }
   }, [isAuthLoading, isUserDocLoading])
 
   useEffect(() => {
-    if (!isLoaded || !userDoc?.exists) return
+    if (!isAuthorizeContextLoaded || !userDoc?.exists) return
 
     const roleRef = userDoc?.get('roleRef')
     const state = userDoc?.get('currentWatchUser')?.statusRef.id
@@ -50,10 +54,10 @@ const useAuthorizedProviderInjection = (): {
       watchId,
       address,
     })
-  }, [isLoaded, userDoc])
+  }, [isAuthorizeContextLoaded, userDoc])
 
   return {
-    isLoaded,
+    isAuthorizeContextLoaded,
     authenticated,
     isAuthLoading,
     authError,
@@ -61,4 +65,4 @@ const useAuthorizedProviderInjection = (): {
   }
 }
 
-export default useAuthorizedProviderInjection
+export default useInjection

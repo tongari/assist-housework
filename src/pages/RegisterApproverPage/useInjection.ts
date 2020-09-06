@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react'
 import { Roles } from 'types/index'
-import { AuthorizedContext } from 'pages/AuthorizedProvider'
+import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 
 export type RenderType =
   | 'NotFound'
@@ -13,11 +13,11 @@ const useInjection = (): {
   renderType: RenderType
   inviteAddress?: string
 } => {
-  const { isLoaded, userInfo } = useContext(AuthorizedContext)
+  const { isAuthorizeContextLoaded, userInfo } = useContext(AuthorizedContext)
   const [renderType, setRenderType] = useState<RenderType>('Register')
 
   useEffect(() => {
-    if (!isLoaded || !userInfo) return
+    if (!isAuthorizeContextLoaded || !userInfo) return
 
     if (userInfo.role !== Roles.Approver) {
       setRenderType('NotFound')
@@ -32,10 +32,10 @@ const useInjection = (): {
     if (userInfo.address) {
       setRenderType('Pending')
     }
-  }, [isLoaded, userInfo])
+  }, [isAuthorizeContextLoaded, userInfo])
 
   return {
-    isLoaded,
+    isLoaded: isAuthorizeContextLoaded,
     renderType,
     inviteAddress: userInfo?.address,
   }

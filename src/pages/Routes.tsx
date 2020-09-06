@@ -5,7 +5,8 @@ import Header from 'components/organisms/Header'
 import { Paths } from 'types'
 
 import Authorized from 'pages/Authorized'
-import AuthorizedProvider from 'pages/AuthorizedProvider'
+import AuthorizedProvider from 'contexts/AuthorizedProvider'
+import ContentsProvider from 'contexts/ContentsProvider'
 
 import RootPage from 'pages/RootPage'
 import LoginPage from 'pages/LoginPage'
@@ -39,11 +40,13 @@ const App: React.FC = () => {
                 path={Paths.ApproveAssistant}
                 component={ApproveAssistantPage}
               />
-              <Route
-                exact
-                path={Paths.SettingApprover}
-                component={SettingApproverPage}
-              />
+              <ContentsProvider>
+                <Route
+                  exact
+                  path={Paths.SettingApprover}
+                  component={SettingApproverPage}
+                />
+              </ContentsProvider>
               <Route
                 path="*"
                 render={() => {

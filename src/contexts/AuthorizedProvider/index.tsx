@@ -1,18 +1,8 @@
 import React, { createContext } from 'react'
-import useAuthorizedProviderInjection, {
-  UserInfo,
-} from './useAuthorizedProviderInjection'
+import useInjection, { InjectionResult } from './useInjection'
 
-interface Props {
-  isLoaded: boolean
-  authenticated: firebase.User | undefined
-  isAuthLoading: boolean
-  authError: firebase.auth.Error | undefined
-  userInfo: UserInfo | null
-}
-
-export const AuthorizedContext = createContext<Props>({
-  isLoaded: false,
+export const AuthorizedContext = createContext<InjectionResult>({
+  isAuthorizeContextLoaded: false,
   authenticated: undefined,
   isAuthLoading: false,
   authError: undefined,
@@ -21,17 +11,17 @@ export const AuthorizedContext = createContext<Props>({
 
 const AuthorizedProvider: React.FC = ({ children }) => {
   const {
-    isLoaded,
+    isAuthorizeContextLoaded,
     authenticated,
     isAuthLoading,
     authError,
     userInfo,
-  } = useAuthorizedProviderInjection()
+  } = useInjection()
 
   return (
     <AuthorizedContext.Provider
       value={{
-        isLoaded,
+        isAuthorizeContextLoaded,
         authenticated,
         isAuthLoading,
         authError,
