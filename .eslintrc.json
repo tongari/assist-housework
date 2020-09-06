@@ -58,6 +58,7 @@
       }
     ],
     "@typescript-eslint/indent": ["off"],
+    "@typescript-eslint/no-empty-function": ["off"],
     "jsx-a11y/label-has-associated-control": "off",
     "react/jsx-one-expression-per-line": "off",
     "import/prefer-default-export": "off"

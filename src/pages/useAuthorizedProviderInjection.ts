@@ -6,21 +6,22 @@ import { useDocument } from 'react-firebase-hooks/firestore'
 import { userDocument } from 'config/firebase'
 import { Roles, Status } from 'types/index'
 
-interface User {
+export interface UserInfo {
   role: Roles | null
   state: Status | null
   watchId: string | null
 }
 
-const useInjection = (): {
+const useAuthorizedProviderInjection = (): {
   isLoaded: boolean
   authenticated: firebase.User | undefined
-  userData: User | null
+  isAuthLoading: boolean
   authError: firebase.auth.Error | undefined
+  userInfo: UserInfo | null
 } => {
   // local state
   const [isLoaded, setIsLoaded] = useState(false)
-  const [userData, setUserData] = useState<User | null>(null)
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null)
 
   // fetch data
   const [authenticated, isAuthLoading, authError] = useAuthState(
@@ -41,7 +42,7 @@ const useInjection = (): {
     const state = userDoc?.get('currentWatchUser')?.statusRef.id
     const watchId = userDoc?.get('currentWatchUser')?.id
 
-    setUserData({
+    setUserInfo({
       role: roleRef.id,
       state,
       watchId,
@@ -51,9 +52,10 @@ const useInjection = (): {
   return {
     isLoaded,
     authenticated,
-    userData,
+    isAuthLoading,
     authError,
+    userInfo,
   }
 }
 
-export default useInjection
+export default useAuthorizedProviderInjection
