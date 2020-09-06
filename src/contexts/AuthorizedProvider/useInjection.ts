@@ -6,21 +6,27 @@ import { useDocument } from 'react-firebase-hooks/firestore'
 import { userDocument } from 'config/firebase'
 import { Roles, Status } from 'types/index'
 
-interface User {
+export interface InjectionResult {
+  isAuthorizeContextLoaded: boolean
+  authenticated: firebase.User | undefined
+  isAuthLoading: boolean
+  authError: firebase.auth.Error | undefined
+  userInfo: UserInfo | null
+}
+
+interface UserInfo {
   role: Roles | null
   state: Status | null
   watchId: string | null
+  address?: string
 }
 
-const useInjection = (): {
-  isLoaded: boolean
-  authenticated: firebase.User | undefined
-  userData: User | null
-  authError: firebase.auth.Error | undefined
-} => {
+const useInjection = (): InjectionResult => {
   // local state
-  const [isLoaded, setIsLoaded] = useState(false)
-  const [userData, setUserData] = useState<User | null>(null)
+  const [isAuthorizeContextLoaded, setIsAuthorizeContextLoaded] = useState(
+    false
+  )
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null)
 
   // fetch data
   const [authenticated, isAuthLoading, authError] = useAuthState(
@@ -29,30 +35,33 @@ const useInjection = (): {
   const [userDoc, isUserDocLoading] = useDocument(userDocument())
 
   useEffect(() => {
-    if (!isAuthLoading || !isUserDocLoading) {
-      setIsLoaded(true)
+    if (!isAuthLoading && !isUserDocLoading) {
+      setIsAuthorizeContextLoaded(true)
     }
   }, [isAuthLoading, isUserDocLoading])
 
   useEffect(() => {
-    if (!isLoaded || !userDoc?.exists) return
+    if (!isAuthorizeContextLoaded || !userDoc?.exists) return
 
     const roleRef = userDoc?.get('roleRef')
     const state = userDoc?.get('currentWatchUser')?.statusRef.id
     const watchId = userDoc?.get('currentWatchUser')?.id
+    const address = userDoc?.get('currentWatchUser')?.inviteAddress
 
-    setUserData({
+    setUserInfo({
       role: roleRef.id,
       state,
       watchId,
+      address,
     })
-  }, [isLoaded, userDoc])
+  }, [isAuthorizeContextLoaded, userDoc])
 
   return {
-    isLoaded,
+    isAuthorizeContextLoaded,
     authenticated,
-    userData,
+    isAuthLoading,
     authError,
+    userInfo,
   }
 }
 

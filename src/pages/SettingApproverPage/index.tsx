@@ -5,13 +5,7 @@ import { Paths } from 'types'
 import useInjection from './useInjection'
 
 const SettingApproverPage: React.FC = () => {
-  const {
-    isLoaded,
-    renderType,
-    assistantNickname,
-    month,
-    items,
-  } = useInjection()
+  const { isLoaded, renderType, assistantNickname, now, items } = useInjection()
 
   if (!isLoaded) return <div>loading...</div>
 
@@ -22,7 +16,10 @@ const SettingApproverPage: React.FC = () => {
   return (
     <div>
       <p>{assistantNickname}</p>
-      <p>{month}</p>
+      <p>{now.year}</p>
+      <p>{now.month}</p>
+      <p>{now.date}</p>
+      <p>{now.day}</p>
       <ul>
         {items?.docs.map((item) => {
           return (

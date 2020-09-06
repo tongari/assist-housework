@@ -1,101 +1,63 @@
-import { Roles, Status } from 'types'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import * as firebase from 'firebase/app'
-import { format } from 'date-fns'
 
-import { useCollection, useDocument } from 'react-firebase-hooks/firestore'
-import {
-  userDocument,
-  itemsCollection,
-  budgetsCollection,
-} from 'config/firebase'
+import { Roles, Status } from 'types'
+import { AuthorizedContext } from 'contexts/AuthorizedProvider'
+import { ContentsContext } from 'contexts/ContentsProvider'
+import { InjectionResult as ContentsInjectionsResult } from 'contexts/ContentsProvider/useInjection'
 
 export type RenderType = 'NotFound' | 'Setting'
 
-const year = format(new Date(), 'yyyy')
-const month = format(new Date(), 'M')
-
-const useInjection = (): {
+type Props = {
   isLoaded: boolean
   renderType: RenderType
-  assistantNickname: string
-  month: string
-  items:
-    | firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>
-    | undefined
-  budgets:
-    | firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>
-    | undefined
-} => {
+} & Omit<ContentsInjectionsResult, 'isContentsContextLoaded'>
+
+const useInjection = (): Props => {
   const myUserId = firebase.auth().currentUser?.uid
 
+  const { isAuthorizeContextLoaded, userInfo } = useContext(AuthorizedContext)
+
+  const {
+    isContentsContextLoaded,
+    assistantNickname,
+    now,
+    items,
+    budgets,
+    deals,
+  } = useContext(ContentsContext)
+
   // local state
-  const [isLoaded, setIsLoaded] = useState(false)
   const [renderType, setRenderType] = useState<RenderType>('Setting')
-  const [assistantUserId, setAssistantUserId] = useState<string | null>(null)
-  const [assistantNickname, setAssistantNickname] = useState<string>('')
-
-  // fetch data
-  const [myUserDoc, isMyUserDocLoading] = useDocument(userDocument())
-  const [otherUserDoc, isOtherUserDocLoading] = useDocument(
-    userDocument(assistantUserId)
-  )
-
-  const [items, isItemsLoading] = useCollection(
-    itemsCollection(assistantUserId, myUserId)
-  )
-  const [budgets, isBudgetsLoading] = useCollection(
-    budgetsCollection(assistantUserId, myUserId)
-      .where('year', '==', year)
-      .where('month', '==', month)
-  )
+  const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {
-    if (
-      !isMyUserDocLoading ||
-      !isOtherUserDocLoading ||
-      !isItemsLoading ||
-      !isBudgetsLoading
-    ) {
+    if (isAuthorizeContextLoaded && isContentsContextLoaded) {
       setIsLoaded(true)
     }
-  }, [
-    isMyUserDocLoading,
-    isOtherUserDocLoading,
-    isItemsLoading,
-    isBudgetsLoading,
-  ])
+  }, [isAuthorizeContextLoaded, isContentsContextLoaded])
 
   useEffect(() => {
-    if (!isLoaded) return
+    if (!isAuthorizeContextLoaded || !isContentsContextLoaded) return
 
-    if (!myUserDoc?.exists) {
+    if (!userInfo) {
       setRenderType('NotFound')
       return
     }
 
-    const roleRef = myUserDoc?.get('roleRef')
-    const watchId = myUserDoc?.get('currentWatchUser')?.id
-    const status = myUserDoc?.get('currentWatchUser')?.statusRef?.id
-    setAssistantUserId(watchId)
-
-    setAssistantNickname(otherUserDoc?.get('nickName'))
-
-    if (
-      roleRef.id !== Roles.Approver ||
-      (status && status !== Status.Setting)
-    ) {
+    if (userInfo.role !== Roles.Approver || userInfo.state !== Status.Setting) {
       setRenderType('NotFound')
     }
-  }, [isLoaded, myUserDoc, otherUserDoc, myUserId])
+  }, [isAuthorizeContextLoaded, isContentsContextLoaded, userInfo, myUserId])
 
   return {
     isLoaded,
     renderType,
     assistantNickname,
-    month,
+    now,
     items,
     budgets,
+    deals,
   }
 }
 

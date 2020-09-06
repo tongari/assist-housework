@@ -36,22 +36,8 @@ export const userDocument = (
   return firebase.firestore().doc(`users/${id}`)
 }
 
-export const assistantUserIdsCollection = (): firebase.firestore.CollectionReference<
-  firebase.firestore.DocumentData
-> =>
-  firebase
-    .firestore()
-    .collection(`users/${firebase.auth().currentUser?.uid}/assistantUserIds`)
-
-export const assistToApproversCollection = (
-  uid?: string
-): firebase.firestore.CollectionReference<firebase.firestore.DocumentData> => {
-  const id = uid ?? firebase.auth().currentUser?.uid
-  return firebase.firestore().collection(`users/${id}/assistToApprovers`)
-}
-
 export const itemsCollection = (
-  userId: string | null,
+  userId: string | null | undefined,
   approverId: string | undefined
 ): firebase.firestore.CollectionReference<firebase.firestore.DocumentData> => {
   return firebase
@@ -60,12 +46,21 @@ export const itemsCollection = (
 }
 
 export const budgetsCollection = (
-  userId: string | null,
+  userId: string | null | undefined,
   approverId: string | undefined
 ): firebase.firestore.CollectionReference<firebase.firestore.DocumentData> => {
   return firebase
     .firestore()
     .collection(`users/${userId}/assistToApprovers/${approverId}/budgets`)
+}
+
+export const dealsCollection = (
+  userId: string | null | undefined,
+  approverId: string | undefined
+): firebase.firestore.CollectionReference<firebase.firestore.DocumentData> => {
+  return firebase
+    .firestore()
+    .collection(`users/${userId}/assistToApprovers/${approverId}/deals`)
 }
 
 export default initializeFirebase
