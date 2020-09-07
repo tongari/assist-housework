@@ -120,8 +120,8 @@ export const setApprovedAssistant = async (
 
   const items = itemsCollection(assistantId, myId)
 
-  const repeat = [...Array(5)]
-  repeat.forEach(() => {
+  const range = [...Array(5)]
+  range.forEach(() => {
     items.add({}).then((snap) => {
       snap.set({
         itemId: snap.id,

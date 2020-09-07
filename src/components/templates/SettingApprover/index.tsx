@@ -104,7 +104,7 @@ const SettingApprover: React.FC<Props> = ({
           </ul>
         </fieldset>
         <fieldset>
-          <legend>{now.month}の予算上限額</legend>
+          <legend>{now.month}月の予算上限額</legend>
           <input
             type="text"
             maxLength={4}
