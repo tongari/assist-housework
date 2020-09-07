@@ -10,9 +10,9 @@ export const ContentsContext = createContext<InjectionResult>({
     date: '',
     day: '',
   },
-  items: undefined,
-  budgets: undefined,
-  deals: undefined,
+  items: [],
+  budgets: [],
+  deals: [],
 })
 
 const ContentsProvider: React.FC = ({ children }) => {

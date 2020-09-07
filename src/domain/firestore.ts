@@ -1,5 +1,10 @@
 import * as firebase from 'firebase/app'
-import { Roles, Status } from 'types'
+import { Roles, Status, Item, Budget, Now } from 'types'
+import {
+  userDocument,
+  itemsCollection,
+  budgetsCollection,
+} from 'config/firebase'
 
 // NOTE: 模索中(firestoreを直接叩く場合は、redux-toolkit必要ないか？)
 
@@ -88,33 +93,42 @@ export const setApprovedAssistant = async (
   assistantId: string
 ): Promise<void> => {
   const db = firebase.firestore()
+  const myId = firebase.auth().currentUser?.uid
 
   const statusRef = db.collection('status')
-  await db
-    .collection(`users`)
-    .doc(firebase.auth().currentUser?.uid)
-    .set(
-      {
-        currentWatchUser: {
-          statusRef: statusRef.doc(Status.Setting),
-        },
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  const approver = userDocument(myId)
+  await approver.set(
+    {
+      currentWatchUser: {
+        statusRef: statusRef.doc(Status.Setting),
       },
-      { merge: true }
-    )
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    },
+    { merge: true }
+  )
 
-  return db
-    .collection(`users`)
-    .doc(assistantId)
-    .set(
-      {
-        currentWatchUser: {
-          statusRef: statusRef.doc(Status.Setting),
-        },
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  const assistant = userDocument(assistantId)
+  await assistant.set(
+    {
+      currentWatchUser: {
+        statusRef: statusRef.doc(Status.Setting),
       },
-      { merge: true }
-    )
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    },
+    { merge: true }
+  )
+
+  const items = itemsCollection(assistantId, myId)
+
+  const repeat = [...Array(5)]
+  repeat.forEach(() => {
+    items.add({}).then((snap) => {
+      snap.set({
+        itemId: snap.id,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      })
+    })
+  })
 }
 
 export const fetchNickName = async (
@@ -122,4 +136,52 @@ export const fetchNickName = async (
 ): Promise<firebase.functions.HttpsCallableResult> => {
   const getNickName = firebase.functions().httpsCallable('getNickName')
   return getNickName({ userId })
+}
+
+export const settingAssistContents = async (
+  editItems: Item[],
+  editBudgets: Budget[],
+  now: Now
+): Promise<void> => {
+  const myId = firebase.auth().currentUser?.uid
+  const watchId = (await userDocument().get()).get('currentWatchUser').id
+
+  const items = itemsCollection(watchId, myId)
+  const itemsRef = await items.get()
+  itemsRef.forEach((doc) => {
+    const updateItem = editItems.find((editItem) => {
+      return editItem.itemId === doc.id
+    })
+    if (updateItem?.label || updateItem?.price) {
+      doc.ref.update({
+        label: updateItem?.label,
+        price: updateItem?.price,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      })
+    }
+  })
+
+  const budgets = budgetsCollection(watchId, myId)
+  const searchedBudgets = budgets
+    .where('year', '==', now.year)
+    .where('month', '==', now.month)
+
+  const budgetsRef = await searchedBudgets.get()
+
+  const updateData = {
+    year: now.year,
+    month: now.month,
+    budget: editBudgets[0]?.budget ?? null,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  }
+
+  if (budgetsRef.empty) {
+    budgets.add(updateData)
+    return
+  }
+
+  budgetsRef.forEach((doc) => {
+    doc.ref.update(updateData)
+  })
 }

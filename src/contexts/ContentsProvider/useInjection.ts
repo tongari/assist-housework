@@ -11,7 +11,13 @@ import {
   dealsCollection,
 } from 'config/firebase'
 
+import { Now, Item, Budget, Deal } from 'types'
 import { AuthorizedContext } from 'contexts/AuthorizedProvider'
+import {
+  convertedItems,
+  convertedBudgets,
+  convertedDeals,
+} from 'contexts/ContentsProvider/converter'
 
 const year = format(new Date(), 'yyyy', { locale: ja })
 const month = format(new Date(), 'M', { locale: ja })
@@ -21,21 +27,10 @@ const day = format(new Date(), 'E', { locale: ja })
 export interface InjectionResult {
   isContentsContextLoaded: boolean
   assistantNickname?: string
-  now: {
-    year: string
-    month: string
-    date: string
-    day: string
-  }
-  items:
-    | firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>
-    | undefined
-  budgets:
-    | firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>
-    | undefined
-  deals:
-    | firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>
-    | undefined
+  now: Now
+  items: Item[]
+  budgets: Budget[]
+  deals: Deal[]
 }
 
 const useInjection = (): InjectionResult => {
@@ -97,9 +92,9 @@ const useInjection = (): InjectionResult => {
       date,
       day,
     },
-    items,
-    budgets,
-    deals,
+    items: convertedItems(items),
+    budgets: convertedBudgets(budgets),
+    deals: convertedDeals(deals),
   }
 }
 

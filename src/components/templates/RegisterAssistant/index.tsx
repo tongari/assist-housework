@@ -27,7 +27,7 @@ const RegisterAssistant: React.FC<Props> = ({
           />
         </label>
         <button
-          type="submit"
+          type="button"
           onClick={(e) => {
             e.preventDefault()
             registerAssistantUserHandler(nickName)

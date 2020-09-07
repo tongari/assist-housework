@@ -36,15 +36,15 @@ users:
       items:
         documentId: auto
         itemId: string(documentId)
-        name: string
+        label: string
         price: number
         createdAt: Date
         updatedAt: Date
 
       budgets:
         documentId: auto
-        year: number
-        month: number
+        year: string
+        month: string
         budget: number
         createdAt: Date
         updatedAt: Date
@@ -52,12 +52,12 @@ users:
       deals:
         documentId: auto
         fullDate: Date
-        year: number
-        month: number
-        date: number
-        day: number（曜日）
+        year: string
+        month: string
+        date: string
+        day: string（曜日）
         itemId: string(items-itemId) 
-        itemName: string(items-name)
+        itemLabel: string(items-name)
         price: number
         createdAt: Date
         updatedAt: Date
