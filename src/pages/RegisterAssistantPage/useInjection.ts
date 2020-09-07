@@ -16,6 +16,7 @@ const useInjection = (): {
   const searchParams = new URLSearchParams(window.location.search)
   const inviteAssistantParams = searchParams.get('invite_assistant') ?? null
 
+  // context
   const { isAuthorizeContextLoaded, userInfo } = useContext(AuthorizedContext)
 
   // local state
@@ -26,10 +27,14 @@ const useInjection = (): {
   const [approverNickName, setApproverNickName] = useState<string | null>(null)
 
   useEffect(() => {
+    let isCleaned = false
     if (isAuthorizeContextLoaded && assistToApproverId) {
       fetchNickName(assistToApproverId).then((v) => {
-        setApproverNickName(v.data.nickName)
+        if (!isCleaned) setApproverNickName(v.data.nickName)
       })
+    }
+    return () => {
+      isCleaned = true
     }
   }, [isAuthorizeContextLoaded, assistToApproverId])
 
