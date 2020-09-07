@@ -29,13 +29,6 @@ const useInjection = (): Props => {
 
   // local state
   const [renderType, setRenderType] = useState<RenderType>('Setting')
-  const [isLoaded, setIsLoaded] = useState(false)
-
-  useEffect(() => {
-    if (isAuthorizeContextLoaded && isContentsContextLoaded) {
-      setIsLoaded(true)
-    }
-  }, [isAuthorizeContextLoaded, isContentsContextLoaded])
 
   useEffect(() => {
     if (!isAuthorizeContextLoaded || !isContentsContextLoaded) return
@@ -51,7 +44,7 @@ const useInjection = (): Props => {
   }, [isAuthorizeContextLoaded, isContentsContextLoaded, userInfo, myUserId])
 
   return {
-    isLoaded,
+    isLoaded: isAuthorizeContextLoaded && isContentsContextLoaded,
     renderType,
     assistantNickname,
     now,

@@ -20,12 +20,16 @@ const useInjection = (): {
   )
 
   useEffect(() => {
-    if (userInfo?.watchId) {
+    let isCleaned = false
+    if (isAuthorizeContextLoaded && userInfo?.watchId) {
       fetchNickName(userInfo?.watchId).then((v) => {
-        setAssistantNickName(v.data.nickName)
+        if (!isCleaned) setAssistantNickName(v.data.nickName)
       })
     }
-  }, [userInfo])
+    return () => {
+      isCleaned = true
+    }
+  }, [isAuthorizeContextLoaded, userInfo])
 
   useEffect(() => {
     if (!isAuthorizeContextLoaded) return

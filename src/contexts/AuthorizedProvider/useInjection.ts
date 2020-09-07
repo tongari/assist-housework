@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react'
 import * as firebase from 'firebase/app'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useDocument } from 'react-firebase-hooks/firestore'
@@ -22,46 +21,22 @@ interface UserInfo {
 }
 
 const useInjection = (): InjectionResult => {
-  // local state
-  const [isAuthorizeContextLoaded, setIsAuthorizeContextLoaded] = useState(
-    false
-  )
-  const [userInfo, setUserInfo] = useState<UserInfo | null>(null)
-
-  // fetch data
   const [authenticated, isAuthLoading, authError] = useAuthState(
     firebase.auth()
   )
   const [userDoc, isUserDocLoading] = useDocument(userDocument())
 
-  useEffect(() => {
-    if (!isAuthLoading && !isUserDocLoading) {
-      setIsAuthorizeContextLoaded(true)
-    }
-  }, [isAuthLoading, isUserDocLoading])
-
-  useEffect(() => {
-    if (!isAuthorizeContextLoaded || !userDoc?.exists) return
-
-    const roleRef = userDoc?.get('roleRef')
-    const state = userDoc?.get('currentWatchUser')?.statusRef.id
-    const watchId = userDoc?.get('currentWatchUser')?.id
-    const address = userDoc?.get('currentWatchUser')?.inviteAddress
-
-    setUserInfo({
-      role: roleRef.id,
-      state,
-      watchId,
-      address,
-    })
-  }, [isAuthorizeContextLoaded, userDoc])
-
   return {
-    isAuthorizeContextLoaded,
+    isAuthorizeContextLoaded: !isAuthLoading && !isUserDocLoading,
     authenticated,
     isAuthLoading,
     authError,
-    userInfo,
+    userInfo: {
+      role: userDoc?.get('roleRef')?.id,
+      state: userDoc?.get('currentWatchUser')?.statusRef.id,
+      watchId: userDoc?.get('currentWatchUser')?.id,
+      address: userDoc?.get('currentWatchUser')?.inviteAddress,
+    },
   }
 }
 
