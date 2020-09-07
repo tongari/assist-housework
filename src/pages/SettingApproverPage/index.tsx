@@ -1,36 +1,42 @@
 import React from 'react'
 import { Redirect } from 'react-router-dom'
 
-import { Paths } from 'types'
+import { Paths, Item, Budget } from 'types'
+import { settingAssistContents } from 'domain/firestore'
+import SettingApprover from 'components/templates/SettingApprover'
 import useInjection from './useInjection'
 
 const SettingApproverPage: React.FC = () => {
-  const { isLoaded, renderType, assistantNickname, now, items } = useInjection()
+  const {
+    isLoaded,
+    renderType,
+    assistantNickname,
+    now,
+    items,
+    budgets,
+  } = useInjection()
 
-  if (!isLoaded) return <div>loading...</div>
-
-  if (renderType === 'NotFound') {
+  if (isLoaded && renderType === 'NotFound') {
     return <Redirect to={Paths.NotFound} />
   }
 
+  if (!isLoaded || !assistantNickname) return <div>loading...</div>
+
+  const settingAssistContentsHandler = (
+    editItems: Item[],
+    editBudgets: Budget[]
+  ) => {
+    settingAssistContents(editItems, editBudgets, now)
+  }
+
   return (
-    <div>
-      <p>{assistantNickname}</p>
-      <p>{now.year}</p>
-      <p>{now.month}</p>
-      <p>{now.date}</p>
-      <p>{now.day}</p>
-      <ul>
-        {items?.docs.map((item) => {
-          return (
-            <li>
-              <p>{item.get('name')}</p>
-              <p>{item.get('price')}</p>
-            </li>
-          )
-        })}
-      </ul>
-    </div>
+    <SettingApprover
+      assistantNickname={assistantNickname}
+      now={now}
+      items={items}
+      budgets={budgets}
+      settingAssistContentsHandler={settingAssistContentsHandler}
+    />
   )
 }
 

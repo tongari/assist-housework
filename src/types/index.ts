@@ -19,3 +19,30 @@ export enum Status {
   Running = '3',
   Calculation = '4',
 }
+
+export interface Now {
+  year: string
+  month: string
+  date: string
+  day: string
+}
+
+export interface Item {
+  itemId: string
+  label: string
+  price: number | null
+}
+
+export interface Budget {
+  year: string
+  month: string
+  budget: number | null
+}
+
+export interface Deal {
+  date: string
+  day: string
+  itemId: string
+  itemLabel: string
+  price: number
+}
