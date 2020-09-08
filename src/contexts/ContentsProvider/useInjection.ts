@@ -11,7 +11,7 @@ import {
   dealsCollection,
 } from 'config/firebase'
 
-import { Now, Item, Budget, Deal } from 'types'
+import { Now, Item, Budget, Deal, Roles } from 'types'
 import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 import {
   convertedItems,
@@ -34,33 +34,43 @@ export interface InjectionResult {
 }
 
 const useInjection = (): InjectionResult => {
-  const myUserId = firebase.auth().currentUser?.uid
-
   const { isAuthorizeContextLoaded, userInfo } = useContext(AuthorizedContext)
 
   // local state
   const [isContentsContextLoaded, setIsContentsContextLoaded] = useState(false)
 
   // fetch data
-  // TODO: roleによってパス変更
+  // Only Use Approver
   const [assistantUserDoc, isAssistantUserDocLoading] = useDocument(
     userDocument(userInfo?.watchId)
   )
 
-  // TODO: roleによってパス変更
+  const getUserId = () => {
+    if (userInfo?.role === Roles.Approver) {
+      return userInfo?.watchId
+    }
+    return firebase.auth().currentUser?.uid
+  }
+
+  const getApproverId = () => {
+    if (userInfo?.role === Roles.Approver) {
+      return firebase.auth().currentUser?.uid
+    }
+    return userInfo?.watchId
+  }
+
   const [items, isItemsLoading] = useCollection(
-    itemsCollection(userInfo?.watchId, myUserId)
+    itemsCollection(getUserId(), getApproverId())
   )
-  // TODO: roleによってパス変更
+
   const [budgets, isBudgetsLoading] = useCollection(
-    budgetsCollection(userInfo?.watchId, myUserId)
+    budgetsCollection(getUserId(), getApproverId())
       .where('year', '==', year)
       .where('month', '==', month)
   )
 
-  // TODO: roleによってパス変更
   const [deals, isDealsLoading] = useCollection(
-    dealsCollection(userInfo?.watchId, myUserId)
+    dealsCollection(getUserId(), getApproverId())
       .where('year', '==', year)
       .where('month', '==', month)
   )

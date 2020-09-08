@@ -122,9 +122,9 @@ export const setApprovedAssistant = async (
 
   const range = [...Array(5)]
   range.forEach(() => {
-    items.add({}).then((snap) => {
-      snap.set({
-        itemId: snap.id,
+    items.add({}).then((doc) => {
+      doc.set({
+        itemId: doc.id,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       })
     })
