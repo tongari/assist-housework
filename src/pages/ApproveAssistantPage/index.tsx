@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { Redirect } from 'react-router-dom'
 
 import { setApprovedAssistant } from 'domain/firestore'
@@ -14,13 +14,13 @@ const ApproveAssistantPage: React.FC = () => {
     assistantNickName,
   } = useInjection()
 
-  const setApprovedAssistantHandler = () => {
+  const setApprovedAssistantHandler = useCallback(() => {
     if (assistantUserId) {
       setApprovedAssistant(assistantUserId)
     }
-  }
+  }, [assistantUserId])
 
-  if (isLoaded && renderType === 'NotFound') {
+  if (renderType === 'NotFound') {
     return <Redirect to={Paths.NotFound} />
   }
 

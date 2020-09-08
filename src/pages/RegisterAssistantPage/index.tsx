@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { Redirect } from 'react-router-dom'
 import { registerAssistantUser } from 'domain/firestore'
 
@@ -15,14 +15,17 @@ const RegisterAssistantPage: React.FC = () => {
     approverNickName,
   } = useInjection()
 
-  const registerAssistantUserHandler = (nickName: string) => {
-    registerAssistantUser(nickName, assistToApproverId).catch((err) => {
-      // eslint-disable-next-line no-alert
-      window.alert(err.message)
-    })
-  }
+  const registerAssistantUserHandler = useCallback(
+    (nickName: string) => {
+      registerAssistantUser(nickName, assistToApproverId).catch((err) => {
+        // eslint-disable-next-line no-alert
+        window.alert(err.message)
+      })
+    },
+    [assistToApproverId]
+  )
 
-  if (isLoaded && renderType === 'NotFound') {
+  if (renderType === 'NotFound') {
     return <Redirect to={Paths.NotFound} />
   }
 

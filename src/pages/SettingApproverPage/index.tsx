@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { Redirect } from 'react-router-dom'
 
 import { Paths, Item, Budget } from 'types'
@@ -16,18 +16,18 @@ const SettingApproverPage: React.FC = () => {
     budgets,
   } = useInjection()
 
-  if (isLoaded && renderType === 'NotFound') {
+  const settingAssistContentsHandler = useCallback(
+    (editItems: Item[], editBudgets: Budget[]) => {
+      settingAssistContents(editItems, editBudgets, now)
+    },
+    [now]
+  )
+
+  if (renderType === 'NotFound') {
     return <Redirect to={Paths.NotFound} />
   }
 
   if (!isLoaded || !assistantNickname) return <div>loading...</div>
-
-  const settingAssistContentsHandler = (
-    editItems: Item[],
-    editBudgets: Budget[]
-  ) => {
-    settingAssistContents(editItems, editBudgets, now)
-  }
 
   return (
     <SettingApprover
