@@ -38,7 +38,7 @@ export const userDocument = (
 
 export const itemsCollection = (
   userId: string | null | undefined,
-  approverId: string | undefined
+  approverId: string | null | undefined
 ): firebase.firestore.CollectionReference<firebase.firestore.DocumentData> => {
   return firebase
     .firestore()
@@ -47,7 +47,7 @@ export const itemsCollection = (
 
 export const budgetsCollection = (
   userId: string | null | undefined,
-  approverId: string | undefined
+  approverId: string | null | undefined
 ): firebase.firestore.CollectionReference<firebase.firestore.DocumentData> => {
   return firebase
     .firestore()
@@ -56,7 +56,7 @@ export const budgetsCollection = (
 
 export const dealsCollection = (
   userId: string | null | undefined,
-  approverId: string | undefined
+  approverId: string | null | undefined
 ): firebase.firestore.CollectionReference<firebase.firestore.DocumentData> => {
   return firebase
     .firestore()
