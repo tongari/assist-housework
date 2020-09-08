@@ -26,17 +26,25 @@ const useInjection = (): InjectionResult => {
   )
   const [userDoc, isUserDocLoading] = useDocument(userDocument())
 
+  const convertUserInfo = () => {
+    if (!userDoc?.get('roleRef')?.id) {
+      return null
+    }
+
+    return {
+      role: userDoc?.get('roleRef')?.id,
+      state: userDoc?.get('currentWatchUser')?.statusRef.id,
+      watchId: userDoc?.get('currentWatchUser')?.id,
+      address: userDoc?.get('currentWatchUser')?.inviteAddress,
+    }
+  }
+
   return {
     isAuthorizeContextLoaded: !isAuthLoading && !isUserDocLoading,
     authenticated,
     isAuthLoading,
     authError,
-    userInfo: {
-      role: userDoc?.get('roleRef')?.id,
-      state: userDoc?.get('currentWatchUser')?.statusRef.id,
-      watchId: userDoc?.get('currentWatchUser')?.id,
-      address: userDoc?.get('currentWatchUser')?.inviteAddress,
-    },
+    userInfo: convertUserInfo(),
   }
 }
 

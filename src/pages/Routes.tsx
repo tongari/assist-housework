@@ -40,13 +40,11 @@ const App: React.FC = () => {
                 path={Paths.ApproveAssistant}
                 component={ApproveAssistantPage}
               />
-              <ContentsProvider>
-                <Route
-                  exact
-                  path={Paths.SettingApprover}
-                  component={SettingApproverPage}
-                />
-              </ContentsProvider>
+              <Route exact path={Paths.SettingApprover}>
+                <ContentsProvider>
+                  <SettingApproverPage />
+                </ContentsProvider>
+              </Route>
               <Route
                 path="*"
                 render={() => {
