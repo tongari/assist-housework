@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { Now, Item, Budget } from 'types'
 
 // TODO: バリデーションをする
@@ -23,6 +23,13 @@ const SettingApprover: React.FC<Props> = ({
 }) => {
   const [tempItems, setTempItems] = useState(items)
   const [tempBudgets, setTempBudgets] = useState(budgets)
+
+  useEffect(() => {
+    setTempItems(items)
+  }, [items])
+  useEffect(() => {
+    setTempBudgets(budgets)
+  }, [budgets])
 
   const updateLabel = useCallback(
     (label: string, index: number) => {

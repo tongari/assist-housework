@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import * as firebase from 'firebase/app'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useDocument } from 'react-firebase-hooks/firestore'
@@ -26,28 +25,26 @@ const useInjection = (): InjectionResult => {
     firebase.auth()
   )
   const [userDoc, isUserDocLoading] = useDocument(userDocument())
-  const [userInfo, setUserInfo] = useState<UserInfo | null>(null)
 
-  useEffect(() => {
-    if (isAuthLoading || isUserDocLoading) return
-    if (userDoc?.metadata.hasPendingWrites) return
+  const convertUserInfo = () => {
+    if (!userDoc?.get('roleRef')?.id) {
+      return null
+    }
 
-    if (!userDoc?.get('roleRef')?.id) return
-
-    setUserInfo({
+    return {
       role: userDoc?.get('roleRef')?.id,
       state: userDoc?.get('currentWatchUser')?.statusRef.id,
       watchId: userDoc?.get('currentWatchUser')?.id,
       address: userDoc?.get('currentWatchUser')?.inviteAddress,
-    })
-  }, [isAuthLoading, isUserDocLoading, userDoc])
+    }
+  }
 
   return {
     isAuthorizeContextLoaded: !isAuthLoading && !isUserDocLoading,
     authenticated,
     isAuthLoading,
     authError,
-    userInfo,
+    userInfo: convertUserInfo(),
   }
 }
 
