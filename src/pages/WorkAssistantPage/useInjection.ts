@@ -1,34 +1,47 @@
 import { useState, useEffect, useContext } from 'react'
 import * as firebase from 'firebase/app'
 
-import { Roles, Status } from 'types'
+import { fetchNickName } from 'domain/firestore'
+import { Roles, Status, Item, Now } from 'types'
 import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 import { ContentsContext } from 'contexts/ContentsProvider'
-import { InjectionResult as ContentsInjectionsResult } from 'contexts/ContentsProvider/useInjection'
 
 export type RenderType = 'NotFound' | 'Running'
 
-type Props = {
+type ResultProps = {
   isLoaded: boolean
   renderType: RenderType
-} & Omit<ContentsInjectionsResult, 'isContentsContextLoaded'>
+  now: Now
+  items: Item[]
+  budget: number
+  totalPrice: number
+  approverNickName: string
+}
 
-const useInjection = (): Props => {
+const useInjection = (): ResultProps => {
   const myUserId = firebase.auth().currentUser?.uid
 
   const { isAuthorizeContextLoaded, userInfo } = useContext(AuthorizedContext)
 
-  const {
-    isContentsContextLoaded,
-    assistantNickname,
-    now,
-    items,
-    budgets,
-    deals,
-  } = useContext(ContentsContext)
+  const { isContentsContextLoaded, now, items, budgets, deals } = useContext(
+    ContentsContext
+  )
 
   // local state
   const [renderType, setRenderType] = useState<RenderType>('Running')
+  const [approverNickName, setApproverNickName] = useState<string>('')
+
+  useEffect(() => {
+    let isCleaned = false
+    if (isAuthorizeContextLoaded && userInfo?.watchId) {
+      fetchNickName(userInfo?.watchId).then((v) => {
+        if (!isCleaned) setApproverNickName(v.data.nickName)
+      })
+    }
+    return () => {
+      isCleaned = true
+    }
+  }, [isAuthorizeContextLoaded, userInfo])
 
   useEffect(() => {
     if (!isAuthorizeContextLoaded || !isContentsContextLoaded) return
@@ -46,14 +59,28 @@ const useInjection = (): Props => {
     }
   }, [isAuthorizeContextLoaded, isContentsContextLoaded, userInfo, myUserId])
 
+  const compactedItems = items.filter((item) => item.label !== null)
+
+  const calculatedTotalPrice = deals.reduce((prev, next) => {
+    return prev + next.price
+  }, 0)
+
+  const calcBudget = () => {
+    if (budgets) {
+      const base = budgets[0]?.budget ?? 0
+      return base - calculatedTotalPrice
+    }
+    return 0
+  }
+
   return {
     isLoaded: isAuthorizeContextLoaded && isContentsContextLoaded,
     renderType,
-    assistantNickname,
     now,
-    items,
-    budgets,
-    deals,
+    items: compactedItems,
+    budget: calcBudget(),
+    totalPrice: calculatedTotalPrice,
+    approverNickName,
   }
 }
 
