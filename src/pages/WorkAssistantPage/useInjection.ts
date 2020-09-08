@@ -6,7 +6,7 @@ import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 import { ContentsContext } from 'contexts/ContentsProvider'
 import { InjectionResult as ContentsInjectionsResult } from 'contexts/ContentsProvider/useInjection'
 
-export type RenderType = 'NotFound' | 'Setting' | 'Running'
+export type RenderType = 'NotFound' | 'Running'
 
 type Props = {
   isLoaded: boolean
@@ -28,7 +28,7 @@ const useInjection = (): Props => {
   } = useContext(ContentsContext)
 
   // local state
-  const [renderType, setRenderType] = useState<RenderType>('Setting')
+  const [renderType, setRenderType] = useState<RenderType>('Running')
 
   useEffect(() => {
     if (!isAuthorizeContextLoaded || !isContentsContextLoaded) return
@@ -38,19 +38,9 @@ const useInjection = (): Props => {
       return
     }
 
-    if (userInfo.role !== Roles.Approver) {
-      setRenderType('NotFound')
-      return
-    }
-
-    if (userInfo.state === Status.Running) {
-      setRenderType('Running')
-      return
-    }
-
     if (
-      !(userInfo.state === Status.Register) &&
-      !(userInfo.state === Status.Setting)
+      userInfo.role !== Roles.Assistant ||
+      userInfo.state !== Status.Running
     ) {
       setRenderType('NotFound')
     }

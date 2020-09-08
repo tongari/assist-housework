@@ -11,6 +11,9 @@ const RootPage: React.FC = () => {
   }
 
   const renderApprover = (): React.ReactElement => {
+    if (userInfo?.state === Status.Running) {
+      return <Redirect to={Paths.WorkApprover} />
+    }
     if (userInfo?.state === Status.Setting) {
       return <Redirect to={Paths.SettingApprover} />
     }
@@ -21,7 +24,9 @@ const RootPage: React.FC = () => {
   }
 
   const renderAssistant = (): React.ReactElement => {
-    // if (userInfo?.state === Status.Setting) { }
+    if (userInfo?.state === Status.Running) {
+      return <Redirect to={Paths.WorkAssistant} />
+    }
     return <Redirect to={Paths.RegisterAssistant} />
   }
 

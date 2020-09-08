@@ -2,6 +2,8 @@ import React, { useState, useCallback, useEffect } from 'react'
 import { Now, Item, Budget } from 'types'
 
 // TODO: バリデーションをする
+// TODO: ロジックを切り出す？
+// TODO: コンポーネントを適切に分割する
 
 interface Props {
   assistantNickname: string
@@ -52,10 +54,20 @@ const SettingApprover: React.FC<Props> = ({
   const updateBudget = useCallback(
     (budget: number | null, index: number) => {
       const copy = tempBudgets.slice()
+      if (copy.length === 0) {
+        setTempBudgets([
+          {
+            year: now.year,
+            month: now.month,
+            budget,
+          },
+        ])
+        return
+      }
       copy[index].budget = budget
       setTempBudgets(copy)
     },
-    [tempBudgets]
+    [tempBudgets, now]
   )
 
   return (
@@ -64,12 +76,7 @@ const SettingApprover: React.FC<Props> = ({
         {now.month}月の{assistantNickname}
         さんにお願いするお手伝いの内容を入力してください。
       </h1>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          settingAssistContentsHandler(tempItems, tempBudgets)
-        }}
-      >
+      <form>
         <fieldset>
           <legend>お手伝い項目（最大５つ）</legend>
           <ul>
@@ -131,7 +138,15 @@ const SettingApprover: React.FC<Props> = ({
             }}
           />
         </fieldset>
-        <button type="submit">更新</button>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault()
+            settingAssistContentsHandler(tempItems, tempBudgets)
+          }}
+        >
+          更新
+        </button>
       </form>
     </div>
   )
