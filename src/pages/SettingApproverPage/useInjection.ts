@@ -6,12 +6,12 @@ import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 import { ContentsContext } from 'contexts/ContentsProvider'
 import { InjectionResult as ContentsInjectionsResult } from 'contexts/ContentsProvider/useInjection'
 
-export type RenderType = 'NotFound' | 'Setting'
+export type RenderType = 'NotFound' | 'Setting' | 'Running'
 
 type Props = {
   isLoaded: boolean
   renderType: RenderType
-} & Omit<ContentsInjectionsResult, 'isContentsContextLoaded'>
+} & Omit<ContentsInjectionsResult, 'isContentsContextLoaded' | 'todayDeals'>
 
 const useInjection = (): Props => {
   const myUserId = firebase.auth().currentUser?.uid
@@ -38,7 +38,20 @@ const useInjection = (): Props => {
       return
     }
 
-    if (userInfo.role !== Roles.Approver || userInfo.state !== Status.Setting) {
+    if (userInfo.role !== Roles.Approver) {
+      setRenderType('NotFound')
+      return
+    }
+
+    if (userInfo.state === Status.Running) {
+      setRenderType('Running')
+      return
+    }
+
+    if (
+      !(userInfo.state === Status.Register) &&
+      !(userInfo.state === Status.Setting)
+    ) {
       setRenderType('NotFound')
     }
   }, [isAuthorizeContextLoaded, isContentsContextLoaded, userInfo, myUserId])

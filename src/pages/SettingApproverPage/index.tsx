@@ -29,6 +29,10 @@ const SettingApproverPage: React.FC = () => {
 
   if (!isLoaded || !assistantNickname) return <div>loading...</div>
 
+  if (renderType === 'Running') {
+    return <Redirect to={Paths.WorkApprover} />
+  }
+
   return (
     <SettingApprover
       assistantNickname={assistantNickname}

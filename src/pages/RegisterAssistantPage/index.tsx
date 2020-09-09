@@ -35,6 +35,10 @@ const RegisterAssistantPage: React.FC = () => {
     return <PendingRegisterAssistant approverNickName={approverNickName} />
   }
 
+  if (renderType === 'Running') {
+    return <Redirect to={Paths.WorkAssistant} />
+  }
+
   return (
     <RegisterAssistant
       approverNickName={approverNickName}

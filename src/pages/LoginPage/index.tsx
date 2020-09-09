@@ -23,7 +23,7 @@ const LoginPage: React.FC = () => {
         />
       )
     }
-    return <Redirect to={Paths.RegisterApprover} />
+    return <Redirect to={Paths.Root} />
   }
 
   return null

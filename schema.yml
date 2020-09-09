@@ -51,7 +51,6 @@ users:
 
       deals:
         documentId: auto
-        fullDate: Date
         year: string
         month: string
         date: string
@@ -59,6 +58,7 @@ users:
         itemId: string(items-itemId) 
         itemLabel: string(items-name)
         price: number
+        isApproved: boolean
         createdAt: Date
         updatedAt: Date
 

@@ -4,6 +4,7 @@ import {
   userDocument,
   itemsCollection,
   budgetsCollection,
+  dealsCollection,
 } from 'config/firebase'
 
 // NOTE: 模索中(firestoreを直接叩く場合は、redux-toolkit必要ないか？)
@@ -120,7 +121,7 @@ export const setApprovedAssistant = async (
 
   const items = itemsCollection(assistantId, myId)
 
-  const range = [...Array(5)]
+  const range = [...Array(5)] // TODO: マジックナンバー要リファクタ バルクアップデート的なものはできないのか？
   range.forEach(() => {
     items.add({}).then((doc) => {
       doc.set({
@@ -146,42 +147,103 @@ export const settingAssistContents = async (
   const myId = firebase.auth().currentUser?.uid
   const watchId = (await userDocument().get()).get('currentWatchUser').id
 
-  const items = itemsCollection(watchId, myId)
-  const itemsRef = await items.get()
-  itemsRef.forEach((doc) => {
-    const updateItem = editItems.find((editItem) => {
-      return editItem.itemId === doc.id
-    })
-    if (updateItem?.label || updateItem?.price) {
-      doc.ref.update({
-        label: updateItem?.label,
-        price: updateItem?.price,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  await new Promise((resolve) => {
+    const fn = async () => {
+      const items = itemsCollection(watchId, myId)
+      const itemsRef = await items.get()
+      itemsRef.docs.forEach((doc, index) => {
+        const updateItem = editItems.find((editItem) => {
+          return editItem.itemId === doc.id
+        })
+        doc.ref
+          .update({
+            label: updateItem?.label ?? null,
+            price: updateItem?.price ?? null,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          })
+          .then(() => {
+            // TODO: 要リファクタ
+            // バルクアップデート的なものはできないのか？
+            if (index === 4) {
+              resolve()
+            }
+          })
       })
     }
+    fn()
   })
 
-  const budgets = budgetsCollection(watchId, myId)
-  const searchedBudgets = budgets
-    .where('year', '==', now.year)
-    .where('month', '==', now.month)
+  await new Promise((resolve) => {
+    const fn = async () => {
+      const budgets = budgetsCollection(watchId, myId)
+      const searchedBudgets = budgets
+        .where('year', '==', now.year)
+        .where('month', '==', now.month)
 
-  const budgetsRef = await searchedBudgets.get()
+      const budgetsRef = await searchedBudgets.get()
 
-  const updateData = {
+      const updateData = {
+        year: now.year,
+        month: now.month,
+        budget: editBudgets[0]?.budget ?? null,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      }
+
+      if (budgetsRef.empty) {
+        budgets.add(updateData).then(() => {
+          resolve()
+        })
+      } else {
+        budgetsRef.forEach((doc) => {
+          doc.ref.update(updateData).then(() => {
+            resolve()
+          })
+        })
+      }
+    }
+    fn()
+  })
+
+  const statusRef = firebase.firestore().collection('status')
+  const assistant = userDocument(watchId)
+  await assistant.set(
+    {
+      currentWatchUser: {
+        statusRef: statusRef.doc(Status.Running),
+      },
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    },
+    { merge: true }
+  )
+
+  const approver = userDocument()
+  await approver.set(
+    {
+      currentWatchUser: {
+        statusRef: statusRef.doc(Status.Running),
+      },
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    },
+    { merge: true }
+  )
+}
+
+export const addDeal = async (now: Now, item: Item): Promise<void> => {
+  const myId = firebase.auth().currentUser?.uid
+  const approverId = (await userDocument().get()).get('currentWatchUser').id
+  const deals = dealsCollection(myId, approverId)
+
+  await deals.add({
     year: now.year,
     month: now.month,
-    budget: editBudgets[0]?.budget ?? null,
+    date: now.date,
+    day: now.day,
+    itemId: item.itemId,
+    itemLabel: item.label,
+    price: item.price,
+    isApproved: false,
     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-  }
-
-  if (budgetsRef.empty) {
-    budgets.add(updateData)
-    return
-  }
-
-  budgetsRef.forEach((doc) => {
-    doc.ref.update(updateData)
   })
 }

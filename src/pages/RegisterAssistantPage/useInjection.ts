@@ -4,7 +4,7 @@ import { fetchNickName } from 'domain/firestore'
 import { Roles, Status } from 'types/index'
 import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 
-export type RenderType = 'NotFound' | 'Pending' | 'Register'
+export type RenderType = 'NotFound' | 'Pending' | 'Register' | 'Running'
 
 const useInjection = (): {
   isLoaded: boolean
@@ -58,7 +58,15 @@ const useInjection = (): {
       return
     }
 
-    if (userInfo.state !== Status.Register) {
+    if (userInfo.state === Status.Running) {
+      setRenderType('Running')
+      return
+    }
+
+    if (
+      !(userInfo.state === Status.Register) &&
+      !(userInfo.state === Status.Setting)
+    ) {
       setRenderType('NotFound')
       return
     }

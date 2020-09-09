@@ -1,9 +1,12 @@
 export enum Paths {
+  Root = '/',
   Login = '/login',
   RegisterApprover = '/register-approver',
   RegisterAssistant = '/register-assistant',
   ApproveAssistant = '/approve-assistant',
   SettingApprover = '/setting-approver',
+  WorkAssistant = '/work-assistant',
+  WorkApprover = '/work-approver',
   NotFound = '/404.html',
 }
 
@@ -29,8 +32,9 @@ export interface Now {
 
 export interface Item {
   itemId: string
-  label: string
+  label: string | null
   price: number | null
+  isWorked?: boolean
 }
 
 export interface Budget {

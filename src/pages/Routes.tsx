@@ -14,6 +14,8 @@ import RegisterApproverPage from 'pages/RegisterApproverPage'
 import RegisterAssistantPage from 'pages/RegisterAssistantPage'
 import ApproveAssistantPage from 'pages/ApproveAssistantPage'
 import SettingApproverPage from 'pages/SettingApproverPage'
+import WorkAssistantPage from 'pages/WorkAssistantPage'
+import WorkApproverPage from 'pages/WorkApproverPage'
 
 const App: React.FC = () => {
   return (
@@ -24,7 +26,7 @@ const App: React.FC = () => {
           <Authorized>
             <Header />
             <Switch>
-              <Route exact path="/" component={RootPage} />
+              <Route exact path={Paths.Root} component={RootPage} />
               <Route
                 exact
                 path={Paths.RegisterApprover}
@@ -43,6 +45,16 @@ const App: React.FC = () => {
               <Route exact path={Paths.SettingApprover}>
                 <ContentsProvider>
                   <SettingApproverPage />
+                </ContentsProvider>
+              </Route>
+              <Route exact path={Paths.WorkAssistant}>
+                <ContentsProvider>
+                  <WorkAssistantPage />
+                </ContentsProvider>
+              </Route>
+              <Route exact path={Paths.WorkApprover}>
+                <ContentsProvider>
+                  <WorkApproverPage />
                 </ContentsProvider>
               </Route>
               <Route
