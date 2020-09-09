@@ -140,8 +140,7 @@ const SettingApprover: React.FC<Props> = ({
         </fieldset>
         <button
           type="button"
-          onClick={(e) => {
-            e.preventDefault()
+          onClick={() => {
             settingAssistContentsHandler(tempItems, tempBudgets)
           }}
         >

@@ -34,6 +34,7 @@ export interface Item {
   itemId: string
   label: string | null
   price: number | null
+  isWorked?: boolean
 }
 
 export interface Budget {

@@ -13,6 +13,7 @@ export const ContentsContext = createContext<InjectionResult>({
   items: [],
   budgets: [],
   deals: [],
+  todayDeals: [],
 })
 
 const ContentsProvider: React.FC = ({ children }) => {
@@ -23,6 +24,7 @@ const ContentsProvider: React.FC = ({ children }) => {
     items,
     budgets,
     deals,
+    todayDeals,
   } = useInjection()
 
   return (
@@ -34,6 +36,7 @@ const ContentsProvider: React.FC = ({ children }) => {
         items,
         budgets,
         deals,
+        todayDeals,
       }}
     >
       {children}

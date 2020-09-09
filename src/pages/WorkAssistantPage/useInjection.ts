@@ -23,9 +23,14 @@ const useInjection = (): ResultProps => {
 
   const { isAuthorizeContextLoaded, userInfo } = useContext(AuthorizedContext)
 
-  const { isContentsContextLoaded, now, items, budgets, deals } = useContext(
-    ContentsContext
-  )
+  const {
+    isContentsContextLoaded,
+    now,
+    items,
+    budgets,
+    deals,
+    todayDeals,
+  } = useContext(ContentsContext)
 
   // local state
   const [renderType, setRenderType] = useState<RenderType>('Running')
@@ -61,6 +66,14 @@ const useInjection = (): ResultProps => {
 
   const compactedItems = items.filter((item) => item.label !== null)
 
+  const addedIsWorkedToItems = compactedItems.map((item) => {
+    const existDeal = todayDeals.find((deal) => deal.itemId === item.itemId)
+    if (existDeal) {
+      return { ...item, isWorked: true }
+    }
+    return item
+  })
+
   const calculatedTotalPrice = deals.reduce((prev, next) => {
     return prev + next.price
   }, 0)
@@ -77,7 +90,7 @@ const useInjection = (): ResultProps => {
     isLoaded: isAuthorizeContextLoaded && isContentsContextLoaded,
     renderType,
     now,
-    items: compactedItems,
+    items: addedIsWorkedToItems,
     budget: calcBudget(),
     totalPrice: calculatedTotalPrice,
     approverNickName,

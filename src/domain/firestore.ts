@@ -4,6 +4,7 @@ import {
   userDocument,
   itemsCollection,
   budgetsCollection,
+  dealsCollection,
 } from 'config/firebase'
 
 // NOTE: 模索中(firestoreを直接叩く場合は、redux-toolkit必要ないか？)
@@ -226,4 +227,23 @@ export const settingAssistContents = async (
     },
     { merge: true }
   )
+}
+
+export const addDeal = async (now: Now, item: Item): Promise<void> => {
+  const myId = firebase.auth().currentUser?.uid
+  const approverId = (await userDocument().get()).get('currentWatchUser').id
+  const deals = dealsCollection(myId, approverId)
+
+  await deals.add({
+    year: now.year,
+    month: now.month,
+    date: now.date,
+    day: now.day,
+    itemId: item.itemId,
+    itemLabel: item.label,
+    price: item.price,
+    isApproved: false,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  })
 }

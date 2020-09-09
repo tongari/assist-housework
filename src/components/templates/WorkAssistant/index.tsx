@@ -9,6 +9,7 @@ interface Props {
   items: Item[]
   budget: number
   totalPrice: number
+  addDealHandler: (item: Item) => void
 }
 
 const WorkAssistant: React.FC<Props> = ({
@@ -17,6 +18,7 @@ const WorkAssistant: React.FC<Props> = ({
   items,
   budget,
   totalPrice,
+  addDealHandler,
 }) => {
   return (
     <div>
@@ -28,7 +30,15 @@ const WorkAssistant: React.FC<Props> = ({
         {items.map((item, index) => {
           return (
             <li key={index.toString()}>
-              <button type="button">{item.label}</button>
+              <button
+                type="button"
+                disabled={item.isWorked}
+                onClick={() => {
+                  addDealHandler(item)
+                }}
+              >
+                {item.label}
+              </button>
             </li>
           )
         })}

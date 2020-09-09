@@ -35,8 +35,7 @@ const RegisterApprover: React.FC<Props> = ({ registerApprovalUser }) => {
         </label>
         <button
           type="button"
-          onClick={(e) => {
-            e.preventDefault()
+          onClick={() => {
             registerApprovalUser(nickName, inviteAddress)
           }}
         >

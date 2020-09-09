@@ -31,6 +31,7 @@ export interface InjectionResult {
   items: Item[]
   budgets: Budget[]
   deals: Deal[]
+  todayDeals: Deal[]
 }
 
 const useInjection = (): InjectionResult => {
@@ -75,13 +76,21 @@ const useInjection = (): InjectionResult => {
       .where('month', '==', month)
   )
 
+  const [todayDeals, isTodayDealsLoading] = useCollection(
+    dealsCollection(getUserId(), getApproverId())
+      .where('year', '==', year)
+      .where('month', '==', month)
+      .where('date', '==', date)
+  )
+
   useEffect(() => {
     if (
       isAuthorizeContextLoaded &&
       !isAssistantUserDocLoading &&
       !isItemsLoading &&
       !isBudgetsLoading &&
-      !isDealsLoading
+      !isDealsLoading &&
+      !isTodayDealsLoading
     ) {
       setIsContentsContextLoaded(true)
     }
@@ -91,6 +100,7 @@ const useInjection = (): InjectionResult => {
     isItemsLoading,
     isBudgetsLoading,
     isDealsLoading,
+    isTodayDealsLoading,
   ])
 
   return {
@@ -105,6 +115,7 @@ const useInjection = (): InjectionResult => {
     items: convertedItems(items),
     budgets: convertedBudgets(budgets),
     deals: convertedDeals(deals),
+    todayDeals: convertedDeals(todayDeals),
   }
 }
 
