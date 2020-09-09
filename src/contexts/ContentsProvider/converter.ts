@@ -32,11 +32,15 @@ export const convertedDeals = (deals: Props): Deal[] => {
   return (
     deals?.docs.map((deal) => {
       return {
+        id: deal.id,
+        year: deal.get('year'),
+        month: deal.get('month'),
         date: deal.get('date'),
         day: deal.get('day'),
         itemId: deal.get('itemId'),
         itemLabel: deal.get('itemLabel'),
         price: deal.get('price'),
+        isApproved: deal.get('isApproved'),
       }
     }) ?? []
   )

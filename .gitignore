@@ -24,6 +24,7 @@ yarn-error.log*
 
 .firebase
 firestore-debug.log
+firebase-debug.log
 ui-debug.log
 .emulators_data
 .runtimeconfig.json

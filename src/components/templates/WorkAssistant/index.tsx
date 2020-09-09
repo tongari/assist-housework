@@ -43,7 +43,7 @@ const WorkAssistant: React.FC<Props> = ({
           )
         })}
       </ul>
-      <p>これまでのお小遣い合計 : {totalPrice}円</p>
+      <p>お小遣い予定額 : {totalPrice}円</p>
       <p>残りの予算額 : {budget}円</p>
     </div>
   )

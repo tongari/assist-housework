@@ -247,3 +247,14 @@ export const addDeal = async (now: Now, item: Item): Promise<void> => {
     updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
   })
 }
+
+export const approveDeal = async (dealId: string): Promise<void> => {
+  const myId = firebase.auth().currentUser?.uid
+  const assistantId = (await userDocument().get()).get('currentWatchUser').id
+  const deals = dealsCollection(assistantId, myId)
+
+  await deals.doc(dealId).update({
+    isApproved: true,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  })
+}
