@@ -44,9 +44,12 @@ export interface Budget {
 }
 
 export interface Deal {
+  year: string
+  month: string
   date: string
   day: string
   itemId: string
   itemLabel: string
   price: number
+  isApproved: boolean
 }
