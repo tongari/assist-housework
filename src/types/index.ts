@@ -7,6 +7,7 @@ export enum Paths {
   SettingApprover = '/setting-approver',
   WorkAssistant = '/work-assistant',
   WorkApprover = '/work-approver',
+  DealsApprover = '/deals-approver',
   NotFound = '/404.html',
 }
 

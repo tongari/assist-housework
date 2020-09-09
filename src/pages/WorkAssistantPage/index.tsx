@@ -14,6 +14,7 @@ const WorkAssistantPage: React.FC = () => {
     items,
     budget,
     totalPrice,
+    unApprovePrice,
     approverNickName,
   } = useInjection()
 
@@ -37,6 +38,7 @@ const WorkAssistantPage: React.FC = () => {
       items={items}
       budget={budget}
       totalPrice={totalPrice}
+      unApprovePrice={unApprovePrice}
       addDealHandler={addDealHandler}
     />
   )
