@@ -9,6 +9,7 @@ interface Props {
   deals: Deal[]
   budget: number
   totalPrice: number
+  approveDealHandler: (dealId: string) => void
 }
 
 const WorkApprover: React.FC<Props> = ({
@@ -17,6 +18,7 @@ const WorkApprover: React.FC<Props> = ({
   deals,
   budget,
   totalPrice,
+  approveDealHandler,
 }) => {
   return (
     <div>
@@ -35,7 +37,12 @@ const WorkApprover: React.FC<Props> = ({
               </dt>
               <dd>{deal.itemLabel}</dd>
               <dd>
-                <button type="button" disabled={deal.isApproved}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    approveDealHandler(deal.id)
+                  }}
+                >
                   承認
                 </button>
               </dd>

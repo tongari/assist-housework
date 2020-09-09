@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { Redirect } from 'react-router-dom'
 
 import { Paths } from 'types'
 import WorkApprover from 'components/templates/WorkApprover'
+import { approveDeal } from 'domain/firestore'
 import useInjection from './useInjection'
 
 const WorkApproverPage: React.FC = () => {
@@ -15,6 +16,10 @@ const WorkApproverPage: React.FC = () => {
     totalPrice,
     assistantNickname,
   } = useInjection()
+
+  const approveDealHandler = useCallback((dealId: string) => {
+    approveDeal(dealId)
+  }, [])
 
   if (renderType === 'NotFound') {
     return <Redirect to={Paths.NotFound} />
@@ -29,6 +34,7 @@ const WorkApproverPage: React.FC = () => {
       deals={deals}
       budget={budget}
       totalPrice={totalPrice}
+      approveDealHandler={approveDealHandler}
     />
   )
 }

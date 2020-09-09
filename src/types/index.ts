@@ -44,6 +44,7 @@ export interface Budget {
 }
 
 export interface Deal {
+  id: string
   year: string
   month: string
   date: string
