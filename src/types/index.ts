@@ -1,4 +1,5 @@
 export enum Paths {
+  Root = '/',
   Login = '/login',
   RegisterApprover = '/register-approver',
   RegisterAssistant = '/register-assistant',

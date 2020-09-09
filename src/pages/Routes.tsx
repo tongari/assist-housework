@@ -26,7 +26,7 @@ const App: React.FC = () => {
           <Authorized>
             <Header />
             <Switch>
-              <Route exact path="/" component={RootPage} />
+              <Route exact path={Paths.Root} component={RootPage} />
               <Route
                 exact
                 path={Paths.RegisterApprover}
