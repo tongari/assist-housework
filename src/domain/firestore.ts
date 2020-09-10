@@ -272,3 +272,51 @@ export const updateCalculationState = async (): Promise<void> => {
     { merge: true }
   )
 }
+
+export const fetchServerTime = async (): Promise<void> => {
+  const userDoc = userDocument()
+  const currentYear = (await userDoc.get()).get('currentWatchUser').year
+  const currentMonth = (await userDoc.get()).get('currentWatchUser').month
+  const currentState = (await userDoc.get()).get('currentWatchUser').statusRef
+    .id
+
+  if (
+    !(currentState === Status.Running) &&
+    !(currentState === Status.Calculation)
+  ) {
+    return
+  }
+
+  const getServerTime = firebase.functions().httpsCallable('getServerTime')
+  const result = await getServerTime()
+
+  const statusRef = firebase.firestore().collection('status')
+
+  const { year, month } = result?.data
+
+  if (currentYear && (year !== currentYear || month !== currentMonth)) {
+    await userDoc.set(
+      {
+        currentWatchUser: {
+          statusRef: statusRef.doc(Status.Calculation),
+        },
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    )
+  }
+
+  // 新規ユーザの場合
+  if (!currentYear) {
+    await userDoc.set(
+      {
+        currentWatchUser: {
+          year,
+          month,
+        },
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    )
+  }
+}

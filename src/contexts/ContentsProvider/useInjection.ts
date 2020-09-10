@@ -19,6 +19,9 @@ import {
   convertedDeals,
 } from 'contexts/ContentsProvider/converter'
 
+import { fetchServerTime } from 'domain/firestore'
+
+// TODO: サーバタイムに差し替える
 const year = format(new Date(), 'yyyy', { locale: ja })
 const month = format(new Date(), 'M', { locale: ja })
 const date = format(new Date(), 'd', { locale: ja })
@@ -82,6 +85,10 @@ const useInjection = (): InjectionResult => {
       .where('month', '==', month)
       .where('date', '==', date)
   )
+
+  useEffect(() => {
+    fetchServerTime()
+  }, [])
 
   useEffect(() => {
     if (

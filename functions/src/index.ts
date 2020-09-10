@@ -2,6 +2,9 @@ import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
 import * as sendGrid from '@sendgrid/mail'
 import { HttpsError } from 'firebase-functions/lib/providers/https'
+import { format } from 'date-fns'
+import { utcToZonedTime } from 'date-fns-tz'
+import { ja } from 'date-fns/locale'
 
 admin.initializeApp()
 
@@ -145,3 +148,27 @@ exports.getNickName = functions.https.onCall(
     }
   }
 )
+
+exports.getServerTime = functions.https.onCall(async () => {
+  const serverDate = admin.firestore.Timestamp.now().toDate()
+
+  const timeZone = 'Asia/Tokyo'
+  const zonedDate = utcToZonedTime(serverDate, timeZone)
+
+  const year = format(zonedDate, 'yyyy', { locale: ja })
+  const month = format(zonedDate, 'M', { locale: ja })
+  const date = format(zonedDate, 'd', { locale: ja })
+  const day = format(zonedDate, 'E', { locale: ja })
+  const hour = format(zonedDate, 'HH', { locale: ja })
+  const minute = format(zonedDate, 'm', { locale: ja })
+
+  return {
+    original: zonedDate,
+    year,
+    month,
+    date,
+    day,
+    hour,
+    minute,
+  }
+})
