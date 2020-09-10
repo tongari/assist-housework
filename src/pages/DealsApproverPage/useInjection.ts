@@ -5,7 +5,7 @@ import { Roles, Status, GroupDateDeal, Now } from 'types'
 import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 import { ContentsContext } from 'contexts/ContentsProvider'
 
-export type RenderType = 'NotFound' | 'Running'
+export type RenderType = 'NotFound' | 'Running' | 'Calculation'
 
 type ResultProps = {
   isLoaded: boolean
@@ -48,6 +48,11 @@ const useInjection = (): ResultProps => {
         !(userInfo.state === Status.Calculation))
     ) {
       setRenderType('NotFound')
+      return
+    }
+
+    if (userInfo.state === Status.Calculation) {
+      setRenderType('Calculation')
     }
   }, [isAuthorizeContextLoaded, isContentsContextLoaded, userInfo, myUserId])
 

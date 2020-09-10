@@ -5,7 +5,7 @@ import { Paths } from 'types'
 import DealsAssistant from 'components/templates/DealsAssistant'
 import useInjection from './useInjection'
 
-const DealsApproverPage: React.FC = () => {
+const DealsAssistantPage: React.FC = () => {
   const {
     isLoaded,
     renderType,
@@ -19,6 +19,10 @@ const DealsApproverPage: React.FC = () => {
 
   if (renderType === 'NotFound') {
     return <Redirect to={Paths.NotFound} />
+  }
+
+  if (renderType === 'Calculation') {
+    return <Redirect to={Paths.CalculationAssistant} />
   }
 
   if (!isLoaded || !approverNickName) return <div>loading...</div>
@@ -35,4 +39,4 @@ const DealsApproverPage: React.FC = () => {
   )
 }
 
-export default DealsApproverPage
+export default DealsAssistantPage
