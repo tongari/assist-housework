@@ -9,15 +9,17 @@ interface Props {
   groupedDateDeals: GroupDateDeal[]
   budget: number
   totalPrice: number
+  unApprovePrice: number
   approveDealHandler: (dealId: string) => void
 }
 
-const WorkApprover: React.FC<Props> = ({
+const DealsApprover: React.FC<Props> = ({
   assistantNickname,
   now,
   groupedDateDeals,
   budget,
   totalPrice,
+  unApprovePrice,
   approveDealHandler,
 }) => {
   return (
@@ -25,11 +27,10 @@ const WorkApprover: React.FC<Props> = ({
       <p>
         {now.year}/{now.month}/{now.date}（{now.day}）
       </p>
-      <h1>{assistantNickname}さんのお手伝いを承認してください。</h1>
+      <h1>
+        {assistantNickname}さんとの{now.month}月の取引履歴
+      </h1>
       <div>
-        {groupedDateDeals.length === 0 && (
-          <p>本日はまだ、{assistantNickname}さんはお手伝いをしていません。</p>
-        )}
         {groupedDateDeals.map((groupedDateDeal, index) => {
           return (
             <dl key={index.toString()}>
@@ -42,14 +43,18 @@ const WorkApprover: React.FC<Props> = ({
                   <React.Fragment key={deal.id}>
                     <dd>
                       <span>{deal.itemLabel}</span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          approveDealHandler(deal.id)
-                        }}
-                      >
-                        承認
-                      </button>
+                      {deal.isApproved ? (
+                        <span>承認済</span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            approveDealHandler(deal.id)
+                          }}
+                        >
+                          承認
+                        </button>
+                      )}
                     </dd>
                   </React.Fragment>
                 )
@@ -58,10 +63,11 @@ const WorkApprover: React.FC<Props> = ({
           )
         })}
       </div>
-      <p>支払い合計 : {totalPrice}円</p>
+      <p>支払い合計額 : {totalPrice}円</p>
+      <p>未承認額 : {unApprovePrice}円</p>
       <p>残りの予算額 : {budget}円</p>
     </div>
   )
 }
 
-export default WorkApprover
+export default DealsApprover

@@ -15,6 +15,7 @@ type ResultProps = {
   items: Item[]
   budget: number
   totalPrice: number
+  unApprovePrice: number
   approverNickName: string
 }
 
@@ -75,7 +76,17 @@ const useInjection = (): ResultProps => {
   })
 
   const calculatedTotalPrice = deals.reduce((prev, next) => {
-    return prev + next.price
+    if (next.isApproved) {
+      return prev + next.price
+    }
+    return prev
+  }, 0)
+
+  const calculatedUnApprovePrice = deals.reduce((prev, next) => {
+    if (!next.isApproved) {
+      return prev + next.price
+    }
+    return prev
   }, 0)
 
   const calcBudget = () => {
@@ -93,6 +104,7 @@ const useInjection = (): ResultProps => {
     items: addedIsWorkedToItems,
     budget: calcBudget(),
     totalPrice: calculatedTotalPrice,
+    unApprovePrice: calculatedUnApprovePrice,
     approverNickName,
   }
 }

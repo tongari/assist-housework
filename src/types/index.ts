@@ -7,6 +7,7 @@ export enum Paths {
   SettingApprover = '/setting-approver',
   WorkAssistant = '/work-assistant',
   WorkApprover = '/work-approver',
+  DealsApprover = '/deals-approver',
   NotFound = '/404.html',
 }
 
@@ -53,4 +54,10 @@ export interface Deal {
   itemLabel: string
   price: number
   isApproved: boolean
+}
+
+export interface GroupDateDeal {
+  date: string
+  day: string
+  deals: Deal[]
 }

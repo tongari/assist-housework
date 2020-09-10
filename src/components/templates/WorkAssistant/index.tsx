@@ -9,6 +9,7 @@ interface Props {
   items: Item[]
   budget: number
   totalPrice: number
+  unApprovePrice: number
   addDealHandler: (item: Item) => void
 }
 
@@ -18,6 +19,7 @@ const WorkAssistant: React.FC<Props> = ({
   items,
   budget,
   totalPrice,
+  unApprovePrice,
   addDealHandler,
 }) => {
   return (
@@ -43,7 +45,8 @@ const WorkAssistant: React.FC<Props> = ({
           )
         })}
       </ul>
-      <p>お小遣い予定額 : {totalPrice}円</p>
+      <p>お小遣い合計額 : {totalPrice}円</p>
+      <p>未承認額 : {unApprovePrice}円</p>
       <p>残りの予算額 : {budget}円</p>
     </div>
   )

@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react'
 import * as firebase from 'firebase/app'
 
-import { Roles, Status, Now, GroupDateDeal } from 'types'
+import { Roles, Status, GroupDateDeal, Now } from 'types'
 import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 import { ContentsContext } from 'contexts/ContentsProvider'
 
@@ -11,10 +11,11 @@ type ResultProps = {
   isLoaded: boolean
   renderType: RenderType
   now: Now
+  groupedDateDeals: GroupDateDeal[]
   budget: number
   totalPrice: number
+  unApprovePrice: number
   assistantNickname?: string
-  groupedDateDeals: GroupDateDeal[]
 }
 
 const useInjection = (): ResultProps => {
@@ -46,13 +47,19 @@ const useInjection = (): ResultProps => {
     }
   }, [isAuthorizeContextLoaded, isContentsContextLoaded, userInfo, myUserId])
 
-  const excludedIsApprovedDeal = deals.filter((deal) => !deal.isApproved)
+  // TODO: ロジック共通化できる
+  const calculatedTotalPrice = deals.reduce((prev, next) => {
+    if (next.isApproved) {
+      return prev + next.price
+    }
+    return prev
+  }, 0)
 
   // TODO: ロジック共通化できる
   const groupDateDeals = () => {
     const result: GroupDateDeal[] = []
 
-    excludedIsApprovedDeal.forEach((deal) => {
+    deals.forEach((deal) => {
       const findIndex = result.findIndex(
         (resultItem) => resultItem.date === deal.date
       )
@@ -71,8 +78,8 @@ const useInjection = (): ResultProps => {
   }
 
   // TODO: ロジック共通化できる
-  const calculatedTotalPrice = deals.reduce((prev, next) => {
-    if (next.isApproved) {
+  const calculatedUnApprovePrice = deals.reduce((prev, next) => {
+    if (!next.isApproved) {
       return prev + next.price
     }
     return prev
@@ -94,6 +101,7 @@ const useInjection = (): ResultProps => {
     groupedDateDeals: groupDateDeals(),
     budget: calcBudget(),
     totalPrice: calculatedTotalPrice,
+    unApprovePrice: calculatedUnApprovePrice,
     assistantNickname,
   }
 }
