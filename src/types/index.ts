@@ -9,6 +9,8 @@ export enum Paths {
   WorkApprover = '/work-approver',
   DealsApprover = '/deals-approver',
   DealsAssistant = '/deals-assistant',
+  CalculationAssistant = '/calculation-assistant',
+  CalculationApprover = '/calculation-approver',
   NotFound = '/404.html',
 }
 

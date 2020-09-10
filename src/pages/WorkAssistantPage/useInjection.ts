@@ -6,7 +6,7 @@ import { Roles, Status, Item, Now } from 'types'
 import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 import { ContentsContext } from 'contexts/ContentsProvider'
 
-export type RenderType = 'NotFound' | 'Running'
+export type RenderType = 'NotFound' | 'Running' | 'Calculation'
 
 type ResultProps = {
   isLoaded: boolean
@@ -59,9 +59,15 @@ const useInjection = (): ResultProps => {
 
     if (
       userInfo.role !== Roles.Assistant ||
-      userInfo.state !== Status.Running
+      (!(userInfo.state === Status.Running) &&
+        !(userInfo.state === Status.Calculation))
     ) {
       setRenderType('NotFound')
+      return
+    }
+
+    if (userInfo.state === Status.Calculation) {
+      setRenderType('Calculation')
     }
   }, [isAuthorizeContextLoaded, isContentsContextLoaded, userInfo, myUserId])
 

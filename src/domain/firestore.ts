@@ -258,3 +258,17 @@ export const approveDeal = async (dealId: string): Promise<void> => {
     updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
   })
 }
+
+export const updateCalculationState = async (): Promise<void> => {
+  const statusRef = firebase.firestore().collection('status')
+  const userDoc = userDocument()
+  await userDoc.set(
+    {
+      currentWatchUser: {
+        statusRef: statusRef.doc(Status.Calculation),
+      },
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    },
+    { merge: true }
+  )
+}

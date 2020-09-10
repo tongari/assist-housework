@@ -54,7 +54,8 @@ const useInjection = (): ResultProps => {
 
     if (
       userInfo.role !== Roles.Assistant ||
-      userInfo.state !== Status.Running
+      (!(userInfo.state === Status.Running) &&
+        !(userInfo.state === Status.Calculation))
     ) {
       setRenderType('NotFound')
     }

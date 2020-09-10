@@ -41,7 +41,11 @@ const useInjection = (): ResultProps => {
       return
     }
 
-    if (userInfo.role !== Roles.Approver || userInfo.state !== Status.Running) {
+    if (
+      userInfo.role !== Roles.Approver ||
+      (!(userInfo.state === Status.Running) &&
+        !(userInfo.state === Status.Calculation))
+    ) {
       setRenderType('NotFound')
     }
   }, [isAuthorizeContextLoaded, isContentsContextLoaded, userInfo, myUserId])
