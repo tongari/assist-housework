@@ -1,12 +1,12 @@
 import React from 'react'
-import { Now, Deal } from 'types'
+import { Now, GroupDateDeal } from 'types'
 
 // TODO: コンポーネントを適切に分割する
 
 interface Props {
   assistantNickname: string
   now: Now
-  deals: Deal[]
+  groupedDateDeals: GroupDateDeal[]
   budget: number
   totalPrice: number
   approveDealHandler: (dealId: string) => void
@@ -15,7 +15,7 @@ interface Props {
 const WorkApprover: React.FC<Props> = ({
   assistantNickname,
   now,
-  deals,
+  groupedDateDeals,
   budget,
   totalPrice,
   approveDealHandler,
@@ -27,25 +27,33 @@ const WorkApprover: React.FC<Props> = ({
       </p>
       <h1>{assistantNickname}さんのお手伝いを承認してください。</h1>
       <div>
-        {deals.map((deal, index) => {
+        {groupedDateDeals.length === 0 && (
+          <p>本日はまだ、{assistantNickname}さんはお手伝いをしていません。</p>
+        )}
+        {groupedDateDeals.map((groupedDateDeal, index) => {
           return (
             <dl key={index.toString()}>
               <dt>
-                <p>
-                  {deal.year}/{deal.month}/{deal.date}（{deal.day}）
-                </p>
+                {now.year}/{now.month}/{groupedDateDeal.date}（
+                {groupedDateDeal.day}）
               </dt>
-              <dd>{deal.itemLabel}</dd>
-              <dd>
-                <button
-                  type="button"
-                  onClick={() => {
-                    approveDealHandler(deal.id)
-                  }}
-                >
-                  承認
-                </button>
-              </dd>
+              {groupedDateDeal.deals.map((deal) => {
+                return (
+                  <React.Fragment key={deal.id}>
+                    <dd>
+                      <span>{deal.itemLabel}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          approveDealHandler(deal.id)
+                        }}
+                      >
+                        承認
+                      </button>
+                    </dd>
+                  </React.Fragment>
+                )
+              })}
             </dl>
           )
         })}

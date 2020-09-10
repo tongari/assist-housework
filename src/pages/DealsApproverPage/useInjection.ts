@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react'
 import * as firebase from 'firebase/app'
 
-import { Roles, Status, Deal, Now } from 'types'
+import { Roles, Status, GroupDateDeal, Now } from 'types'
 import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 import { ContentsContext } from 'contexts/ContentsProvider'
 
@@ -11,7 +11,7 @@ type ResultProps = {
   isLoaded: boolean
   renderType: RenderType
   now: Now
-  deals: Deal[]
+  groupedDateDeals: GroupDateDeal[]
   budget: number
   totalPrice: number
   unApprovePrice: number
@@ -47,6 +47,7 @@ const useInjection = (): ResultProps => {
     }
   }, [isAuthorizeContextLoaded, isContentsContextLoaded, userInfo, myUserId])
 
+  // TODO: ロジック共通化できる
   const calculatedTotalPrice = deals.reduce((prev, next) => {
     if (next.isApproved) {
       return prev + next.price
@@ -54,6 +55,29 @@ const useInjection = (): ResultProps => {
     return prev
   }, 0)
 
+  // TODO: ロジック共通化できる
+  const groupDateDeals = () => {
+    const result: GroupDateDeal[] = []
+
+    deals.forEach((deal) => {
+      const findIndex = result.findIndex(
+        (resultItem) => resultItem.date === deal.date
+      )
+
+      if (findIndex < 0) {
+        result.push({
+          date: deal.date,
+          day: deal.day,
+          deals: [deal],
+        })
+      } else {
+        result[findIndex].deals.push(deal)
+      }
+    })
+    return result
+  }
+
+  // TODO: ロジック共通化できる
   const calculatedUnApprovePrice = deals.reduce((prev, next) => {
     if (!next.isApproved) {
       return prev + next.price
@@ -61,6 +85,7 @@ const useInjection = (): ResultProps => {
     return prev
   }, 0)
 
+  // TODO: ロジック共通化できる
   const calcBudget = () => {
     if (budgets) {
       const base = budgets[0]?.budget ?? 0
@@ -73,7 +98,7 @@ const useInjection = (): ResultProps => {
     isLoaded: isAuthorizeContextLoaded && isContentsContextLoaded,
     renderType,
     now,
-    deals,
+    groupedDateDeals: groupDateDeals(),
     budget: calcBudget(),
     totalPrice: calculatedTotalPrice,
     unApprovePrice: calculatedUnApprovePrice,

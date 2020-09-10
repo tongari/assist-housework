@@ -11,7 +11,7 @@ const WorkApproverPage: React.FC = () => {
     isLoaded,
     renderType,
     now,
-    deals,
+    groupedDateDeals,
     budget,
     totalPrice,
     assistantNickname,
@@ -31,7 +31,7 @@ const WorkApproverPage: React.FC = () => {
     <WorkApprover
       assistantNickname={assistantNickname}
       now={now}
-      deals={deals}
+      groupedDateDeals={groupedDateDeals}
       budget={budget}
       totalPrice={totalPrice}
       approveDealHandler={approveDealHandler}

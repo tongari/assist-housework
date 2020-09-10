@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react'
 import * as firebase from 'firebase/app'
 
-import { Roles, Status, Deal, Now } from 'types'
+import { Roles, Status, Now, GroupDateDeal } from 'types'
 import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 import { ContentsContext } from 'contexts/ContentsProvider'
 
@@ -11,10 +11,10 @@ type ResultProps = {
   isLoaded: boolean
   renderType: RenderType
   now: Now
-  deals: Deal[]
   budget: number
   totalPrice: number
   assistantNickname?: string
+  groupedDateDeals: GroupDateDeal[]
 }
 
 const useInjection = (): ResultProps => {
@@ -48,6 +48,29 @@ const useInjection = (): ResultProps => {
 
   const excludedIsApprovedDeal = deals.filter((deal) => !deal.isApproved)
 
+  // TODO: ロジック共通化できる
+  const groupDateDeals = () => {
+    const result: GroupDateDeal[] = []
+
+    excludedIsApprovedDeal.forEach((deal) => {
+      const findIndex = result.findIndex(
+        (resultItem) => resultItem.date === deal.date
+      )
+
+      if (findIndex < 0) {
+        result.push({
+          date: deal.date,
+          day: deal.day,
+          deals: [deal],
+        })
+      } else {
+        result[findIndex].deals.push(deal)
+      }
+    })
+    return result
+  }
+
+  // TODO: ロジック共通化できる
   const calculatedTotalPrice = deals.reduce((prev, next) => {
     if (next.isApproved) {
       return prev + next.price
@@ -55,6 +78,7 @@ const useInjection = (): ResultProps => {
     return prev
   }, 0)
 
+  // TODO: ロジック共通化できる
   const calcBudget = () => {
     if (budgets) {
       const base = budgets[0]?.budget ?? 0
@@ -67,7 +91,7 @@ const useInjection = (): ResultProps => {
     isLoaded: isAuthorizeContextLoaded && isContentsContextLoaded,
     renderType,
     now,
-    deals: excludedIsApprovedDeal,
+    groupedDateDeals: groupDateDeals(),
     budget: calcBudget(),
     totalPrice: calculatedTotalPrice,
     assistantNickname,

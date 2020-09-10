@@ -55,3 +55,9 @@ export interface Deal {
   price: number
   isApproved: boolean
 }
+
+export interface GroupDateDeal {
+  date: string
+  day: string
+  deals: Deal[]
+}

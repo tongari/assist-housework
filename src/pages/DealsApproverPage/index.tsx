@@ -11,7 +11,7 @@ const DealsApproverPage: React.FC = () => {
     isLoaded,
     renderType,
     now,
-    deals,
+    groupedDateDeals,
     budget,
     totalPrice,
     unApprovePrice,
@@ -32,7 +32,7 @@ const DealsApproverPage: React.FC = () => {
     <DealsApprover
       assistantNickname={assistantNickname}
       now={now}
-      deals={deals}
+      groupedDateDeals={groupedDateDeals}
       budget={budget}
       totalPrice={totalPrice}
       unApprovePrice={unApprovePrice}

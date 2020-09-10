@@ -1,12 +1,12 @@
 import React from 'react'
-import { Now, Deal } from 'types'
+import { Now, GroupDateDeal } from 'types'
 
 // TODO: コンポーネントを適切に分割する
 
 interface Props {
   assistantNickname: string
   now: Now
-  deals: Deal[]
+  groupedDateDeals: GroupDateDeal[]
   budget: number
   totalPrice: number
   unApprovePrice: number
@@ -16,7 +16,7 @@ interface Props {
 const DealsApprover: React.FC<Props> = ({
   assistantNickname,
   now,
-  deals,
+  groupedDateDeals,
   budget,
   totalPrice,
   unApprovePrice,
@@ -31,29 +31,34 @@ const DealsApprover: React.FC<Props> = ({
         {assistantNickname}さんとの{now.month}月の取引履歴
       </h1>
       <div>
-        {deals.map((deal, index) => {
+        {groupedDateDeals.map((groupedDateDeal, index) => {
           return (
             <dl key={index.toString()}>
               <dt>
-                <p>
-                  {deal.year}/{deal.month}/{deal.date}（{deal.day}）
-                </p>
+                {now.year}/{now.month}/{groupedDateDeal.date}（
+                {groupedDateDeal.day}）
               </dt>
-              <dd>{deal.itemLabel}</dd>
-              <dd>
-                {deal.isApproved ? (
-                  <p>承認済</p>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      approveDealHandler(deal.id)
-                    }}
-                  >
-                    承認
-                  </button>
-                )}
-              </dd>
+              {groupedDateDeal.deals.map((deal) => {
+                return (
+                  <React.Fragment key={deal.id}>
+                    <dd>
+                      <span>{deal.itemLabel}</span>
+                      {deal.isApproved ? (
+                        <span>承認済</span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            approveDealHandler(deal.id)
+                          }}
+                        >
+                          承認
+                        </button>
+                      )}
+                    </dd>
+                  </React.Fragment>
+                )
+              })}
             </dl>
           )
         })}
