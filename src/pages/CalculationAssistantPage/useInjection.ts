@@ -15,6 +15,7 @@ type ResultProps = {
   totalPrice: number
   unApprovePrice: number
   approverNickName: string
+  watchMonth: string
 }
 
 const useInjection = (): ResultProps => {
@@ -22,7 +23,9 @@ const useInjection = (): ResultProps => {
 
   const { isAuthorizeContextLoaded, userInfo } = useContext(AuthorizedContext)
 
-  const { isContentsContextLoaded, now, deals } = useContext(ContentsContext)
+  const { isContentsContextLoaded, now, calculationDeals } = useContext(
+    ContentsContext
+  )
 
   // local state
   const [renderType, setRenderType] = useState<RenderType>('Calculation')
@@ -63,7 +66,7 @@ const useInjection = (): ResultProps => {
   }, [isAuthorizeContextLoaded, isContentsContextLoaded, userInfo, myUserId])
 
   // TODO: ロジック共通化できる
-  const calculatedTotalPrice = deals.reduce((prev, next) => {
+  const calculatedTotalPrice = calculationDeals.reduce((prev, next) => {
     if (next.isApproved) {
       return prev + next.price
     }
@@ -71,7 +74,7 @@ const useInjection = (): ResultProps => {
   }, 0)
 
   // TODO: ロジック共通化できる
-  const calculatedUnApprovePrice = deals.reduce((prev, next) => {
+  const calculatedUnApprovePrice = calculationDeals.reduce((prev, next) => {
     if (!next.isApproved) {
       return prev + next.price
     }
@@ -85,6 +88,7 @@ const useInjection = (): ResultProps => {
     totalPrice: calculatedTotalPrice,
     unApprovePrice: calculatedUnApprovePrice,
     approverNickName,
+    watchMonth: userInfo?.month ?? '',
   }
 }
 

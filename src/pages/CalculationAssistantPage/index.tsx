@@ -13,6 +13,7 @@ const CalculationAssistantPage: React.FC = () => {
     totalPrice,
     unApprovePrice,
     approverNickName,
+    watchMonth,
   } = useInjection()
 
   if (renderType === 'NotFound') {
@@ -31,6 +32,7 @@ const CalculationAssistantPage: React.FC = () => {
       totalPrice={totalPrice}
       unApprovePrice={unApprovePrice}
       approverNickName={approverNickName}
+      watchMonth={watchMonth}
     />
   )
 }

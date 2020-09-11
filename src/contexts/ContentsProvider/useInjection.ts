@@ -27,6 +27,7 @@ export interface InjectionResult {
   budgets: Budget[]
   deals: Deal[]
   todayDeals: Deal[]
+  calculationDeals: Deal[]
 }
 
 const useInjection = (): InjectionResult => {
@@ -79,6 +80,12 @@ const useInjection = (): InjectionResult => {
       .where('date', '==', now?.date ?? null)
   )
 
+  const [calculationDeals, isCalculationDealsLoading] = useCollection(
+    dealsCollection(getUserId(), getApproverId())
+      .where('year', '==', userInfo?.year ?? null)
+      .where('month', '==', userInfo?.month ?? null)
+  )
+
   useEffect(() => {
     fetchServerTime().then((res) => {
       setNow(res.data)
@@ -93,6 +100,7 @@ const useInjection = (): InjectionResult => {
       !isBudgetsLoading &&
       !isDealsLoading &&
       !isTodayDealsLoading &&
+      !isCalculationDealsLoading &&
       now
     ) {
       setIsContentsContextLoaded(true)
@@ -104,6 +112,7 @@ const useInjection = (): InjectionResult => {
     isBudgetsLoading,
     isDealsLoading,
     isTodayDealsLoading,
+    isCalculationDealsLoading,
     now,
   ])
 
@@ -120,6 +129,7 @@ const useInjection = (): InjectionResult => {
     budgets: convertedBudgets(budgets),
     deals: convertedDeals(deals),
     todayDeals: convertedDeals(todayDeals),
+    calculationDeals: convertedDeals(calculationDeals),
   }
 }
 

@@ -259,18 +259,23 @@ export const approveDeal = async (dealId: string): Promise<void> => {
   })
 }
 
-export const updateCalculationState = async (): Promise<void> => {
+export const fixCalculation = async (now: Now): Promise<void> => {
   const statusRef = firebase.firestore().collection('status')
-  const userDoc = userDocument()
-  await userDoc.set(
-    {
-      currentWatchUser: {
-        statusRef: statusRef.doc(Status.Calculation),
-      },
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  const approver = userDocument()
+  const assistantId = (await approver.get()).get('currentWatchUser').id
+  const assistant = userDocument(assistantId)
+
+  const updateData = {
+    currentWatchUser: {
+      statusRef: statusRef.doc(Status.Running),
+      year: now.year,
+      month: now.month,
     },
-    { merge: true }
-  )
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  }
+
+  await approver.set(updateData, { merge: true })
+  await assistant.set(updateData, { merge: true })
 }
 
 export const fetchServerTime = async (): Promise<

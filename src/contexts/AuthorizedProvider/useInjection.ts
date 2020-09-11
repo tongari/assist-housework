@@ -18,6 +18,8 @@ interface UserInfo {
   state: Status | null
   watchId: string | null
   address?: string
+  year?: string
+  month?: string
 }
 
 const useInjection = (): InjectionResult => {
@@ -36,6 +38,8 @@ const useInjection = (): InjectionResult => {
       state: userDoc?.get('currentWatchUser')?.statusRef.id,
       watchId: userDoc?.get('currentWatchUser')?.id,
       address: userDoc?.get('currentWatchUser')?.inviteAddress,
+      year: userDoc?.get('currentWatchUser')?.year,
+      month: userDoc?.get('currentWatchUser')?.month,
     }
   }
 
