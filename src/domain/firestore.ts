@@ -273,22 +273,24 @@ export const updateCalculationState = async (): Promise<void> => {
   )
 }
 
-export const fetchServerTime = async (): Promise<void> => {
+export const fetchServerTime = async (): Promise<
+  firebase.functions.HttpsCallableResult
+> => {
   const userDoc = userDocument()
   const currentYear = (await userDoc.get()).get('currentWatchUser').year
   const currentMonth = (await userDoc.get()).get('currentWatchUser').month
   const currentState = (await userDoc.get()).get('currentWatchUser').statusRef
     .id
 
+  const getServerTime = firebase.functions().httpsCallable('getServerTime')
+  const result = await getServerTime()
+
   if (
     !(currentState === Status.Running) &&
     !(currentState === Status.Calculation)
   ) {
-    return
+    return result
   }
-
-  const getServerTime = firebase.functions().httpsCallable('getServerTime')
-  const result = await getServerTime()
 
   const statusRef = firebase.firestore().collection('status')
 
@@ -319,4 +321,6 @@ export const fetchServerTime = async (): Promise<void> => {
       { merge: true }
     )
   }
+
+  return result
 }

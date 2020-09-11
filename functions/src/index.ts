@@ -163,7 +163,7 @@ exports.getServerTime = functions.https.onCall(async () => {
   const minute = format(zonedDate, 'm', { locale: ja })
 
   return {
-    original: zonedDate,
+    original: zonedDate.toUTCString(),
     year,
     month,
     date,

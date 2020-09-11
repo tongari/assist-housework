@@ -1,7 +1,5 @@
 import { useState, useEffect, useContext } from 'react'
 import * as firebase from 'firebase/app'
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
 
 import { useCollection, useDocument } from 'react-firebase-hooks/firestore'
 import {
@@ -21,12 +19,6 @@ import {
 
 import { fetchServerTime } from 'domain/firestore'
 
-// TODO: サーバタイムに差し替える
-const year = format(new Date(), 'yyyy', { locale: ja })
-const month = format(new Date(), 'M', { locale: ja })
-const date = format(new Date(), 'd', { locale: ja })
-const day = format(new Date(), 'E', { locale: ja })
-
 export interface InjectionResult {
   isContentsContextLoaded: boolean
   assistantNickname?: string
@@ -42,6 +34,7 @@ const useInjection = (): InjectionResult => {
 
   // local state
   const [isContentsContextLoaded, setIsContentsContextLoaded] = useState(false)
+  const [now, setNow] = useState<Now | null>(null)
 
   // fetch data
   // Only Use Approver
@@ -69,25 +62,27 @@ const useInjection = (): InjectionResult => {
 
   const [budgets, isBudgetsLoading] = useCollection(
     budgetsCollection(getUserId(), getApproverId())
-      .where('year', '==', year)
-      .where('month', '==', month)
+      .where('year', '==', now?.year ?? null)
+      .where('month', '==', now?.month ?? null)
   )
 
   const [deals, isDealsLoading] = useCollection(
     dealsCollection(getUserId(), getApproverId())
-      .where('year', '==', year)
-      .where('month', '==', month)
+      .where('year', '==', now?.year ?? null)
+      .where('month', '==', now?.month ?? null)
   )
 
   const [todayDeals, isTodayDealsLoading] = useCollection(
     dealsCollection(getUserId(), getApproverId())
-      .where('year', '==', year)
-      .where('month', '==', month)
-      .where('date', '==', date)
+      .where('year', '==', now?.year ?? null)
+      .where('month', '==', now?.month ?? null)
+      .where('date', '==', now?.date ?? null)
   )
 
   useEffect(() => {
-    fetchServerTime()
+    fetchServerTime().then((res) => {
+      setNow(res.data)
+    })
   }, [])
 
   useEffect(() => {
@@ -97,7 +92,8 @@ const useInjection = (): InjectionResult => {
       !isItemsLoading &&
       !isBudgetsLoading &&
       !isDealsLoading &&
-      !isTodayDealsLoading
+      !isTodayDealsLoading &&
+      now
     ) {
       setIsContentsContextLoaded(true)
     }
@@ -108,16 +104,17 @@ const useInjection = (): InjectionResult => {
     isBudgetsLoading,
     isDealsLoading,
     isTodayDealsLoading,
+    now,
   ])
 
   return {
     isContentsContextLoaded,
     assistantNickname: assistantUserDoc?.get('nickName'),
     now: {
-      year,
-      month,
-      date,
-      day,
+      year: now?.year ?? '',
+      month: now?.month ?? '',
+      date: now?.date ?? '',
+      day: now?.day ?? '',
     },
     items: convertedItems(items),
     budgets: convertedBudgets(budgets),

@@ -32,6 +32,9 @@ export interface Now {
   month: string
   date: string
   day: string
+  original?: string
+  hour?: string
+  minute?: string
 }
 
 export interface Item {
