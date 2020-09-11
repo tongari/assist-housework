@@ -11,6 +11,9 @@ const RootPage: React.FC = () => {
   }
 
   const renderApprover = (): React.ReactElement => {
+    if (userInfo?.state === Status.Calculation) {
+      return <Redirect to={Paths.CalculationApprover} />
+    }
     if (userInfo?.state === Status.Running) {
       return <Redirect to={Paths.WorkApprover} />
     }
@@ -24,6 +27,9 @@ const RootPage: React.FC = () => {
   }
 
   const renderAssistant = (): React.ReactElement => {
+    if (userInfo?.state === Status.Calculation) {
+      return <Redirect to={Paths.CalculationAssistant} />
+    }
     if (userInfo?.state === Status.Running) {
       return <Redirect to={Paths.WorkAssistant} />
     }

@@ -258,3 +258,74 @@ export const approveDeal = async (dealId: string): Promise<void> => {
     updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
   })
 }
+
+export const fixCalculation = async (now: Now): Promise<void> => {
+  const statusRef = firebase.firestore().collection('status')
+  const approver = userDocument()
+  const assistantId = (await approver.get()).get('currentWatchUser').id
+  const assistant = userDocument(assistantId)
+
+  const updateData = {
+    currentWatchUser: {
+      statusRef: statusRef.doc(Status.Running),
+      year: now.year,
+      month: now.month,
+    },
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  }
+
+  await approver.set(updateData, { merge: true })
+  await assistant.set(updateData, { merge: true })
+}
+
+export const fetchServerTime = async (): Promise<
+  firebase.functions.HttpsCallableResult
+> => {
+  const userDoc = userDocument()
+  const currentYear = (await userDoc.get()).get('currentWatchUser').year
+  const currentMonth = (await userDoc.get()).get('currentWatchUser').month
+  const currentState = (await userDoc.get()).get('currentWatchUser').statusRef
+    .id
+
+  const getServerTime = firebase.functions().httpsCallable('getServerTime')
+  const result = await getServerTime()
+
+  if (
+    !(currentState === Status.Running) &&
+    !(currentState === Status.Calculation)
+  ) {
+    return result
+  }
+
+  const statusRef = firebase.firestore().collection('status')
+
+  const { year, month } = result?.data
+
+  if (currentYear && (year !== currentYear || month !== currentMonth)) {
+    await userDoc.set(
+      {
+        currentWatchUser: {
+          statusRef: statusRef.doc(Status.Calculation),
+        },
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    )
+  }
+
+  // 新規ユーザの場合
+  if (!currentYear) {
+    await userDoc.set(
+      {
+        currentWatchUser: {
+          year,
+          month,
+        },
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    )
+  }
+
+  return result
+}

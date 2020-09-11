@@ -18,6 +18,8 @@ import WorkAssistantPage from 'pages/WorkAssistantPage'
 import WorkApproverPage from 'pages/WorkApproverPage'
 import DealsApproverPage from 'pages/DealsApproverPage'
 import DealsAssistantPage from 'pages/DealsAssistantPage'
+import CalculationAssistantPage from 'pages/CalculationAssistantPage'
+import CalculationApproverPage from 'pages/CalculationApproverPage'
 
 const App: React.FC = () => {
   return (
@@ -67,6 +69,16 @@ const App: React.FC = () => {
               <Route exact path={Paths.DealsAssistant}>
                 <ContentsProvider>
                   <DealsAssistantPage />
+                </ContentsProvider>
+              </Route>
+              <Route exact path={Paths.CalculationAssistant}>
+                <ContentsProvider>
+                  <CalculationAssistantPage />
+                </ContentsProvider>
+              </Route>
+              <Route exact path={Paths.CalculationApprover}>
+                <ContentsProvider>
+                  <CalculationApproverPage />
                 </ContentsProvider>
               </Route>
               <Route

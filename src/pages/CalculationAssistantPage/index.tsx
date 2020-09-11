@@ -2,41 +2,39 @@ import React from 'react'
 import { Redirect } from 'react-router-dom'
 
 import { Paths } from 'types'
-import DealsAssistant from 'components/templates/DealsAssistant'
+import CalculationAssistant from 'components/templates/CalculationAssistant'
 import useInjection from './useInjection'
 
-const DealsAssistantPage: React.FC = () => {
+const CalculationAssistantPage: React.FC = () => {
   const {
     isLoaded,
     renderType,
     now,
-    groupedDateDeals,
-    budget,
     totalPrice,
     unApprovePrice,
     approverNickName,
+    watchMonth,
   } = useInjection()
 
   if (renderType === 'NotFound') {
     return <Redirect to={Paths.NotFound} />
   }
 
-  if (renderType === 'Calculation') {
-    return <Redirect to={Paths.CalculationAssistant} />
+  if (renderType === 'Running') {
+    return <Redirect to={Paths.WorkAssistant} />
   }
 
   if (!isLoaded || !approverNickName) return <div>loading...</div>
 
   return (
-    <DealsAssistant
-      approverNickName={approverNickName}
+    <CalculationAssistant
       now={now}
-      groupedDateDeals={groupedDateDeals}
-      budget={budget}
       totalPrice={totalPrice}
       unApprovePrice={unApprovePrice}
+      approverNickName={approverNickName}
+      watchMonth={watchMonth}
     />
   )
 }
 
-export default DealsAssistantPage
+export default CalculationAssistantPage

@@ -29,6 +29,10 @@ const WorkAssistantPage: React.FC = () => {
     return <Redirect to={Paths.NotFound} />
   }
 
+  if (renderType === 'Calculation') {
+    return <Redirect to={Paths.CalculationAssistant} />
+  }
+
   if (!isLoaded || !approverNickName) return <div>loading...</div>
 
   return (

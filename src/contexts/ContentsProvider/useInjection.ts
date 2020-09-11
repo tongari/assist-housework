@@ -1,7 +1,5 @@
 import { useState, useEffect, useContext } from 'react'
 import * as firebase from 'firebase/app'
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
 
 import { useCollection, useDocument } from 'react-firebase-hooks/firestore'
 import {
@@ -19,10 +17,7 @@ import {
   convertedDeals,
 } from 'contexts/ContentsProvider/converter'
 
-const year = format(new Date(), 'yyyy', { locale: ja })
-const month = format(new Date(), 'M', { locale: ja })
-const date = format(new Date(), 'd', { locale: ja })
-const day = format(new Date(), 'E', { locale: ja })
+import { fetchServerTime } from 'domain/firestore'
 
 export interface InjectionResult {
   isContentsContextLoaded: boolean
@@ -32,6 +27,7 @@ export interface InjectionResult {
   budgets: Budget[]
   deals: Deal[]
   todayDeals: Deal[]
+  calculationDeals: Deal[]
 }
 
 const useInjection = (): InjectionResult => {
@@ -39,6 +35,7 @@ const useInjection = (): InjectionResult => {
 
   // local state
   const [isContentsContextLoaded, setIsContentsContextLoaded] = useState(false)
+  const [now, setNow] = useState<Now | null>(null)
 
   // fetch data
   // Only Use Approver
@@ -66,22 +63,34 @@ const useInjection = (): InjectionResult => {
 
   const [budgets, isBudgetsLoading] = useCollection(
     budgetsCollection(getUserId(), getApproverId())
-      .where('year', '==', year)
-      .where('month', '==', month)
+      .where('year', '==', now?.year ?? null)
+      .where('month', '==', now?.month ?? null)
   )
 
   const [deals, isDealsLoading] = useCollection(
     dealsCollection(getUserId(), getApproverId())
-      .where('year', '==', year)
-      .where('month', '==', month)
+      .where('year', '==', now?.year ?? null)
+      .where('month', '==', now?.month ?? null)
   )
 
   const [todayDeals, isTodayDealsLoading] = useCollection(
     dealsCollection(getUserId(), getApproverId())
-      .where('year', '==', year)
-      .where('month', '==', month)
-      .where('date', '==', date)
+      .where('year', '==', now?.year ?? null)
+      .where('month', '==', now?.month ?? null)
+      .where('date', '==', now?.date ?? null)
   )
+
+  const [calculationDeals, isCalculationDealsLoading] = useCollection(
+    dealsCollection(getUserId(), getApproverId())
+      .where('year', '==', userInfo?.year ?? null)
+      .where('month', '==', userInfo?.month ?? null)
+  )
+
+  useEffect(() => {
+    fetchServerTime().then((res) => {
+      setNow(res.data)
+    })
+  }, [])
 
   useEffect(() => {
     if (
@@ -90,7 +99,9 @@ const useInjection = (): InjectionResult => {
       !isItemsLoading &&
       !isBudgetsLoading &&
       !isDealsLoading &&
-      !isTodayDealsLoading
+      !isTodayDealsLoading &&
+      !isCalculationDealsLoading &&
+      now
     ) {
       setIsContentsContextLoaded(true)
     }
@@ -101,21 +112,24 @@ const useInjection = (): InjectionResult => {
     isBudgetsLoading,
     isDealsLoading,
     isTodayDealsLoading,
+    isCalculationDealsLoading,
+    now,
   ])
 
   return {
     isContentsContextLoaded,
     assistantNickname: assistantUserDoc?.get('nickName'),
     now: {
-      year,
-      month,
-      date,
-      day,
+      year: now?.year ?? '',
+      month: now?.month ?? '',
+      date: now?.date ?? '',
+      day: now?.day ?? '',
     },
     items: convertedItems(items),
     budgets: convertedBudgets(budgets),
     deals: convertedDeals(deals),
     todayDeals: convertedDeals(todayDeals),
+    calculationDeals: convertedDeals(calculationDeals),
   }
 }
 

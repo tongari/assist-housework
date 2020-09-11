@@ -11,7 +11,10 @@ export type RenderType = 'NotFound' | 'Setting' | 'Running'
 type Props = {
   isLoaded: boolean
   renderType: RenderType
-} & Omit<ContentsInjectionsResult, 'isContentsContextLoaded' | 'todayDeals'>
+} & Omit<
+  ContentsInjectionsResult,
+  'isContentsContextLoaded' | 'todayDeals' | 'calculationDeals'
+>
 
 const useInjection = (): Props => {
   const myUserId = firebase.auth().currentUser?.uid

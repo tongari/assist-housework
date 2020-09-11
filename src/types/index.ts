@@ -9,6 +9,8 @@ export enum Paths {
   WorkApprover = '/work-approver',
   DealsApprover = '/deals-approver',
   DealsAssistant = '/deals-assistant',
+  CalculationAssistant = '/calculation-assistant',
+  CalculationApprover = '/calculation-approver',
   NotFound = '/404.html',
 }
 
@@ -30,6 +32,9 @@ export interface Now {
   month: string
   date: string
   day: string
+  original?: string
+  hour?: string
+  minute?: string
 }
 
 export interface Item {
