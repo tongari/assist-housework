@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext } from 'react'
-import * as firebase from 'firebase/app'
 
 import { Roles, Status, Now } from 'types'
 import { fetchNickName } from 'domain/firestore'
 import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 import { ContentsContext } from 'contexts/ContentsProvider'
+import { CalculationContext } from 'contexts/CalculationProvider'
 
 export type RenderType = 'NotFound' | 'Calculation' | 'Running'
 
@@ -19,13 +19,15 @@ type ResultProps = {
 }
 
 const useInjection = (): ResultProps => {
-  const myUserId = firebase.auth().currentUser?.uid
-
   const { isAuthorizeContextLoaded, userInfo } = useContext(AuthorizedContext)
-
-  const { isContentsContextLoaded, now, calculationDeals } = useContext(
-    ContentsContext
-  )
+  const { now } = useContext(ContentsContext)
+  const {
+    isCalculationContextLoaded,
+    totalPrice,
+    unApprovePrice,
+    watchMonth,
+    isNotFound,
+  } = useContext(CalculationContext)
 
   // local state
   const [renderType, setRenderType] = useState<RenderType>('Calculation')
@@ -44,51 +46,31 @@ const useInjection = (): ResultProps => {
   }, [isAuthorizeContextLoaded, userInfo])
 
   useEffect(() => {
-    if (!isAuthorizeContextLoaded || !isContentsContextLoaded) return
+    if (!isCalculationContextLoaded) return
 
-    if (!userInfo) {
+    if (isNotFound) {
       setRenderType('NotFound')
       return
     }
 
-    if (
-      userInfo.role !== Roles.Assistant ||
-      (!(userInfo.state === Status.Running) &&
-        !(userInfo.state === Status.Calculation))
-    ) {
+    if (userInfo?.role !== Roles.Assistant) {
       setRenderType('NotFound')
       return
     }
 
-    if (userInfo.state === Status.Running) {
+    if (userInfo?.state === Status.Running) {
       setRenderType('Running')
     }
-  }, [isAuthorizeContextLoaded, isContentsContextLoaded, userInfo, myUserId])
-
-  // TODO: ロジック共通化できる
-  const calculatedTotalPrice = calculationDeals.reduce((prev, next) => {
-    if (next.isApproved) {
-      return prev + next.price
-    }
-    return prev
-  }, 0)
-
-  // TODO: ロジック共通化できる
-  const calculatedUnApprovePrice = calculationDeals.reduce((prev, next) => {
-    if (!next.isApproved) {
-      return prev + next.price
-    }
-    return prev
-  }, 0)
+  }, [isCalculationContextLoaded, userInfo, isNotFound])
 
   return {
-    isLoaded: isAuthorizeContextLoaded && isContentsContextLoaded,
+    isLoaded: isCalculationContextLoaded,
     renderType,
     now,
-    totalPrice: calculatedTotalPrice,
-    unApprovePrice: calculatedUnApprovePrice,
+    totalPrice,
+    unApprovePrice,
     approverNickName,
-    watchMonth: userInfo?.month ?? '',
+    watchMonth,
   }
 }
 

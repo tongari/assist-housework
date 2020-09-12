@@ -1,9 +1,9 @@
 import { useState, useEffect, useContext } from 'react'
-import * as firebase from 'firebase/app'
 
 import { Roles, Status, GroupDateDeal, Now } from 'types'
 import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 import { ContentsContext } from 'contexts/ContentsProvider'
+import { RunningContext } from 'contexts/RunningProvider'
 
 export type RenderType = 'NotFound' | 'Running' | 'Calculation'
 
@@ -19,34 +19,30 @@ type ResultProps = {
 }
 
 const useInjection = (): ResultProps => {
-  const myUserId = firebase.auth().currentUser?.uid
+  const { userInfo } = useContext(AuthorizedContext)
 
-  const { isAuthorizeContextLoaded, userInfo } = useContext(AuthorizedContext)
-
+  const { now, assistantNickname } = useContext(ContentsContext)
   const {
-    isContentsContextLoaded,
-    now,
-    budgets,
-    deals,
-    assistantNickname,
-  } = useContext(ContentsContext)
+    isRunningContextLoaded,
+    budget,
+    totalPrice,
+    isNotFound,
+    unApprovePrice,
+    convertGroupDateDeals,
+  } = useContext(RunningContext)
 
   // local state
   const [renderType, setRenderType] = useState<RenderType>('Running')
 
   useEffect(() => {
-    if (!isAuthorizeContextLoaded || !isContentsContextLoaded) return
+    if (!isRunningContextLoaded) return
 
-    if (!userInfo) {
+    if (isNotFound) {
       setRenderType('NotFound')
       return
     }
 
-    if (
-      userInfo.role !== Roles.Approver ||
-      (!(userInfo.state === Status.Running) &&
-        !(userInfo.state === Status.Calculation))
-    ) {
+    if (userInfo?.role !== Roles.Approver) {
       setRenderType('NotFound')
       return
     }
@@ -54,63 +50,16 @@ const useInjection = (): ResultProps => {
     if (userInfo.state === Status.Calculation) {
       setRenderType('Calculation')
     }
-  }, [isAuthorizeContextLoaded, isContentsContextLoaded, userInfo, myUserId])
-
-  // TODO: ロジック共通化できる
-  const calculatedTotalPrice = deals.reduce((prev, next) => {
-    if (next.isApproved) {
-      return prev + next.price
-    }
-    return prev
-  }, 0)
-
-  // TODO: ロジック共通化できる
-  const groupDateDeals = () => {
-    const result: GroupDateDeal[] = []
-
-    deals.forEach((deal) => {
-      const findIndex = result.findIndex(
-        (resultItem) => resultItem.date === deal.date
-      )
-
-      if (findIndex < 0) {
-        result.push({
-          date: deal.date,
-          day: deal.day,
-          deals: [deal],
-        })
-      } else {
-        result[findIndex].deals.push(deal)
-      }
-    })
-    return result
-  }
-
-  // TODO: ロジック共通化できる
-  const calculatedUnApprovePrice = deals.reduce((prev, next) => {
-    if (!next.isApproved) {
-      return prev + next.price
-    }
-    return prev
-  }, 0)
-
-  // TODO: ロジック共通化できる
-  const calcBudget = () => {
-    if (budgets) {
-      const base = budgets[0]?.budget ?? 0
-      return base - calculatedTotalPrice
-    }
-    return 0
-  }
+  }, [isRunningContextLoaded, userInfo, isNotFound])
 
   return {
-    isLoaded: isAuthorizeContextLoaded && isContentsContextLoaded,
+    isLoaded: isRunningContextLoaded,
     renderType,
     now,
-    groupedDateDeals: groupDateDeals(),
-    budget: calcBudget(),
-    totalPrice: calculatedTotalPrice,
-    unApprovePrice: calculatedUnApprovePrice,
+    groupedDateDeals: convertGroupDateDeals(),
+    budget,
+    totalPrice,
+    unApprovePrice,
     assistantNickname,
   }
 }

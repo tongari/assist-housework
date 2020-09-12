@@ -9,6 +9,7 @@ interface Props {
   groupedDateDeals: GroupDateDeal[]
   budget: number
   totalPrice: number
+  unApprovePrice: number
   approveDealHandler: (dealId: string) => void
 }
 
@@ -18,6 +19,7 @@ const WorkApprover: React.FC<Props> = ({
   groupedDateDeals,
   budget,
   totalPrice,
+  unApprovePrice,
   approveDealHandler,
 }) => {
   return (
@@ -59,6 +61,7 @@ const WorkApprover: React.FC<Props> = ({
         })}
       </div>
       <p>支払い合計 : {totalPrice}円</p>
+      <p>未承認額 : {unApprovePrice}円</p>
       <p>残りの予算額 : {budget}円</p>
     </div>
   )

@@ -14,6 +14,7 @@ const WorkApproverPage: React.FC = () => {
     groupedDateDeals,
     budget,
     totalPrice,
+    unApprovePrice,
     assistantNickname,
   } = useInjection()
 
@@ -38,6 +39,7 @@ const WorkApproverPage: React.FC = () => {
       groupedDateDeals={groupedDateDeals}
       budget={budget}
       totalPrice={totalPrice}
+      unApprovePrice={unApprovePrice}
       approveDealHandler={approveDealHandler}
     />
   )
