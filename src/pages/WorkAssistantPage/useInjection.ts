@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext } from 'react'
-import * as firebase from 'firebase/app'
 
 import { fetchNickName } from 'domain/firestore'
 import { Roles, Status, Item, Now } from 'types'
 import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 import { ContentsContext } from 'contexts/ContentsProvider'
+import { RunningContext } from 'contexts/RunningProvider'
 
 export type RenderType = 'NotFound' | 'Running' | 'Calculation'
 
@@ -20,18 +20,15 @@ type ResultProps = {
 }
 
 const useInjection = (): ResultProps => {
-  const myUserId = firebase.auth().currentUser?.uid
-
   const { isAuthorizeContextLoaded, userInfo } = useContext(AuthorizedContext)
-
+  const { now, items, todayDeals } = useContext(ContentsContext)
   const {
-    isContentsContextLoaded,
-    now,
-    items,
-    budgets,
-    deals,
-    todayDeals,
-  } = useContext(ContentsContext)
+    isRunningContextLoaded,
+    budget,
+    totalPrice,
+    isNotFound,
+    unApprovePrice,
+  } = useContext(RunningContext)
 
   // local state
   const [renderType, setRenderType] = useState<RenderType>('Running')
@@ -50,26 +47,22 @@ const useInjection = (): ResultProps => {
   }, [isAuthorizeContextLoaded, userInfo])
 
   useEffect(() => {
-    if (!isAuthorizeContextLoaded || !isContentsContextLoaded) return
+    if (!isRunningContextLoaded) return
 
-    if (!userInfo) {
+    if (isNotFound) {
       setRenderType('NotFound')
       return
     }
 
-    if (
-      userInfo.role !== Roles.Assistant ||
-      (!(userInfo.state === Status.Running) &&
-        !(userInfo.state === Status.Calculation))
-    ) {
+    if (userInfo?.role !== Roles.Assistant) {
       setRenderType('NotFound')
       return
     }
 
-    if (userInfo.state === Status.Calculation) {
+    if (userInfo?.state === Status.Calculation) {
       setRenderType('Calculation')
     }
-  }, [isAuthorizeContextLoaded, isContentsContextLoaded, userInfo, myUserId])
+  }, [isRunningContextLoaded, userInfo, isNotFound])
 
   const compactedItems = items.filter((item) => item.label !== null)
 
@@ -81,36 +74,14 @@ const useInjection = (): ResultProps => {
     return item
   })
 
-  const calculatedTotalPrice = deals.reduce((prev, next) => {
-    if (next.isApproved) {
-      return prev + next.price
-    }
-    return prev
-  }, 0)
-
-  const calculatedUnApprovePrice = deals.reduce((prev, next) => {
-    if (!next.isApproved) {
-      return prev + next.price
-    }
-    return prev
-  }, 0)
-
-  const calcBudget = () => {
-    if (budgets) {
-      const base = budgets[0]?.budget ?? 0
-      return base - calculatedTotalPrice
-    }
-    return 0
-  }
-
   return {
-    isLoaded: isAuthorizeContextLoaded && isContentsContextLoaded,
+    isLoaded: isRunningContextLoaded,
     renderType,
     now,
     items: addedIsWorkedToItems,
-    budget: calcBudget(),
-    totalPrice: calculatedTotalPrice,
-    unApprovePrice: calculatedUnApprovePrice,
+    budget,
+    totalPrice,
+    unApprovePrice,
     approverNickName,
   }
 }
