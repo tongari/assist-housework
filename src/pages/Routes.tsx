@@ -6,6 +6,7 @@ import { Paths } from 'types'
 
 import AuthorizedProvider from 'contexts/AuthorizedProvider'
 import ContentsProvider from 'contexts/ContentsProvider'
+import CalculationProvider from 'contexts/CalculationProvider'
 
 import Authorized from 'pages/Authorized'
 import RootPage from 'pages/RootPage'
@@ -73,12 +74,16 @@ const App: React.FC = () => {
               </Route>
               <Route exact path={Paths.CalculationAssistant}>
                 <ContentsProvider>
-                  <CalculationAssistantPage />
+                  <CalculationProvider>
+                    <CalculationAssistantPage />
+                  </CalculationProvider>
                 </ContentsProvider>
               </Route>
               <Route exact path={Paths.CalculationApprover}>
                 <ContentsProvider>
-                  <CalculationApproverPage />
+                  <CalculationProvider>
+                    <CalculationApproverPage />
+                  </CalculationProvider>
                 </ContentsProvider>
               </Route>
               <Route
