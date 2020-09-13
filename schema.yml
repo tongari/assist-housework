@@ -9,7 +9,7 @@ status:
 users:
   documentId: uid
   userId: string(uid) # 一応持たせる
-  nickName: string
+  nickname: string
   roleRef: Ref/Role.documentId
   createdAt: Date
   updatedAt: Date

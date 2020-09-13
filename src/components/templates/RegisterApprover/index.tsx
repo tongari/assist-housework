@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 
 interface Props {
-  registerApprovalUser: (nickName: string, inviteAddress: string) => void
+  registerApprovalUser: (nickname: string, inviteAddress: string) => void
 }
 
 const RegisterApprover: React.FC<Props> = ({ registerApprovalUser }) => {
-  const [nickName, setNickName] = useState('')
+  const [nickname, setNickname] = useState('')
   const [inviteAddress, setInviteAddress] = useState('')
 
   return (
@@ -17,9 +17,9 @@ const RegisterApprover: React.FC<Props> = ({ registerApprovalUser }) => {
           <input
             type="text"
             maxLength={50}
-            value={nickName}
+            value={nickname}
             onChange={(e) => {
-              setNickName(e.target.value)
+              setNickname(e.target.value)
             }}
           />
         </label>
@@ -36,7 +36,7 @@ const RegisterApprover: React.FC<Props> = ({ registerApprovalUser }) => {
         <button
           type="button"
           onClick={() => {
-            registerApprovalUser(nickName, inviteAddress)
+            registerApprovalUser(nickname, inviteAddress)
           }}
         >
           登録

@@ -10,7 +10,7 @@ import {
 // NOTE: 模索中(firestoreを直接叩く場合は、redux-toolkit必要ないか？)
 
 export const registerApprovalUser = async (
-  nickName: string,
+  nickname: string,
   inviteAddress: string
 ): Promise<firebase.functions.HttpsCallableResult> => {
   const db = firebase.firestore()
@@ -22,7 +22,7 @@ export const registerApprovalUser = async (
     .doc(userId)
     .set({
       userId,
-      nickName,
+      nickname,
       currentWatchUser: {
         statusRef: statusRef.doc(Status.Register),
         inviteAddress,
@@ -36,12 +36,12 @@ export const registerApprovalUser = async (
     .functions()
     .httpsCallable('sendAssistantInviteMail')
 
-  const result = await sendAssistantInviteMail({ inviteAddress, nickName })
+  const result = await sendAssistantInviteMail({ inviteAddress, nickname })
   return result
 }
 
 export const registerAssistantUser = async (
-  nickName: string,
+  nickname: string,
   assistToApproverId: string | null
 ): Promise<void> => {
   if (assistToApproverId === null) {
@@ -64,7 +64,7 @@ export const registerAssistantUser = async (
   const userDoc = db.collection('users').doc(userId)
   await userDoc.set({
     userId,
-    nickName,
+    nickname,
     roleRef: rolesRef.doc(Roles.Assistant),
     currentWatchUser: {
       id: assistToApproverId,
@@ -132,11 +132,11 @@ export const setApprovedAssistant = async (
   })
 }
 
-export const fetchNickName = async (
+export const fetchNickname = async (
   userId: string
 ): Promise<firebase.functions.HttpsCallableResult> => {
-  const getNickName = firebase.functions().httpsCallable('getNickName')
-  return getNickName({ userId })
+  const getNickname = firebase.functions().httpsCallable('getNickname')
+  return getNickname({ userId })
 }
 
 export const settingAssistContents = async (

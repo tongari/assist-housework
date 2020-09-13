@@ -17,11 +17,12 @@ import {
   convertedDeals,
 } from 'contexts/ContentsProvider/converter'
 
-import { fetchServerTime } from 'domain/firestore'
+import { fetchServerTime, fetchNickname } from 'domain/firestore'
 
 export interface InjectionResult {
   isContentsContextLoaded: boolean
   assistantNickname?: string
+  approverNickname?: string
   now: Now
   items: Item[]
   budgets: Budget[]
@@ -35,6 +36,7 @@ const useInjection = (): InjectionResult => {
 
   // local state
   const [isContentsContextLoaded, setIsContentsContextLoaded] = useState(false)
+  const [approverNickname, setApproverNickname] = useState('')
   const [now, setNow] = useState<Now | null>(null)
 
   // fetch data
@@ -87,6 +89,18 @@ const useInjection = (): InjectionResult => {
   )
 
   useEffect(() => {
+    let isCleaned = false
+    if (isAuthorizeContextLoaded && userInfo?.watchId) {
+      fetchNickname(userInfo?.watchId).then((v) => {
+        if (!isCleaned) setApproverNickname(v.data.nickname)
+      })
+    }
+    return () => {
+      isCleaned = true
+    }
+  }, [isAuthorizeContextLoaded, userInfo])
+
+  useEffect(() => {
     fetchServerTime().then((res) => {
       setNow(res.data)
     })
@@ -118,7 +132,8 @@ const useInjection = (): InjectionResult => {
 
   return {
     isContentsContextLoaded,
-    assistantNickname: assistantUserDoc?.get('nickName'),
+    assistantNickname: assistantUserDoc?.get('nickname'),
+    approverNickname,
     now: {
       year: now?.year ?? '',
       month: now?.month ?? '',

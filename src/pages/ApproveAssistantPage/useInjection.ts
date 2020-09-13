@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react'
-import { fetchNickName } from 'domain/firestore'
+import { fetchNickname } from 'domain/firestore'
 
 import { Roles, Status } from 'types/index'
 import { AuthorizedContext } from 'contexts/AuthorizedProvider'
@@ -9,21 +9,21 @@ export type RenderType = 'NotFound' | 'Register' | 'Setting'
 const useInjection = (): {
   isLoaded: boolean
   renderType: RenderType
-  assistantNickName: string | null
+  assistantNickname: string | null
   assistantUserId?: string | null
 } => {
   const { isAuthorizeContextLoaded, userInfo } = useContext(AuthorizedContext)
 
   const [renderType, setRenderType] = useState<RenderType>('Register')
-  const [assistantNickName, setAssistantNickName] = useState<string | null>(
+  const [assistantNickname, setAssistantNickname] = useState<string | null>(
     null
   )
 
   useEffect(() => {
     let isCleaned = false
     if (isAuthorizeContextLoaded && userInfo?.watchId) {
-      fetchNickName(userInfo?.watchId).then((v) => {
-        if (!isCleaned) setAssistantNickName(v.data.nickName)
+      fetchNickname(userInfo?.watchId).then((v) => {
+        if (!isCleaned) setAssistantNickname(v.data.nickname)
       })
     }
     return () => {
@@ -53,7 +53,7 @@ const useInjection = (): {
     isLoaded: isAuthorizeContextLoaded,
     renderType,
     assistantUserId: userInfo?.watchId,
-    assistantNickName,
+    assistantNickname,
   }
 }
 

@@ -11,7 +11,7 @@ const ApproveAssistantPage: React.FC = () => {
     isLoaded,
     renderType,
     assistantUserId,
-    assistantNickName,
+    assistantNickname,
   } = useInjection()
 
   const setApprovedAssistantHandler = useCallback(() => {
@@ -24,7 +24,7 @@ const ApproveAssistantPage: React.FC = () => {
     return <Redirect to={Paths.NotFound} />
   }
 
-  if (!isLoaded || !assistantNickName) return <div>loading...</div>
+  if (!isLoaded || !assistantNickname) return <div>loading...</div>
 
   if (renderType === 'Setting') {
     return <Redirect to={Paths.SettingApprover} />
@@ -32,7 +32,7 @@ const ApproveAssistantPage: React.FC = () => {
 
   return (
     <ApproveAssistant
-      assistantNickName={assistantNickName}
+      assistantNickname={assistantNickname}
       setApprovedAssistantHandler={setApprovedAssistantHandler}
     />
   )
