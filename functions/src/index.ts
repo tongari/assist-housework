@@ -18,20 +18,20 @@ sendGrid.setApiKey(apiKey)
 
 interface SendAssistantInviteMailProps {
   inviteAddress: string
-  nickName: string
+  nickname: string
 }
 exports.sendAssistantInviteMail = functions.https.onCall(
   async (
-    { inviteAddress, nickName }: SendAssistantInviteMailProps,
+    { inviteAddress, nickname }: SendAssistantInviteMailProps,
     context
   ) => {
     const host = context.rawRequest.headers.origin
     const msg = {
       to: inviteAddress,
       from: fromAddress,
-      subject: `${nickName}さんからお手伝いのお願いがきています`,
+      subject: `${nickname}さんからお手伝いのお願いがきています`,
       html: `
-          <p>${nickName}さんからお手伝いのお願いがきています</p>
+          <p>${nickname}さんからお手伝いのお願いがきています</p>
           <p>以下、URLより登録してください。</p>
           <p>${host}/login?invite_assistant=${context.auth?.uid}</p>
         `,
@@ -59,16 +59,16 @@ exports.sendApproveAssistantToApprover = functions.https.onCall(
 
     const assistant = admin.firestore().collection('users').doc(assistantId)
     const assistantDoc = await assistant.get()
-    const assistantNickName = assistantDoc.get('nickName')
+    const assistantNickname = assistantDoc.get('nickname')
 
     const host = context.rawRequest.headers.origin
 
     const msg = {
       to: toAddress,
       from: fromAddress,
-      subject: `${assistantNickName}さんから承認のお願いがきています`,
+      subject: `${assistantNickname}さんから承認のお願いがきています`,
       html: `
-          <p>${assistantNickName}さんから承認のお願いがきています</p>
+          <p>${assistantNickname}さんから承認のお願いがきています</p>
           <p>以下、URLより承認してください。</p>
           <p>${host}/approve-assistant</p>
         `,
@@ -132,19 +132,19 @@ exports.addAssistantUserIds = functions.https.onCall(
   }
 )
 
-interface GetNickName {
+interface GetNickname {
   userId: string | null
 }
-exports.getNickName = functions.https.onCall(
-  async ({ userId }: GetNickName) => {
+exports.getNickname = functions.https.onCall(
+  async ({ userId }: GetNickname) => {
     if (!userId) {
       throw new HttpsError('invalid-argument', 'nothing userId')
     }
     const user = admin.firestore().collection('users').doc(userId)
-    functions.logger.info('getNickName', user)
+    functions.logger.info('getNickname', user)
     const userDoc = await user.get()
     return {
-      nickName: userDoc.get('nickName'),
+      nickname: userDoc.get('nickname'),
     }
   }
 )

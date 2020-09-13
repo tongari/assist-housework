@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react'
 
-import { fetchNickName } from 'domain/firestore'
+import { fetchNickname } from 'domain/firestore'
 import { Roles, Status } from 'types/index'
 import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 
@@ -10,7 +10,7 @@ const useInjection = (): {
   isLoaded: boolean
   renderType: RenderType
   assistToApproverId: string | null
-  approverNickName: string | null
+  approverNickname: string | null
 } => {
   // query parameters
   const searchParams = new URLSearchParams(window.location.search)
@@ -24,13 +24,13 @@ const useInjection = (): {
   const [assistToApproverId, setAssistToApproverId] = useState<string | null>(
     null
   )
-  const [approverNickName, setApproverNickName] = useState<string | null>(null)
+  const [approverNickname, setApproverNickname] = useState<string | null>(null)
 
   useEffect(() => {
     let isCleaned = false
     if (isAuthorizeContextLoaded && assistToApproverId) {
-      fetchNickName(assistToApproverId).then((v) => {
-        if (!isCleaned) setApproverNickName(v.data.nickName)
+      fetchNickname(assistToApproverId).then((v) => {
+        if (!isCleaned) setApproverNickname(v.data.nickname)
       })
     }
     return () => {
@@ -78,7 +78,7 @@ const useInjection = (): {
     isLoaded: isAuthorizeContextLoaded,
     renderType,
     assistToApproverId,
-    approverNickName,
+    approverNickname,
   }
 }
 

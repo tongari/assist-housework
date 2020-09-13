@@ -118,7 +118,7 @@ const useInjection = (): InjectionResult => {
 
   return {
     isContentsContextLoaded,
-    assistantNickname: assistantUserDoc?.get('nickName'),
+    assistantNickname: assistantUserDoc?.get('nickname'),
     now: {
       year: now?.year ?? '',
       month: now?.month ?? '',

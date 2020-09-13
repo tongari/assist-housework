@@ -4,7 +4,7 @@ import { Now, Item } from 'types'
 // TODO: コンポーネントを適切に分割する
 
 interface Props {
-  approverNickName: string
+  approverNickname: string
   now: Now
   items: Item[]
   budget: number
@@ -14,7 +14,7 @@ interface Props {
 }
 
 const WorkAssistant: React.FC<Props> = ({
-  approverNickName,
+  approverNickname,
   now,
   items,
   budget,
@@ -27,7 +27,7 @@ const WorkAssistant: React.FC<Props> = ({
       <p>
         {now.year}/{now.month}/{now.date}（{now.day}）
       </p>
-      <h1>{approverNickName}さんのお手伝いをしよう！</h1>
+      <h1>{approverNickname}さんのお手伝いをしよう！</h1>
       <ul>
         {items.map((item, index) => {
           return (

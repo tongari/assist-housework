@@ -1,16 +1,16 @@
 import React from 'react'
 
 interface Props {
-  approverNickName: string
+  approverNickname: string
 }
 
-const PendingRegisterAssistant: React.FC<Props> = ({ approverNickName }) => {
+const PendingRegisterAssistant: React.FC<Props> = ({ approverNickname }) => {
   return (
     <div>
       <p>
         ただいま、
         <br />
-        <strong>{approverNickName}</strong>
+        <strong>{approverNickname}</strong>
         <br />
         さんの承認待ちです。
       </p>

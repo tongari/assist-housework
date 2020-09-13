@@ -12,7 +12,7 @@ const CalculationAssistantPage: React.FC = () => {
     now,
     totalPrice,
     unApprovePrice,
-    approverNickName,
+    approverNickname,
     watchMonth,
   } = useInjection()
 
@@ -24,14 +24,14 @@ const CalculationAssistantPage: React.FC = () => {
     return <Redirect to={Paths.WorkAssistant} />
   }
 
-  if (!isLoaded || !approverNickName) return <div>loading...</div>
+  if (!isLoaded || !approverNickname) return <div>loading...</div>
 
   return (
     <CalculationAssistant
       now={now}
       totalPrice={totalPrice}
       unApprovePrice={unApprovePrice}
-      approverNickName={approverNickName}
+      approverNickname={approverNickname}
       watchMonth={watchMonth}
     />
   )

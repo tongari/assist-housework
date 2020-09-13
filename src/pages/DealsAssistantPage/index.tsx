@@ -14,7 +14,7 @@ const DealsAssistantPage: React.FC = () => {
     budget,
     totalPrice,
     unApprovePrice,
-    approverNickName,
+    approverNickname,
   } = useInjection()
 
   if (renderType === 'NotFound') {
@@ -25,11 +25,11 @@ const DealsAssistantPage: React.FC = () => {
     return <Redirect to={Paths.CalculationAssistant} />
   }
 
-  if (!isLoaded || !approverNickName) return <div>loading...</div>
+  if (!isLoaded || !approverNickname) return <div>loading...</div>
 
   return (
     <DealsAssistant
-      approverNickName={approverNickName}
+      approverNickname={approverNickname}
       now={now}
       groupedDateDeals={groupedDateDeals}
       budget={budget}

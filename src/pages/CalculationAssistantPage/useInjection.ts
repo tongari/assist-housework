@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react'
 
 import { Roles, Status, Now } from 'types'
-import { fetchNickName } from 'domain/firestore'
+import { fetchNickname } from 'domain/firestore'
 import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 import { ContentsContext } from 'contexts/ContentsProvider'
 import { CalculationContext } from 'contexts/CalculationProvider'
@@ -14,7 +14,7 @@ type ResultProps = {
   now: Now
   totalPrice: number
   unApprovePrice: number
-  approverNickName: string
+  approverNickname: string
   watchMonth: string
 }
 
@@ -31,13 +31,13 @@ const useInjection = (): ResultProps => {
 
   // local state
   const [renderType, setRenderType] = useState<RenderType>('Calculation')
-  const [approverNickName, setApproverNickName] = useState<string>('')
+  const [approverNickname, setApproverNickname] = useState<string>('')
 
   useEffect(() => {
     let isCleaned = false
     if (isAuthorizeContextLoaded && userInfo?.watchId) {
-      fetchNickName(userInfo?.watchId).then((v) => {
-        if (!isCleaned) setApproverNickName(v.data.nickName)
+      fetchNickname(userInfo?.watchId).then((v) => {
+        if (!isCleaned) setApproverNickname(v.data.nickname)
       })
     }
     return () => {
@@ -69,7 +69,7 @@ const useInjection = (): ResultProps => {
     now,
     totalPrice,
     unApprovePrice,
-    approverNickName,
+    approverNickname,
     watchMonth,
   }
 }

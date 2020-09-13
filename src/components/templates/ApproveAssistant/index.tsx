@@ -1,18 +1,18 @@
 import React from 'react'
 
 interface Props {
-  assistantNickName: string
+  assistantNickname: string
   setApprovedAssistantHandler: () => void
 }
 
 const ApproveAssistant: React.FC<Props> = ({
-  assistantNickName,
+  assistantNickname,
   setApprovedAssistantHandler,
 }) => {
   return (
     <div>
       <p>
-        <strong>{assistantNickName}</strong>
+        <strong>{assistantNickname}</strong>
         さんを承認しますか？
       </p>
       <button

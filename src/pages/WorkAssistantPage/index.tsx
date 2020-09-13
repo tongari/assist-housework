@@ -15,7 +15,7 @@ const WorkAssistantPage: React.FC = () => {
     budget,
     totalPrice,
     unApprovePrice,
-    approverNickName,
+    approverNickname,
   } = useInjection()
 
   const addDealHandler = useCallback(
@@ -33,11 +33,11 @@ const WorkAssistantPage: React.FC = () => {
     return <Redirect to={Paths.CalculationAssistant} />
   }
 
-  if (!isLoaded || !approverNickName) return <div>loading...</div>
+  if (!isLoaded || !approverNickname) return <div>loading...</div>
 
   return (
     <WorkAssistant
-      approverNickName={approverNickName}
+      approverNickname={approverNickname}
       now={now}
       items={items}
       budget={budget}

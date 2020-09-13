@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react'
 
 import { Roles, Status, GroupDateDeal, Now } from 'types'
-import { fetchNickName } from 'domain/firestore'
+import { fetchNickname } from 'domain/firestore'
 import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 import { ContentsContext } from 'contexts/ContentsProvider'
 import { RunningContext } from 'contexts/RunningProvider'
@@ -16,7 +16,7 @@ type ResultProps = {
   budget: number
   totalPrice: number
   unApprovePrice: number
-  approverNickName?: string
+  approverNickname?: string
 }
 
 const useInjection = (): ResultProps => {
@@ -33,13 +33,13 @@ const useInjection = (): ResultProps => {
 
   // local state
   const [renderType, setRenderType] = useState<RenderType>('Running')
-  const [approverNickName, setApproverNickName] = useState<string>('')
+  const [approverNickname, setApproverNickname] = useState<string>('')
 
   useEffect(() => {
     let isCleaned = false
     if (isAuthorizeContextLoaded && userInfo?.watchId) {
-      fetchNickName(userInfo?.watchId).then((v) => {
-        if (!isCleaned) setApproverNickName(v.data.nickName)
+      fetchNickname(userInfo?.watchId).then((v) => {
+        if (!isCleaned) setApproverNickname(v.data.nickname)
       })
     }
     return () => {
@@ -73,7 +73,7 @@ const useInjection = (): ResultProps => {
     budget,
     totalPrice,
     unApprovePrice,
-    approverNickName,
+    approverNickname,
   }
 }
 

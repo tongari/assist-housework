@@ -12,12 +12,12 @@ const RegisterAssistantPage: React.FC = () => {
     isLoaded,
     renderType,
     assistToApproverId,
-    approverNickName,
+    approverNickname,
   } = useInjection()
 
   const registerAssistantUserHandler = useCallback(
-    (nickName: string) => {
-      registerAssistantUser(nickName, assistToApproverId).catch((err) => {
+    (nickname: string) => {
+      registerAssistantUser(nickname, assistToApproverId).catch((err) => {
         // eslint-disable-next-line no-alert
         window.alert(err.message)
       })
@@ -29,10 +29,10 @@ const RegisterAssistantPage: React.FC = () => {
     return <Redirect to={Paths.NotFound} />
   }
 
-  if (!isLoaded || !approverNickName) return <div>loading...</div>
+  if (!isLoaded || !approverNickname) return <div>loading...</div>
 
   if (renderType === 'Pending') {
-    return <PendingRegisterAssistant approverNickName={approverNickName} />
+    return <PendingRegisterAssistant approverNickname={approverNickname} />
   }
 
   if (renderType === 'Running') {
@@ -41,7 +41,7 @@ const RegisterAssistantPage: React.FC = () => {
 
   return (
     <RegisterAssistant
-      approverNickName={approverNickName}
+      approverNickname={approverNickname}
       registerAssistantUserHandler={registerAssistantUserHandler}
     />
   )

@@ -4,7 +4,7 @@ import { Now, GroupDateDeal } from 'types'
 // TODO: コンポーネントを適切に分割する
 
 interface Props {
-  approverNickName: string
+  approverNickname: string
   now: Now
   groupedDateDeals: GroupDateDeal[]
   budget: number
@@ -13,7 +13,7 @@ interface Props {
 }
 
 const DealsAssistant: React.FC<Props> = ({
-  approverNickName,
+  approverNickname,
   now,
   groupedDateDeals,
   budget,
@@ -26,7 +26,7 @@ const DealsAssistant: React.FC<Props> = ({
         {now.year}/{now.month}/{now.date}（{now.day}）
       </p>
       <h1>
-        {approverNickName}さんへの{now.month}月のお手伝い履歴
+        {approverNickname}さんへの{now.month}月のお手伝い履歴
       </h1>
       <div>
         {groupedDateDeals.map((groupedDateDeal, index) => {
