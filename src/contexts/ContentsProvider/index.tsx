@@ -4,6 +4,7 @@ import useInjection, { InjectionResult } from './useInjection'
 export const ContentsContext = createContext<InjectionResult>({
   isContentsContextLoaded: false,
   assistantNickname: undefined,
+  approverNickname: undefined,
   now: {
     year: '',
     month: '',
@@ -21,6 +22,7 @@ const ContentsProvider: React.FC = ({ children }) => {
   const {
     isContentsContextLoaded,
     assistantNickname,
+    approverNickname,
     now,
     items,
     budgets,
@@ -34,6 +36,7 @@ const ContentsProvider: React.FC = ({ children }) => {
       value={{
         isContentsContextLoaded,
         assistantNickname,
+        approverNickname,
         now,
         items,
         budgets,

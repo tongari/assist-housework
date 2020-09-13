@@ -1,6 +1,5 @@
 import { useState, useEffect, useContext } from 'react'
 
-import { fetchNickname } from 'domain/firestore'
 import { Roles, Status, Item, Now } from 'types'
 import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 import { ContentsContext } from 'contexts/ContentsProvider'
@@ -16,12 +15,14 @@ type ResultProps = {
   budget: number
   totalPrice: number
   unApprovePrice: number
-  approverNickname: string
+  approverNickname?: string
 }
 
 const useInjection = (): ResultProps => {
-  const { isAuthorizeContextLoaded, userInfo } = useContext(AuthorizedContext)
-  const { now, items, todayDeals } = useContext(ContentsContext)
+  const { userInfo } = useContext(AuthorizedContext)
+  const { now, items, todayDeals, approverNickname } = useContext(
+    ContentsContext
+  )
   const {
     isRunningContextLoaded,
     budget,
@@ -32,19 +33,6 @@ const useInjection = (): ResultProps => {
 
   // local state
   const [renderType, setRenderType] = useState<RenderType>('Running')
-  const [approverNickname, setApproverNickname] = useState<string>('')
-
-  useEffect(() => {
-    let isCleaned = false
-    if (isAuthorizeContextLoaded && userInfo?.watchId) {
-      fetchNickname(userInfo?.watchId).then((v) => {
-        if (!isCleaned) setApproverNickname(v.data.nickname)
-      })
-    }
-    return () => {
-      isCleaned = true
-    }
-  }, [isAuthorizeContextLoaded, userInfo])
 
   useEffect(() => {
     if (!isRunningContextLoaded) return
