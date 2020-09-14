@@ -51,7 +51,7 @@ const Navigation: React.FC = () => {
         className={classes.root}
       >
         <BottomNavigationAction
-          label="お手伝い登録"
+          label="取引登録"
           value="work"
           icon={<AddIcon />}
         />
