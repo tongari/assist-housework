@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
-import Header from 'components/organisms/Header'
+import Navigation from 'components/organisms/Navigation'
 import { Paths } from 'types'
 
 import AuthorizedProvider from 'contexts/AuthorizedProvider'
@@ -31,7 +31,7 @@ const App: React.FC = () => {
         <Route exact path={Paths.Login} component={LoginPage} />
         <AuthorizedProvider>
           <Authorized>
-            <Header />
+            <Navigation />
             <Switch>
               <Route exact path={Paths.Root} component={RootPage} />
               <Route
