@@ -1,7 +1,11 @@
 import React from 'react'
-import { Now } from 'types'
+import Button from '@material-ui/core/Button'
 
-// TODO: コンポーネントを適切に分割する
+import { Now } from 'types'
+import { useSharedStyles } from 'styles'
+import DateText from 'components/molecules/DateText'
+import NextActionText from 'components/organisms/NextActionText'
+import CalculatedPriceItems from 'components/organisms/CalculatedPriceItems'
 
 interface Props {
   assistantNickname: string
@@ -20,26 +24,35 @@ const CalculationApprover: React.FC<Props> = ({
   watchMonth,
   fixCalculationHandler,
 }) => {
+  const classes = useSharedStyles()
   return (
-    <div>
-      <p>
-        {now.year}/{now.month}/{now.date}（{now.day}）
-      </p>
-      <h1>
-        {assistantNickname}さんに{watchMonth}月のお小遣いを支払いください。
-      </h1>
-      <p>お小遣い合計額 : {totalPrice}円</p>
-      <p>未承認額 : {unApprovePrice}円</p>
+    <>
+      <DateText now={now} />
+      <div className={classes.templateInner}>
+        <NextActionText nickname={assistantNickname} month={watchMonth}>
+          のお小遣いを支払いください。
+        </NextActionText>
 
-      <button
-        type="button"
-        onClick={() => {
-          fixCalculationHandler()
-        }}
-      >
-        {now.month}月を開始する
-      </button>
-    </div>
+        <CalculatedPriceItems
+          items={[
+            { label: 'お小遣い合計額', price: totalPrice },
+            { label: '未承認額', price: unApprovePrice },
+          ]}
+        />
+
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          fullWidth
+          onClick={() => {
+            fixCalculationHandler()
+          }}
+        >
+          {now.month}月を開始する
+        </Button>
+      </div>
+    </>
   )
 }
 
