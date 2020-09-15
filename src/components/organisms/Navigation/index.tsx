@@ -16,8 +16,12 @@ const useStyles = makeStyles((theme: Theme) =>
       position: 'fixed',
       bottom: 0,
       width: '100vw',
-      backgroundColor: theme.palette.grey[100],
-      boxShadow: theme.shadows[10],
+      backgroundColor: theme.palette.primary.light,
+      boxShadow: theme.shadows[24],
+      '& *': {
+        color: theme.palette.common.white,
+        fontWeight: theme.typography.fontWeightMedium,
+      },
     },
   })
 )
@@ -43,7 +47,7 @@ const Navigation: React.FC = () => {
   }, [])
 
   return (
-    <div className={classes.root}>
+    <>
       <BottomNavigation
         value={navigationValue}
         onChange={changeNavigationHandler}
@@ -76,7 +80,7 @@ const Navigation: React.FC = () => {
         />
       </BottomNavigation>
       <OtherDrawer isOpen={isOpenedDrawer} closeDrawer={closeDrawer} />
-    </div>
+    </>
   )
 }
 

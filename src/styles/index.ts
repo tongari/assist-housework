@@ -1,4 +1,9 @@
-import { createMuiTheme } from '@material-ui/core/styles'
+import {
+  createMuiTheme,
+  makeStyles,
+  createStyles,
+  Theme,
+} from '@material-ui/core/styles'
 
 export const globalTheme = createMuiTheme({
   overrides: {
@@ -12,3 +17,19 @@ export const globalTheme = createMuiTheme({
     },
   },
 })
+
+export const useSharedStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    templateInner: {
+      [theme.breakpoints.down('sm')]: {
+        width: '100%',
+      },
+
+      maxWidth: theme.breakpoints.values.md,
+      margin: 'auto',
+      padding: `0 ${theme.spacing(2)}px ${theme.spacing(8)}px ${theme.spacing(
+        2
+      )}px`,
+    },
+  })
+)
