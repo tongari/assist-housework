@@ -2,6 +2,7 @@ import React from 'react'
 import { Redirect } from 'react-router-dom'
 
 import { Paths } from 'types'
+import Loader from 'components/molecules/Loader'
 import CalculationAssistant from 'components/templates/CalculationAssistant'
 import useInjection from './useInjection'
 
@@ -24,16 +25,19 @@ const CalculationAssistantPage: React.FC = () => {
     return <Redirect to={Paths.WorkAssistant} />
   }
 
-  if (!isLoaded || !approverNickname) return <div>loading...</div>
-
   return (
-    <CalculationAssistant
-      now={now}
-      totalPrice={totalPrice}
-      unApprovePrice={unApprovePrice}
-      approverNickname={approverNickname}
-      watchMonth={watchMonth}
-    />
+    <>
+      <Loader isLoading={!isLoaded || !approverNickname} />
+      {isLoaded && approverNickname && (
+        <CalculationAssistant
+          now={now}
+          totalPrice={totalPrice}
+          unApprovePrice={unApprovePrice}
+          approverNickname={approverNickname}
+          watchMonth={watchMonth}
+        />
+      )}
+    </>
   )
 }
 

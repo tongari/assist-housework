@@ -3,6 +3,8 @@ import { Redirect } from 'react-router-dom'
 
 import { Paths } from 'types'
 import { fixCalculation } from 'domain/firestore'
+
+import Loader from 'components/molecules/Loader'
 import CalculationApprover from 'components/templates/CalculationApprover'
 import useInjection from './useInjection'
 
@@ -29,17 +31,20 @@ const CalculationApproverPage: React.FC = () => {
     return <Redirect to={Paths.WorkApprover} />
   }
 
-  if (!isLoaded || !assistantNickname) return <div>loading...</div>
-
   return (
-    <CalculationApprover
-      now={now}
-      totalPrice={totalPrice}
-      unApprovePrice={unApprovePrice}
-      assistantNickname={assistantNickname}
-      watchMonth={watchMonth}
-      fixCalculationHandler={fixCalculationHandler}
-    />
+    <>
+      <Loader isLoading={!isLoaded || !assistantNickname} />
+      {isLoaded && assistantNickname && (
+        <CalculationApprover
+          now={now}
+          totalPrice={totalPrice}
+          unApprovePrice={unApprovePrice}
+          assistantNickname={assistantNickname}
+          watchMonth={watchMonth}
+          fixCalculationHandler={fixCalculationHandler}
+        />
+      )}
+    </>
   )
 }
 

@@ -1,7 +1,10 @@
 import React from 'react'
-import { Now } from 'types'
 
-// TODO: コンポーネントを適切に分割する
+import { Now } from 'types'
+import { useSharedStyles } from 'styles'
+import DateText from 'components/molecules/DateText'
+import NextActionText from 'components/organisms/NextActionText'
+import CalculatedPriceItems from 'components/organisms/CalculatedPriceItems'
 
 interface Props {
   approverNickname: string
@@ -18,17 +21,23 @@ const CalculationAssistant: React.FC<Props> = ({
   unApprovePrice,
   watchMonth,
 }) => {
+  const classes = useSharedStyles()
   return (
-    <div>
-      <p>
-        {now.year}/{now.month}/{now.date}（{now.day}）
-      </p>
-      <h1>
-        {approverNickname}さんから{watchMonth}月のお小遣いを貰ってくください。
-      </h1>
-      <p>お小遣い合計額 : {totalPrice}円</p>
-      <p>未承認額 : {unApprovePrice}円</p>
-    </div>
+    <>
+      <DateText now={now} />
+      <div className={classes.templateInner}>
+        <NextActionText nickname={approverNickname} month={watchMonth}>
+          のお小遣いを貰ってください。
+        </NextActionText>
+
+        <CalculatedPriceItems
+          items={[
+            { label: 'お小遣い合計額', price: totalPrice },
+            { label: '未承認額', price: unApprovePrice },
+          ]}
+        />
+      </div>
+    </>
   )
 }
 

@@ -2,10 +2,10 @@ import React from 'react'
 import Button from '@material-ui/core/Button'
 
 import { Now } from 'types'
+import { useSharedStyles } from 'styles'
 import DateText from 'components/molecules/DateText'
 import NextActionText from 'components/organisms/NextActionText'
 import CalculatedPriceItems from 'components/organisms/CalculatedPriceItems'
-import { useSharedStyles } from 'styles'
 
 interface Props {
   assistantNickname: string

@@ -2,6 +2,7 @@ import React, { useContext } from 'react'
 import { RouteProps, Redirect } from 'react-router-dom'
 import { Paths } from 'types'
 import { AuthorizedContext } from 'contexts/AuthorizedProvider'
+import Loader from 'components/molecules/Loader'
 
 const Authorized: React.FC<RouteProps> = ({ children }) => {
   const { authenticated, isAuthLoading, authError } = useContext(
@@ -13,7 +14,7 @@ const Authorized: React.FC<RouteProps> = ({ children }) => {
   }
 
   if (isAuthLoading) {
-    return <div>loading...</div>
+    return <Loader isLoading={isAuthLoading} />
   }
 
   if (authenticated) {
