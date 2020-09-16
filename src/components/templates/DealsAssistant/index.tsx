@@ -1,7 +1,10 @@
 import React from 'react'
 import { Now, GroupDateDeal } from 'types'
+import { useSharedStyles } from 'styles'
 
-// TODO: コンポーネントを適切に分割する
+import NextActionText from 'components/organisms/NextActionText'
+import CalculatedPriceItems from 'components/organisms/CalculatedPriceItems'
+import Deals from 'components/organisms/Deals'
 
 interface Props {
   approverNickname: string
@@ -20,43 +23,28 @@ const DealsAssistant: React.FC<Props> = ({
   totalPrice,
   unApprovePrice,
 }) => {
+  const classes = useSharedStyles()
+
   return (
-    <div>
-      <p>
-        {now.year}/{now.month}/{now.date}（{now.day}）
-      </p>
-      <h1>
-        {approverNickname}さんへの{now.month}月のお手伝い履歴
-      </h1>
-      <div>
-        {groupedDateDeals.map((groupedDateDeal, index) => {
-          return (
-            <dl key={index.toString()}>
-              <dt>
-                {now.year}/{now.month}/{groupedDateDeal.date}（
-                {groupedDateDeal.day}）
-              </dt>
-              {groupedDateDeal.deals.map((deal) => {
-                return (
-                  <React.Fragment key={deal.id}>
-                    <dd>
-                      <span>{deal.itemLabel}</span>
-                      {deal.isApproved ? (
-                        <span>承認済</span>
-                      ) : (
-                        <span>未承認</span>
-                      )}
-                    </dd>
-                  </React.Fragment>
-                )
-              })}
-            </dl>
-          )
-        })}
-      </div>
-      <p>お小遣い合計額 : {totalPrice}円</p>
-      <p>未承認額 : {unApprovePrice}円</p>
-      <p>残りの予算額 : {budget}円</p>
+    <div className={classes.templateInner}>
+      <NextActionText
+        words={[
+          { text: `${approverNickname}`, isEmphasis: true },
+          { text: 'さんへの' },
+          { text: `${now.month}月`, isEmphasis: true },
+          { text: 'のお手伝い履歴' },
+        ]}
+      />
+
+      <Deals groupedDateDeals={groupedDateDeals} isAssistant />
+
+      <CalculatedPriceItems
+        items={[
+          { label: '支払い合計', price: totalPrice },
+          { label: '未承認額', price: unApprovePrice },
+          { label: '残りの予算額', price: budget },
+        ]}
+      />
     </div>
   )
 }

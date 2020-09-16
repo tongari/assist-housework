@@ -1,7 +1,9 @@
 import React from 'react'
 import { Now, GroupDateDeal } from 'types'
-
-// TODO: コンポーネントを適切に分割する
+import { useSharedStyles } from 'styles'
+import NextActionText from 'components/organisms/NextActionText'
+import CalculatedPriceItems from 'components/organisms/CalculatedPriceItems'
+import Deals from 'components/organisms/Deals'
 
 interface Props {
   assistantNickname: string
@@ -22,50 +24,31 @@ const DealsApprover: React.FC<Props> = ({
   unApprovePrice,
   approveDealHandler,
 }) => {
+  const classes = useSharedStyles()
+
   return (
-    <div>
-      <p>
-        {now.year}/{now.month}/{now.date}（{now.day}）
-      </p>
-      <h1>
-        {assistantNickname}さんとの{now.month}月の取引履歴
-      </h1>
-      <div>
-        {groupedDateDeals.map((groupedDateDeal, index) => {
-          return (
-            <dl key={index.toString()}>
-              <dt>
-                {now.year}/{now.month}/{groupedDateDeal.date}（
-                {groupedDateDeal.day}）
-              </dt>
-              {groupedDateDeal.deals.map((deal) => {
-                return (
-                  <React.Fragment key={deal.id}>
-                    <dd>
-                      <span>{deal.itemLabel}</span>
-                      {deal.isApproved ? (
-                        <span>承認済</span>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            approveDealHandler(deal.id)
-                          }}
-                        >
-                          承認
-                        </button>
-                      )}
-                    </dd>
-                  </React.Fragment>
-                )
-              })}
-            </dl>
-          )
-        })}
-      </div>
-      <p>支払い合計額 : {totalPrice}円</p>
-      <p>未承認額 : {unApprovePrice}円</p>
-      <p>残りの予算額 : {budget}円</p>
+    <div className={classes.templateInner}>
+      <NextActionText
+        words={[
+          { text: `${assistantNickname}`, isEmphasis: true },
+          { text: 'さんとの' },
+          { text: `${now.month}月`, isEmphasis: true },
+          { text: 'の取引履歴' },
+        ]}
+      />
+
+      <Deals
+        groupedDateDeals={groupedDateDeals}
+        approveDealHandler={approveDealHandler}
+      />
+
+      <CalculatedPriceItems
+        items={[
+          { label: '支払い合計', price: totalPrice },
+          { label: '未承認額', price: unApprovePrice },
+          { label: '残りの予算額', price: budget },
+        ]}
+      />
     </div>
   )
 }

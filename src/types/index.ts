@@ -63,6 +63,7 @@ export interface Deal {
 }
 
 export interface GroupDateDeal {
+  month: string
   date: string
   day: string
   deals: Deal[]

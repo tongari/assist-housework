@@ -3,6 +3,7 @@ import { Redirect } from 'react-router-dom'
 
 import { Paths } from 'types'
 import { approveDeal } from 'domain/firestore'
+import Loader from 'components/molecules/Loader'
 import DealsApprover from 'components/templates/DealsApprover'
 import useInjection from './useInjection'
 
@@ -30,18 +31,21 @@ const DealsApproverPage: React.FC = () => {
     return <Redirect to={Paths.CalculationApprover} />
   }
 
-  if (!isLoaded || !assistantNickname) return <div>loading...</div>
-
   return (
-    <DealsApprover
-      assistantNickname={assistantNickname}
-      now={now}
-      groupedDateDeals={groupedDateDeals}
-      budget={budget}
-      totalPrice={totalPrice}
-      unApprovePrice={unApprovePrice}
-      approveDealHandler={approveDealHandler}
-    />
+    <>
+      <Loader isLoading={!isLoaded || !assistantNickname} />
+      {isLoaded && assistantNickname && (
+        <DealsApprover
+          assistantNickname={assistantNickname}
+          now={now}
+          groupedDateDeals={groupedDateDeals}
+          budget={budget}
+          totalPrice={totalPrice}
+          unApprovePrice={unApprovePrice}
+          approveDealHandler={approveDealHandler}
+        />
+      )}
+    </>
   )
 }
 
