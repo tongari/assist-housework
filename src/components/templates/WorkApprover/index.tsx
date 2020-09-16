@@ -8,6 +8,7 @@ import { Now, GroupDateDeal } from 'types'
 import { useSharedStyles } from 'styles'
 import NextActionText from 'components/organisms/NextActionText'
 import CalculatedPriceItems from 'components/organisms/CalculatedPriceItems'
+import Deals from 'components/organisms/Deals'
 
 interface Props {
   assistantNickname: string
@@ -21,7 +22,6 @@ interface Props {
 
 const WorkApprover: React.FC<Props> = ({
   assistantNickname,
-  now,
   groupedDateDeals,
   budget,
   totalPrice,
@@ -39,44 +39,21 @@ const WorkApprover: React.FC<Props> = ({
         ]}
       />
 
-      <div>
-        {groupedDateDeals.length === 0 && (
-          <Box display="flex">
-            <InfoIcon color="secondary" />
-            <Typography>
-              本日はまだ、
-              {assistantNickname}さんはお手伝いをしていません。
-            </Typography>
-          </Box>
-        )}
-        {groupedDateDeals.map((groupedDateDeal, index) => {
-          return (
-            <dl key={index.toString()}>
-              <dt>
-                {now.year}/{now.month}/{groupedDateDeal.date}（
-                {groupedDateDeal.day}）
-              </dt>
-              {groupedDateDeal.deals.map((deal) => {
-                return (
-                  <React.Fragment key={deal.id}>
-                    <dd>
-                      <span>{deal.itemLabel}</span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          approveDealHandler(deal.id)
-                        }}
-                      >
-                        承認
-                      </button>
-                    </dd>
-                  </React.Fragment>
-                )
-              })}
-            </dl>
-          )
-        })}
-      </div>
+      {groupedDateDeals.length === 0 ? (
+        <Box display="flex">
+          <InfoIcon color="secondary" />
+          <Typography>
+            本日はまだ、
+            {assistantNickname}さんはお手伝いをしていません。
+          </Typography>
+        </Box>
+      ) : (
+        <Deals
+          groupedDateDeals={groupedDateDeals}
+          approveDealHandler={approveDealHandler}
+        />
+      )}
+
       <CalculatedPriceItems
         items={[
           { label: '支払い合計', price: totalPrice },

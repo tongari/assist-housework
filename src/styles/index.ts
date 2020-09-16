@@ -13,6 +13,9 @@ export const globalTheme = createMuiTheme({
           fontFamily:
             '"Roboto","Helvetica Neue",Arial,"Hiragino Kaku Gothic ProN","Hiragino Sans",Meiryo,sans-serif',
         },
+        li: {
+          listStyle: 'none',
+        },
       },
     },
   },

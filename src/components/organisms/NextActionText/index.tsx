@@ -27,13 +27,18 @@ const NextActionText: React.FC<Props> = ({ words }) => {
   return (
     <Box mt={5} mb={5}>
       <Typography variant="h4" component="h1">
-        {words.map((word) => {
+        {words.map((word, index) => {
           if (word.isEmphasis) {
             return (
-              <span className={classes.emphasisTitleText}>{word.text}</span>
+              <span
+                key={index.toString()}
+                className={classes.emphasisTitleText}
+              >
+                {word.text}
+              </span>
             )
           }
-          return <span>{word.text}</span>
+          return <span key={index.toString()}>{word.text}</span>
         })}
       </Typography>
     </Box>
