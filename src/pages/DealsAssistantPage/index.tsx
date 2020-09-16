@@ -2,6 +2,7 @@ import React from 'react'
 import { Redirect } from 'react-router-dom'
 
 import { Paths } from 'types'
+import Loader from 'components/molecules/Loader'
 import DealsAssistant from 'components/templates/DealsAssistant'
 import useInjection from './useInjection'
 
@@ -25,17 +26,20 @@ const DealsAssistantPage: React.FC = () => {
     return <Redirect to={Paths.CalculationAssistant} />
   }
 
-  if (!isLoaded || !approverNickname) return <div>loading...</div>
-
   return (
-    <DealsAssistant
-      approverNickname={approverNickname}
-      now={now}
-      groupedDateDeals={groupedDateDeals}
-      budget={budget}
-      totalPrice={totalPrice}
-      unApprovePrice={unApprovePrice}
-    />
+    <>
+      <Loader isLoading={!isLoaded || !approverNickname} />
+      {isLoaded && approverNickname && (
+        <DealsAssistant
+          approverNickname={approverNickname}
+          now={now}
+          groupedDateDeals={groupedDateDeals}
+          budget={budget}
+          totalPrice={totalPrice}
+          unApprovePrice={unApprovePrice}
+        />
+      )}
+    </>
   )
 }
 

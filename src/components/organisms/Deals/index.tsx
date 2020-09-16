@@ -30,16 +30,45 @@ export const useStyles = makeStyles((theme: Theme) =>
 
 interface Props {
   groupedDateDeals: GroupDateDeal[]
-  approveDealHandler: (dealId: string) => void
+  approveDealHandler?: (dealId: string) => void
+  isAssistant?: boolean
 }
 
-const Deals: React.FC<Props> = ({ groupedDateDeals, approveDealHandler }) => {
+const Deals: React.FC<Props> = ({
+  groupedDateDeals,
+  approveDealHandler,
+  isAssistant,
+}) => {
   const classes = useStyles()
+
+  const renderUnApproval = (dealId: string) => {
+    if (isAssistant) {
+      return (
+        <Typography color="secondary" variant="body2">
+          未承認
+        </Typography>
+      )
+    }
+    return (
+      <Button
+        variant="outlined"
+        color="secondary"
+        size="small"
+        onClick={() => {
+          if (approveDealHandler) {
+            approveDealHandler(dealId)
+          }
+        }}
+      >
+        承認
+      </Button>
+    )
+  }
 
   return (
     <TableContainer className={classes.container}>
       {groupedDateDeals.map((groupedDateDeal, index) => (
-        <>
+        <React.Fragment key={index.toString()}>
           <Box m={1}>
             <Typography variant="h6" component="p" align="left">
               {`${groupedDateDeal.month}/${groupedDateDeal.date}（${groupedDateDeal.day}）`}
@@ -62,23 +91,14 @@ const Deals: React.FC<Props> = ({ groupedDateDeals, approveDealHandler }) => {
                         承認済
                       </Typography>
                     ) : (
-                      <Button
-                        variant="outlined"
-                        color="secondary"
-                        size="small"
-                        onClick={() => {
-                          approveDealHandler(deal.id)
-                        }}
-                      >
-                        承認
-                      </Button>
+                      <>{renderUnApproval(deal.id)}</>
                     )}
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
-        </>
+        </React.Fragment>
       ))}
     </TableContainer>
   )
