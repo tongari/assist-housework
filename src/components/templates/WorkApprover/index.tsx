@@ -1,7 +1,13 @@
 import React from 'react'
-import { Now, GroupDateDeal } from 'types'
 
-// TODO: コンポーネントを適切に分割する
+import Typography from '@material-ui/core/Typography'
+import Box from '@material-ui/core/Box'
+import InfoIcon from '@material-ui/icons/Info'
+
+import { Now, GroupDateDeal } from 'types'
+import { useSharedStyles } from 'styles'
+import NextActionText from 'components/organisms/NextActionText'
+import CalculatedPriceItems from 'components/organisms/CalculatedPriceItems'
 
 interface Props {
   assistantNickname: string
@@ -22,15 +28,26 @@ const WorkApprover: React.FC<Props> = ({
   unApprovePrice,
   approveDealHandler,
 }) => {
+  const classes = useSharedStyles()
+
   return (
-    <div>
-      <p>
-        {now.year}/{now.month}/{now.date}（{now.day}）
-      </p>
-      <h1>{assistantNickname}さんのお手伝いを承認してください。</h1>
+    <div className={classes.templateInner}>
+      <NextActionText
+        words={[
+          { text: `${assistantNickname}`, isEmphasis: true },
+          { text: 'さんのお手伝いを承認してください。' },
+        ]}
+      />
+
       <div>
         {groupedDateDeals.length === 0 && (
-          <p>本日はまだ、{assistantNickname}さんはお手伝いをしていません。</p>
+          <Box display="flex">
+            <InfoIcon color="secondary" />
+            <Typography>
+              本日はまだ、
+              {assistantNickname}さんはお手伝いをしていません。
+            </Typography>
+          </Box>
         )}
         {groupedDateDeals.map((groupedDateDeal, index) => {
           return (
@@ -60,9 +77,13 @@ const WorkApprover: React.FC<Props> = ({
           )
         })}
       </div>
-      <p>支払い合計 : {totalPrice}円</p>
-      <p>未承認額 : {unApprovePrice}円</p>
-      <p>残りの予算額 : {budget}円</p>
+      <CalculatedPriceItems
+        items={[
+          { label: '支払い合計', price: totalPrice },
+          { label: '未承認額', price: unApprovePrice },
+          { label: '残りの予算額', price: budget },
+        ]}
+      />
     </div>
   )
 }

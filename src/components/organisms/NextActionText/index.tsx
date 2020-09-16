@@ -13,19 +13,28 @@ export const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-interface Props {
-  nickname: string
-  month: string
+interface Word {
+  text: string
+  isEmphasis?: boolean
 }
-const NextActionText: React.FC<Props> = ({ nickname, month, children }) => {
+
+interface Props {
+  words: Word[]
+}
+
+const NextActionText: React.FC<Props> = ({ words }) => {
   const classes = useStyles()
   return (
     <Box mt={5} mb={5}>
       <Typography variant="h4" component="h1">
-        <span className={classes.emphasisTitleText}>{nickname}</span>
-        さんに
-        <span className={classes.emphasisTitleText}>{month}月分</span>
-        {children}
+        {words.map((word) => {
+          if (word.isEmphasis) {
+            return (
+              <span className={classes.emphasisTitleText}>{word.text}</span>
+            )
+          }
+          return <span>{word.text}</span>
+        })}
       </Typography>
     </Box>
   )

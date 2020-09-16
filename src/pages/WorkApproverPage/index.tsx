@@ -2,6 +2,7 @@ import React, { useCallback } from 'react'
 import { Redirect } from 'react-router-dom'
 
 import { Paths } from 'types'
+import Loader from 'components/molecules/Loader'
 import WorkApprover from 'components/templates/WorkApprover'
 import { approveDeal } from 'domain/firestore'
 import useInjection from './useInjection'
@@ -30,18 +31,21 @@ const WorkApproverPage: React.FC = () => {
     return <Redirect to={Paths.CalculationApprover} />
   }
 
-  if (!isLoaded || !assistantNickname) return <div>loading...</div>
-
   return (
-    <WorkApprover
-      assistantNickname={assistantNickname}
-      now={now}
-      groupedDateDeals={groupedDateDeals}
-      budget={budget}
-      totalPrice={totalPrice}
-      unApprovePrice={unApprovePrice}
-      approveDealHandler={approveDealHandler}
-    />
+    <>
+      <Loader isLoading={!isLoaded || !assistantNickname} />
+      {isLoaded && assistantNickname && (
+        <WorkApprover
+          assistantNickname={assistantNickname}
+          now={now}
+          groupedDateDeals={groupedDateDeals}
+          budget={budget}
+          totalPrice={totalPrice}
+          unApprovePrice={unApprovePrice}
+          approveDealHandler={approveDealHandler}
+        />
+      )}
+    </>
   )
 }
 

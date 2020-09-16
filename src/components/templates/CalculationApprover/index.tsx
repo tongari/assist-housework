@@ -25,32 +25,35 @@ const CalculationApprover: React.FC<Props> = ({
 }) => {
   const classes = useSharedStyles()
   return (
-    <>
-      <div className={classes.templateInner}>
-        <NextActionText nickname={assistantNickname} month={watchMonth}>
-          のお小遣いを支払いください。
-        </NextActionText>
+    <div className={classes.templateInner}>
+      <NextActionText
+        words={[
+          { text: `${assistantNickname}`, isEmphasis: true },
+          { text: 'さんに' },
+          { text: `${watchMonth}月分`, isEmphasis: true },
+          { text: 'のお小遣いを支払いください。' },
+        ]}
+      />
 
-        <CalculatedPriceItems
-          items={[
-            { label: 'お小遣い合計額', price: totalPrice },
-            { label: '未承認額', price: unApprovePrice },
-          ]}
-        />
+      <CalculatedPriceItems
+        items={[
+          { label: 'お小遣い合計額', price: totalPrice },
+          { label: '未承認額', price: unApprovePrice },
+        ]}
+      />
 
-        <Button
-          variant="contained"
-          color="primary"
-          size="large"
-          fullWidth
-          onClick={() => {
-            fixCalculationHandler()
-          }}
-        >
-          {now.month}月を開始する
-        </Button>
-      </div>
-    </>
+      <Button
+        variant="contained"
+        color="primary"
+        size="large"
+        fullWidth
+        onClick={() => {
+          fixCalculationHandler()
+        }}
+      >
+        {now.month}月を開始する
+      </Button>
+    </div>
   )
 }
 

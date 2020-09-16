@@ -51,6 +51,7 @@ const useInjection = (): InjectionResult => {
 
       if (findIndex < 0) {
         result.push({
+          month: deal.month,
           date: deal.date,
           day: deal.day,
           deals: [deal],

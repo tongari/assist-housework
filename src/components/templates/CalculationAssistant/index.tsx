@@ -19,20 +19,23 @@ const CalculationAssistant: React.FC<Props> = ({
 }) => {
   const classes = useSharedStyles()
   return (
-    <>
-      <div className={classes.templateInner}>
-        <NextActionText nickname={approverNickname} month={watchMonth}>
-          のお小遣いを貰ってください。
-        </NextActionText>
+    <div className={classes.templateInner}>
+      <NextActionText
+        words={[
+          { text: `${approverNickname}`, isEmphasis: true },
+          { text: 'さんから' },
+          { text: `${watchMonth}月分`, isEmphasis: true },
+          { text: 'のお小遣いを貰ってください。' },
+        ]}
+      />
 
-        <CalculatedPriceItems
-          items={[
-            { label: 'お小遣い合計額', price: totalPrice },
-            { label: '未承認額', price: unApprovePrice },
-          ]}
-        />
-      </div>
-    </>
+      <CalculatedPriceItems
+        items={[
+          { label: 'お小遣い合計額', price: totalPrice },
+          { label: '未承認額', price: unApprovePrice },
+        ]}
+      />
+    </div>
   )
 }
 
