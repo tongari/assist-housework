@@ -7,6 +7,12 @@ export const AuthorizedContext = createContext<InjectionResult>({
   isAuthLoading: false,
   authError: undefined,
   userInfo: null,
+  now: {
+    year: '',
+    month: '',
+    date: '',
+    day: '',
+  },
 })
 
 const AuthorizedProvider: React.FC = ({ children }) => {
@@ -16,6 +22,7 @@ const AuthorizedProvider: React.FC = ({ children }) => {
     isAuthLoading,
     authError,
     userInfo,
+    now,
   } = useInjection()
 
   return (
@@ -26,6 +33,7 @@ const AuthorizedProvider: React.FC = ({ children }) => {
         isAuthLoading,
         authError,
         userInfo,
+        now,
       }}
     >
       {children}
