@@ -1,12 +1,14 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
-import { Now } from 'types'
+
+import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
       width: '100vw',
+      minHeight: '56px',
       padding: theme.spacing(2),
       color: theme.palette.common.white,
       backgroundColor: theme.palette.primary.light,
@@ -23,23 +25,23 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-interface Props {
-  now: Now
-}
-
-const DateText: React.FC<Props> = ({ now }) => {
+const Header: React.FC = () => {
   const classes = useStyles()
+
+  const { isAuthorizeContextLoaded, now } = useContext(AuthorizedContext)
   const { year, month, date, day } = now
+
+  const dispDate = isAuthorizeContextLoaded ? `${year}/${month}/${date}` : ''
+  const dispDay = isAuthorizeContextLoaded ? `（${day}）` : ''
+
   return (
     <div className={classes.container}>
       <Typography className={classes.text}>
-        <span>
-          {year}/{month}/{date}
-        </span>
-        <span className={classes.day}>（{day}）</span>
+        <span>{dispDate}</span>
+        <span className={classes.day}>{dispDay}</span>
       </Typography>
     </div>
   )
 }
 
-export default DateText
+export default Header

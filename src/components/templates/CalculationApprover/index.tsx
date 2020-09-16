@@ -3,7 +3,6 @@ import Button from '@material-ui/core/Button'
 
 import { Now } from 'types'
 import { useSharedStyles } from 'styles'
-import DateText from 'components/molecules/DateText'
 import NextActionText from 'components/organisms/NextActionText'
 import CalculatedPriceItems from 'components/organisms/CalculatedPriceItems'
 
@@ -27,7 +26,6 @@ const CalculationApprover: React.FC<Props> = ({
   const classes = useSharedStyles()
   return (
     <>
-      <DateText now={now} />
       <div className={classes.templateInner}>
         <NextActionText nickname={assistantNickname} month={watchMonth}>
           のお小遣いを支払いください。

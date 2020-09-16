@@ -10,7 +10,6 @@ const CalculationAssistantPage: React.FC = () => {
   const {
     isLoaded,
     renderType,
-    now,
     totalPrice,
     unApprovePrice,
     approverNickname,
@@ -30,7 +29,6 @@ const CalculationAssistantPage: React.FC = () => {
       <Loader isLoading={!isLoaded || !approverNickname} />
       {isLoaded && approverNickname && (
         <CalculationAssistant
-          now={now}
           totalPrice={totalPrice}
           unApprovePrice={unApprovePrice}
           approverNickname={approverNickname}

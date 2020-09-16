@@ -1,14 +1,15 @@
 import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
-import Navigation from 'components/organisms/Navigation'
 import { Paths } from 'types'
 
 import AuthorizedProvider from 'contexts/AuthorizedProvider'
 import ContentsProvider from 'contexts/ContentsProvider'
 import RunningProvider from 'contexts/RunningProvider'
-
 import CalculationProvider from 'contexts/CalculationProvider'
+
+import Navigation from 'components/organisms/Navigation'
+import Header from 'components/organisms/Header'
 
 import Authorized from 'pages/Authorized'
 import RootPage from 'pages/RootPage'
@@ -31,6 +32,7 @@ const App: React.FC = () => {
         <Route exact path={Paths.Login} component={LoginPage} />
         <AuthorizedProvider>
           <Authorized>
+            <Header />
             <Navigation />
             <Switch>
               <Route exact path={Paths.Root} component={RootPage} />
