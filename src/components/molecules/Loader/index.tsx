@@ -10,6 +10,8 @@ const useStyles = makeStyles(() =>
       zIndex: 9999,
       width: '100vw',
       height: '100vh',
+      top: 0,
+      left: 0,
     },
     loader: {
       position: 'absolute',
