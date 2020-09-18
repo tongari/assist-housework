@@ -1,9 +1,16 @@
 import React, { useState, useCallback, useEffect } from 'react'
+import { useTheme } from '@material-ui/core/styles'
+import Button from '@material-ui/core/Button'
+import Box from '@material-ui/core/Box'
+
 import { Now, Item, Budget } from 'types'
+import { useSharedStyles } from 'styles'
+import NextActionText from 'components/organisms/NextActionText'
+import SettingItems from 'components/organisms/SettingItems'
+import SettingBudget from 'components/organisms/SettingBudget'
 
 // TODO: バリデーションをする
 // TODO: ロジックを切り出す？
-// TODO: コンポーネントを適切に分割する
 
 interface Props {
   assistantNickname: string
@@ -23,6 +30,9 @@ const SettingApprover: React.FC<Props> = ({
   settingAssistContentsHandler,
   budgets,
 }) => {
+  const classes = useSharedStyles()
+  const theme = useTheme()
+
   const [tempItems, setTempItems] = useState(items)
   const [tempBudgets, setTempBudgets] = useState(budgets)
 
@@ -71,82 +81,37 @@ const SettingApprover: React.FC<Props> = ({
   )
 
   return (
-    <div>
-      <h1>
-        {now.month}月の{assistantNickname}
-        さんにお願いするお手伝いの内容を入力してください。
-      </h1>
-      <form>
-        <fieldset>
-          <legend>お手伝い項目（最大５つ）</legend>
-          <ul>
-            {tempItems.map((tempItem, index) => {
-              return (
-                <li key={index.toString()}>
-                  <p>項目:</p>
-                  <input
-                    type="text"
-                    maxLength={20}
-                    value={tempItem.label ?? ''}
-                    placeholder="20文字以内で設定してください。"
-                    onChange={(e) => {
-                      updateLabel(e.target.value, index)
-                    }}
-                  />
-                  <p>金額:</p>
-                  <input
-                    type="text"
-                    maxLength={3}
-                    placeholder="999円まで設定可能です。"
-                    value={tempItem.price ?? ''}
-                    onChange={(e) => {
-                      const inputValue = e.target.value
-                      if (e.target.value === '') {
-                        updatePrice(null, index)
-                        return
-                      }
-                      const price = parseInt(inputValue, 10)
-                      if (!Number.isInteger(price)) {
-                        return
-                      }
-                      updatePrice(price, index)
-                    }}
-                  />
-                </li>
-              )
-            })}
-          </ul>
-        </fieldset>
-        <fieldset>
-          <legend>{now.month}月の予算上限額</legend>
-          <input
-            type="text"
-            maxLength={4}
-            placeholder="9999円まで設定可能です。"
-            value={tempBudgets[0]?.budget ?? ''}
-            onChange={(e) => {
-              const inputValue = e.target.value
-              if (e.target.value === '') {
-                updateBudget(null, 0)
-                return
-              }
-              const budget = parseInt(inputValue, 10)
-              if (!Number.isInteger(budget)) {
-                return
-              }
-              updateBudget(budget, 0)
-            }}
-          />
-        </fieldset>
-        <button
-          type="button"
+    <div className={classes.templateInner}>
+      <NextActionText
+        words={[
+          { text: `${assistantNickname}`, isEmphasis: true },
+          { text: 'さんにお願いするお手伝いの内容を入力してください。' },
+        ]}
+      />
+      <SettingItems
+        tempItems={tempItems}
+        updateLabel={updateLabel}
+        updatePrice={updatePrice}
+      />
+      <SettingBudget
+        month={now.month}
+        tempBudgets={tempBudgets}
+        updateBudget={updateBudget}
+      />
+
+      <Box m="auto" mb={8} maxWidth={theme.breakpoints.values.sm}>
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          fullWidth
           onClick={() => {
             settingAssistContentsHandler(tempItems, tempBudgets)
           }}
         >
-          更新
-        </button>
-      </form>
+          設定
+        </Button>
+      </Box>
     </div>
   )
 }
