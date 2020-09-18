@@ -1,9 +1,13 @@
 import React, { useState, useCallback, useEffect } from 'react'
+import { useTheme } from '@material-ui/core/styles'
+import Button from '@material-ui/core/Button'
+import Box from '@material-ui/core/Box'
 
 import { Now, Item, Budget } from 'types'
 import { useSharedStyles } from 'styles'
 import NextActionText from 'components/organisms/NextActionText'
 import SettingItems from 'components/organisms/SettingItems'
+import SettingBudget from 'components/organisms/SettingBudget'
 
 // TODO: バリデーションをする
 // TODO: ロジックを切り出す？
@@ -27,6 +31,7 @@ const SettingApprover: React.FC<Props> = ({
   budgets,
 }) => {
   const classes = useSharedStyles()
+  const theme = useTheme()
 
   const [tempItems, setTempItems] = useState(items)
   const [tempBudgets, setTempBudgets] = useState(budgets)
@@ -88,35 +93,25 @@ const SettingApprover: React.FC<Props> = ({
         updateLabel={updateLabel}
         updatePrice={updatePrice}
       />
-      <fieldset>
-        <legend>{now.month}月の予算上限額</legend>
-        <input
-          type="text"
-          maxLength={4}
-          placeholder="9999円まで設定可能です。"
-          value={tempBudgets[0]?.budget ?? ''}
-          onChange={(e) => {
-            const inputValue = e.target.value
-            if (e.target.value === '') {
-              updateBudget(null, 0)
-              return
-            }
-            const budget = parseInt(inputValue, 10)
-            if (!Number.isInteger(budget)) {
-              return
-            }
-            updateBudget(budget, 0)
+      <SettingBudget
+        month={now.month}
+        tempBudgets={tempBudgets}
+        updateBudget={updateBudget}
+      />
+
+      <Box m="auto" mb={8} maxWidth={theme.breakpoints.values.sm}>
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          fullWidth
+          onClick={() => {
+            settingAssistContentsHandler(tempItems, tempBudgets)
           }}
-        />
-      </fieldset>
-      <button
-        type="button"
-        onClick={() => {
-          settingAssistContentsHandler(tempItems, tempBudgets)
-        }}
-      >
-        更新
-      </button>
+        >
+          設定
+        </Button>
+      </Box>
     </div>
   )
 }

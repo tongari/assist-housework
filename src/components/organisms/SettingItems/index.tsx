@@ -11,7 +11,7 @@ export const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
       backgroundColor: theme.palette.common.white,
-      borderRadius: '8px',
+      borderRadius: '4px',
       boxShadow: theme.shadows[1],
     },
     item: {
