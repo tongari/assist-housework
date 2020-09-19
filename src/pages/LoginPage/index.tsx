@@ -1,12 +1,13 @@
 import React from 'react'
 import { Redirect } from 'react-router-dom'
+import Loader from 'components/molecules/Loader'
 import useLogin from 'pages/LoginPage/useLogin'
 import { Paths } from 'types'
 
 const LoginPage: React.FC = () => {
   const [user, isLoading, error] = useLogin()
   if (isLoading) {
-    return <div>Login Loading...</div>
+    return <Loader isLoading={isLoading} />
   }
 
   if (error) {

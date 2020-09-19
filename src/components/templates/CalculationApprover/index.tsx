@@ -1,5 +1,7 @@
 import React from 'react'
+import { useTheme } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
+import Box from '@material-ui/core/Box'
 
 import { Now } from 'types'
 import { useSharedStyles } from 'styles'
@@ -24,6 +26,8 @@ const CalculationApprover: React.FC<Props> = ({
   fixCalculationHandler,
 }) => {
   const classes = useSharedStyles()
+  const theme = useTheme()
+
   return (
     <div className={classes.templateInner}>
       <NextActionText
@@ -42,17 +46,19 @@ const CalculationApprover: React.FC<Props> = ({
         ]}
       />
 
-      <Button
-        variant="contained"
-        color="primary"
-        size="large"
-        fullWidth
-        onClick={() => {
-          fixCalculationHandler()
-        }}
-      >
-        {now.month}月を開始する
-      </Button>
+      <Box m="auto" maxWidth={theme.breakpoints.values.sm}>
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          fullWidth
+          onClick={() => {
+            fixCalculationHandler()
+          }}
+        >
+          {now.month}月を開始する
+        </Button>
+      </Box>
     </div>
   )
 }
