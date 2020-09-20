@@ -2,12 +2,13 @@ import React, { useContext } from 'react'
 import { Redirect } from 'react-router-dom'
 import { Paths, Roles, Status } from 'types'
 import { AuthorizedContext } from 'contexts/AuthorizedProvider'
+import Loader from 'components/molecules/Loader'
 
 const RootPage: React.FC = () => {
   const { isAuthorizeContextLoaded, userInfo } = useContext(AuthorizedContext)
 
   if (!isAuthorizeContextLoaded) {
-    return <div>loading...</div>
+    return <Loader isLoading={!isAuthorizeContextLoaded} />
   }
 
   const renderApprover = (): React.ReactElement => {

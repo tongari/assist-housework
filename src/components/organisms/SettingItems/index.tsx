@@ -1,4 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useFormContext, useFieldArray } from 'react-hook-form'
+
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
@@ -24,17 +26,29 @@ export const useStyles = makeStyles((theme: Theme) =>
 )
 
 interface Props {
-  tempItems: Item[]
-  updateLabel: (label: string, index: number) => void
-  updatePrice: (price: number | null, index: number) => void
+  items: Item[]
 }
 
-const SettingItems: React.FC<Props> = ({
-  tempItems,
-  updateLabel,
-  updatePrice,
-}) => {
+const SettingItems: React.FC<Props> = ({ items }) => {
   const classes = useStyles()
+
+  const { register, errors, control } = useFormContext()
+
+  const { fields, append } = useFieldArray({
+    control,
+    name: 'items',
+  })
+
+  useEffect(() => {
+    items.forEach((item) => {
+      const sameId = fields.findIndex((fieldItem) => {
+        return fieldItem.itemId === item.itemId
+      })
+      if (sameId === -1) {
+        append({ label: item.label, price: item.price, itemId: item.itemId })
+      }
+    })
+  }, [items, fields, append])
 
   return (
     <>
@@ -42,7 +56,7 @@ const SettingItems: React.FC<Props> = ({
         お手伝い項目（最大５つ）
       </Typography>
       <Box m={1.5}>
-        {tempItems.map((tempItem, index) => {
+        {fields.map((field, index) => {
           return (
             <Box mt={3} key={index.toString()}>
               <Grid
@@ -53,44 +67,37 @@ const SettingItems: React.FC<Props> = ({
               >
                 <Grid item xs={12} sm={6}>
                   <TextField
+                    name={`items[${index.toString()}].label`}
                     label="項目"
                     variant="outlined"
                     fullWidth
                     inputProps={{
                       placeholder: '20文字以内で設定してください。',
-                      maxLength: 20,
                     }}
                     className={classes.item}
-                    value={tempItem.label ?? ''}
-                    onChange={(e) => {
-                      updateLabel(e.target.value, index)
-                    }}
+                    defaultValue={field.label ?? ''}
+                    inputRef={register()}
                   />
+                  {errors?.items && (
+                    <p>{errors.items[index]?.label?.message}</p>
+                  )}
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
+                    name={`items[${index.toString()}].price`}
                     label="金額"
                     variant="outlined"
                     fullWidth
                     inputProps={{
                       placeholder: '999円まで設定可能です。',
-                      maxLength: 3,
                     }}
                     className={classes.item}
-                    value={tempItem.price ?? ''}
-                    onChange={(e) => {
-                      const inputValue = e.target.value
-                      if (e.target.value === '') {
-                        updatePrice(null, index)
-                        return
-                      }
-                      const price = parseInt(inputValue, 10)
-                      if (!Number.isInteger(price)) {
-                        return
-                      }
-                      updatePrice(price, index)
-                    }}
+                    defaultValue={field.price ?? ''}
+                    inputRef={register()}
                   />
+                  {errors?.items && (
+                    <p>{errors.items[index]?.price?.message}</p>
+                  )}
                 </Grid>
               </Grid>
             </Box>

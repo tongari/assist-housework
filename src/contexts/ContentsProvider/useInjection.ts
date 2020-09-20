@@ -60,7 +60,7 @@ const useInjection = (): InjectionResult => {
   }
 
   const [items, isItemsLoading] = useCollection(
-    itemsCollection(getUserId(), getApproverId())
+    itemsCollection(getUserId(), getApproverId()).orderBy('itemId', 'desc')
   )
 
   const [budgets, isBudgetsLoading] = useCollection(
