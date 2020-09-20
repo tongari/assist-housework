@@ -3,6 +3,7 @@ import { Redirect } from 'react-router-dom'
 import { registerAssistantUser } from 'domain/firestore'
 
 import { Paths } from 'types'
+import Loader from 'components/molecules/Loader'
 import RegisterAssistant from 'components/templates/RegisterAssistant'
 import PendingRegisterAssistant from 'components/templates/RegisterAssistant/pending'
 import useInjection from './useInjection'
@@ -29,10 +30,15 @@ const RegisterAssistantPage: React.FC = () => {
     return <Redirect to={Paths.NotFound} />
   }
 
-  if (!isLoaded || !approverNickname) return <div>loading...</div>
-
   if (renderType === 'Pending') {
-    return <PendingRegisterAssistant approverNickname={approverNickname} />
+    return (
+      <>
+        <Loader isLoading={!isLoaded || !approverNickname} />
+        {isLoaded && approverNickname && (
+          <PendingRegisterAssistant approverNickname={approverNickname} />
+        )}
+      </>
+    )
   }
 
   if (renderType === 'Running') {
@@ -40,10 +46,15 @@ const RegisterAssistantPage: React.FC = () => {
   }
 
   return (
-    <RegisterAssistant
-      approverNickname={approverNickname}
-      registerAssistantUserHandler={registerAssistantUserHandler}
-    />
+    <>
+      <Loader isLoading={!isLoaded || !approverNickname} />
+      {isLoaded && approverNickname && (
+        <RegisterAssistant
+          approverNickname={approverNickname}
+          registerAssistantUserHandler={registerAssistantUserHandler}
+        />
+      )}
+    </>
   )
 }
 
