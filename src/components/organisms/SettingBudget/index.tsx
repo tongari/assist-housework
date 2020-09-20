@@ -43,7 +43,7 @@ const SettingBudget: React.FC<Props> = ({
           fullWidth
           inputProps={{
             placeholder: '9999円まで設定可能です。',
-            maxlength: 4,
+            maxLength: 4,
           }}
           value={tempBudgets[0]?.budget ?? ''}
           onChange={(e) => {

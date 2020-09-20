@@ -1,19 +1,24 @@
 import React from 'react'
 
+import { useSharedStyles } from 'styles'
+import NextActionText from 'components/organisms/NextActionText'
+
 interface Props {
   inviteAddress: string
 }
 
 const PendingRegisterApprover: React.FC<Props> = ({ inviteAddress }) => {
+  const classes = useSharedStyles()
+
   return (
-    <div>
-      <p>
-        ただいま、
-        <br />
-        <strong>{inviteAddress}</strong>
-        <br />
-        さんの登録待ちです。
-      </p>
+    <div className={classes.templateInner}>
+      <NextActionText
+        words={[
+          { text: 'ただいま' },
+          { text: inviteAddress, isEmphasis: true },
+          { text: 'さんの登録待ちです。' },
+        ]}
+      />
     </div>
   )
 }

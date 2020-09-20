@@ -44,7 +44,7 @@ const SettingItems: React.FC<Props> = ({
       <Box m={1.5}>
         {tempItems.map((tempItem, index) => {
           return (
-            <Box mt={3}>
+            <Box mt={3} key={index.toString()}>
               <Grid
                 container
                 spacing={3}
@@ -58,7 +58,7 @@ const SettingItems: React.FC<Props> = ({
                     fullWidth
                     inputProps={{
                       placeholder: '20文字以内で設定してください。',
-                      maxlength: 20,
+                      maxLength: 20,
                     }}
                     className={classes.item}
                     value={tempItem.label ?? ''}
@@ -74,7 +74,7 @@ const SettingItems: React.FC<Props> = ({
                     fullWidth
                     inputProps={{
                       placeholder: '999円まで設定可能です。',
-                      maxlength: 3,
+                      maxLength: 3,
                     }}
                     className={classes.item}
                     value={tempItem.price ?? ''}

@@ -282,9 +282,9 @@ export const fetchServerTime = async (): Promise<
   firebase.functions.HttpsCallableResult
 > => {
   const userDoc = userDocument()
-  const currentYear = (await userDoc.get()).get('currentWatchUser').year
-  const currentMonth = (await userDoc.get()).get('currentWatchUser').month
-  const currentState = (await userDoc.get()).get('currentWatchUser').statusRef
+  const currentYear = (await userDoc.get()).get('currentWatchUser')?.year
+  const currentMonth = (await userDoc.get()).get('currentWatchUser')?.month
+  const currentState = (await userDoc.get()).get('currentWatchUser')?.statusRef
     .id
 
   const getServerTime = firebase.functions().httpsCallable('getServerTime')

@@ -26,7 +26,11 @@ const NextActionText: React.FC<Props> = ({ words }) => {
   const classes = useStyles()
   return (
     <Box mt={5} mb={5}>
-      <Typography variant="h4" component="h1">
+      <Typography
+        variant="h4"
+        component="h1"
+        style={{ overflowWrap: 'break-word' }}
+      >
         {words.map((word, index) => {
           if (word.isEmphasis) {
             return (
