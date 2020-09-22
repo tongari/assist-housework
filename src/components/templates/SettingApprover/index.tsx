@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useState, useCallback, useEffect } from 'react'
+import React from 'react'
 import { useTheme } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import Box from '@material-ui/core/Box'
@@ -14,51 +14,37 @@ import NextActionText from 'components/organisms/NextActionText'
 import SettingItems from 'components/organisms/SettingItems'
 import SettingBudget from 'components/organisms/SettingBudget'
 
-// TODO: バリデーションをする
-// TODO: ロジックを切り出す？
 const itemSchema = yup.object({
   label: yup
     .string()
-    .max(5, '文字数超えてます。')
-    .required('入力してください。'),
-  // TODO: 後で削除する
-  // eslint-disable-next-line func-names
-  // .test('Both price', '必須です', function (value) {
-  //   if (this.parent.price === null && value === '') {
-  //     return true
-  //   }
-  //   if (this.parent.price !== null && value === '') {
-  //     return false
-  //   }
-  //   return true
-  // }),
+    .required('入力してください。')
+    .max(20, '20文字以内で設定してください。'),
+
   price: yup
     .number()
-    .transform((v, o) => (o === '' ? null : v))
     .typeError('半角数字で入力してください。')
-    .nullable()
     .integer('小数点は入力できません。')
     .positive('1円以上で設定してください。')
-    .max(999, '999円まで設定可能です。')
-    .required('入力してください。'),
-  // eslint-disable-next-line func-names
-  // .test('Both label', '必須です', function (value) {
-  //   if (this.parent.label === '' && value === null) {
-  //     return true
-  //   }
-  //   if (this.parent.label !== '' && value === null) {
-  //     return false
-  //   }
-  //   return true
-  // }),
+    .max(999, '999円まで設定可能です。'),
+})
+
+const budgetSchema = yup.object({
+  budget: yup
+    .number()
+    .typeError('半角数字で入力してください。')
+    .integer('小数点は入力できません。')
+    .positive('1円以上で設定してください。')
+    .max(9999, '9999円まで設定可能です。'),
 })
 
 const schema = yup.object().shape({
   items: yup.array().of(itemSchema),
+  budget: budgetSchema,
 })
 
 interface FormInputs {
   items: Item[]
+  budget: Budget
 }
 
 interface Props {
@@ -82,8 +68,6 @@ const SettingApprover: React.FC<Props> = ({
   const classes = useSharedStyles()
   const theme = useTheme()
 
-  const [tempBudgets, setTempBudgets] = useState(budgets)
-
   const methods = useForm<FormInputs>({
     resolver: yupResolver(schema),
   })
@@ -92,29 +76,6 @@ const SettingApprover: React.FC<Props> = ({
   const onSubmit = (data: FormInputs) => {
     // settingAssistContentsHandler(data.items, data.editBudget)
   }
-
-  useEffect(() => {
-    setTempBudgets(budgets)
-  }, [budgets])
-
-  const updateBudget = useCallback(
-    (budget: number | null, index: number) => {
-      const copy = tempBudgets.slice()
-      if (copy.length === 0) {
-        setTempBudgets([
-          {
-            year: now.year,
-            month: now.month,
-            budget,
-          },
-        ])
-        return
-      }
-      copy[index].budget = budget
-      setTempBudgets(copy)
-    },
-    [tempBudgets, now]
-  )
 
   return (
     <div className={classes.templateInner}>
@@ -127,11 +88,7 @@ const SettingApprover: React.FC<Props> = ({
             ]}
           />
           <SettingItems items={items} />
-          <SettingBudget
-            month={now.month}
-            tempBudgets={tempBudgets}
-            updateBudget={updateBudget}
-          />
+          <SettingBudget month={now.month} budget={budgets[0]} />
 
           <Box m="auto" mb={8} maxWidth={theme.breakpoints.values.sm}>
             <Button

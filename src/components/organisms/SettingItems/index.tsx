@@ -33,7 +33,6 @@ const SettingItems: React.FC<Props> = ({ items }) => {
   const classes = useStyles()
 
   const { register, errors, control } = useFormContext()
-
   const { fields, append } = useFieldArray({
     control,
     name: 'items',
