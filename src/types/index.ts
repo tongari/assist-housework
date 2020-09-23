@@ -45,6 +45,7 @@ export interface Item {
 }
 
 export interface Budget {
+  budgetId: string
   year: string
   month: string
   budget: number | null

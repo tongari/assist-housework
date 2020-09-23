@@ -4,6 +4,8 @@ import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
 
+import { useFormContext } from 'react-hook-form'
+
 import { Budget } from 'types'
 
 export const useStyles = makeStyles((theme: Theme) =>
@@ -20,16 +22,12 @@ export const useStyles = makeStyles((theme: Theme) =>
 
 interface Props {
   month: string
-  tempBudgets: Budget[]
-  updateBudget: (budget: number | null, index: number) => void
+  budget: Budget
 }
 
-const SettingBudget: React.FC<Props> = ({
-  month,
-  tempBudgets,
-  updateBudget,
-}) => {
+const SettingBudget: React.FC<Props> = ({ month, budget }) => {
   const classes = useStyles()
+  const { register, errors } = useFormContext()
 
   return (
     <Box mt={8} mb={4}>
@@ -38,27 +36,17 @@ const SettingBudget: React.FC<Props> = ({
       </Typography>
       <div className={classes.container}>
         <TextField
+          name="budget.budget"
           label="予算額"
           variant="outlined"
           fullWidth
           inputProps={{
             placeholder: '9999円まで設定可能です。',
-            maxLength: 4,
           }}
-          value={tempBudgets[0]?.budget ?? ''}
-          onChange={(e) => {
-            const inputValue = e.target.value
-            if (e.target.value === '') {
-              updateBudget(null, 0)
-              return
-            }
-            const budget = parseInt(inputValue, 10)
-            if (!Number.isInteger(budget)) {
-              return
-            }
-            updateBudget(budget, 0)
-          }}
+          defaultValue={budget?.budget ?? ''}
+          inputRef={register}
         />
+        <p>{errors?.budget?.budget?.message}</p>
       </div>
     </Box>
   )

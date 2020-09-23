@@ -20,6 +20,7 @@ export const convertedBudgets = (budgets: Props): Budget[] => {
   return (
     budgets?.docs.map((budget) => {
       return {
+        budgetId: budget.get('budgetId'),
         year: budget.get('year'),
         month: budget.get('month'),
         budget: budget.get('budget'),
