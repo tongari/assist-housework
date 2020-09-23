@@ -27,7 +27,6 @@ interface Props {
 
 const SettingBudget: React.FC<Props> = ({ month, budget }) => {
   const classes = useStyles()
-
   const { register, errors } = useFormContext()
 
   return (

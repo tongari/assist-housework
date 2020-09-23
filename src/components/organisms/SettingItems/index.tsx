@@ -39,6 +39,10 @@ const SettingItems: React.FC<Props> = ({ items }) => {
   })
 
   useEffect(() => {
+    if (items.length === 0 && fields.length === 0) {
+      append({ label: null, price: null })
+      return
+    }
     items.forEach((item) => {
       const sameId = fields.findIndex((fieldItem) => {
         return fieldItem.itemId === item.itemId

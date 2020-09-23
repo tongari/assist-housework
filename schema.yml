@@ -43,6 +43,7 @@ users:
 
       budgets:
         documentId: auto
+        budgetId: string(documentId)
         year: string
         month: string
         budget: number

@@ -52,17 +52,14 @@ interface Props {
   now: Now
   items: Item[]
   budgets: Budget[]
-  settingAssistContentsHandler: (
-    editItems: Item[],
-    editBudget: Budget[]
-  ) => void
+  settingAssistContentsHandler: (editItems: Item[], editBudget: Budget) => void
 }
 
 const SettingApprover: React.FC<Props> = ({
   assistantNickname,
   now,
   items,
-  // settingAssistContentsHandler,
+  settingAssistContentsHandler,
   budgets,
 }) => {
   const classes = useSharedStyles()
@@ -72,9 +69,8 @@ const SettingApprover: React.FC<Props> = ({
     resolver: yupResolver(schema),
   })
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onSubmit = (data: FormInputs) => {
-    // settingAssistContentsHandler(data.items, data.editBudget)
+    settingAssistContentsHandler(data.items, data.budget)
   }
 
   return (

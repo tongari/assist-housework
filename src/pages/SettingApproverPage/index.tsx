@@ -18,8 +18,8 @@ const SettingApproverPage: React.FC = () => {
   } = useInjection()
 
   const settingAssistContentsHandler = useCallback(
-    (editItems: Item[], editBudgets: Budget[]) => {
-      settingAssistContents(editItems, editBudgets, now)
+    (editItems: Item[], editBudget: Budget) => {
+      settingAssistContents(editItems, editBudget, now)
     },
     [now]
   )

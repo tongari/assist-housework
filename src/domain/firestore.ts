@@ -118,18 +118,6 @@ export const setApprovedAssistant = async (
     },
     { merge: true }
   )
-
-  const items = itemsCollection(assistantId, myId)
-
-  const range = [...Array(5)] // TODO: マジックナンバー要リファクタ バルクアップデート的なものはできないのか？
-  range.forEach(() => {
-    items.add({}).then((doc) => {
-      doc.set({
-        itemId: doc.id,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      })
-    })
-  })
 }
 
 export const fetchNickname = async (
@@ -141,69 +129,72 @@ export const fetchNickname = async (
 
 export const settingAssistContents = async (
   editItems: Item[],
-  editBudgets: Budget[],
+  editBudget: Budget,
   now: Now
 ): Promise<void> => {
   const myId = firebase.auth().currentUser?.uid
   const watchId = (await userDocument().get()).get('currentWatchUser').id
 
-  await new Promise((resolve) => {
-    const fn = async () => {
-      const items = itemsCollection(watchId, myId)
-      const itemsRef = await items.get()
-      itemsRef.docs.forEach((doc, index) => {
-        const updateItem = editItems.find((editItem) => {
-          return editItem.itemId === doc.id
+  const items = itemsCollection(watchId, myId)
+  const itemsRef = await items.get()
+  editItems.forEach((editItem) => {
+    if (!editItem.itemId) {
+      items
+        .add({
+          label: editItem.label,
+          price: editItem.price,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
         })
-        doc.ref
-          .update({
-            label: updateItem?.label ?? null,
-            price: updateItem?.price ?? null,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        .then((doc) => {
+          doc.update({
+            itemId: doc.id,
           })
-          .then(() => {
-            // TODO: 要リファクタ
-            // バルクアップデート的なものはできないのか？
-            if (index === 4) {
-              resolve()
-            }
-          })
-      })
+        })
     }
-    fn()
+  })
+  itemsRef.docs.forEach((doc) => {
+    const updateItem = editItems.find((editItem) => {
+      return editItem.itemId === doc.id
+    })
+    doc.ref.update({
+      label: updateItem?.label,
+      price: updateItem?.price,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    })
   })
 
-  await new Promise((resolve) => {
-    const fn = async () => {
-      const budgets = budgetsCollection(watchId, myId)
-      const searchedBudgets = budgets
-        .where('year', '==', now.year)
-        .where('month', '==', now.month)
+  const budgets = budgetsCollection(watchId, myId)
+  const searchedBudgets = budgets
+    .where('year', '==', now.year)
+    .where('month', '==', now.month)
 
-      const budgetsRef = await searchedBudgets.get()
+  const budgetsRef = await searchedBudgets.get()
 
-      const updateData = {
+  if (budgetsRef.empty) {
+    budgets
+      .add({
         year: now.year,
         month: now.month,
-        budget: editBudgets[0]?.budget ?? null,
+        budget: editBudget.budget,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-      }
-
-      if (budgetsRef.empty) {
-        budgets.add(updateData).then(() => {
-          resolve()
+      })
+      .then((doc) => {
+        doc.update({
+          budgetId: doc.id,
         })
-      } else {
-        budgetsRef.forEach((doc) => {
-          doc.ref.update(updateData).then(() => {
-            resolve()
-          })
-        })
-      }
-    }
-    fn()
-  })
+      })
+  } else {
+    budgetsRef.forEach((doc) => {
+      doc.ref.update({
+        year: editBudget.year,
+        month: editBudget.month,
+        budget: editBudget.budget,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      })
+    })
+  }
 
   const statusRef = firebase.firestore().collection('status')
   const assistant = userDocument(watchId)
