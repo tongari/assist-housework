@@ -157,11 +157,16 @@ export const settingAssistContents = async (
     const updateItem = editItems.find((editItem) => {
       return editItem.itemId === doc.id
     })
-    doc.ref.update({
-      label: updateItem?.label,
-      price: updateItem?.price,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-    })
+
+    if (updateItem) {
+      doc.ref.update({
+        label: updateItem?.label,
+        price: updateItem?.price,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      })
+    } else {
+      doc.ref.delete()
+    }
   })
 
   const budgets = budgetsCollection(watchId, myId)
@@ -171,12 +176,16 @@ export const settingAssistContents = async (
 
   const budgetsRef = await searchedBudgets.get()
 
+  const updateBudget = {
+    year: now.year,
+    month: now.month,
+    budget: editBudget.budget,
+  }
+
   if (budgetsRef.empty) {
     budgets
       .add({
-        year: now.year,
-        month: now.month,
-        budget: editBudget.budget,
+        ...updateBudget,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
       })
@@ -186,11 +195,9 @@ export const settingAssistContents = async (
         })
       })
   } else {
-    budgetsRef.forEach((doc) => {
+    budgetsRef.docs.forEach((doc) => {
       doc.ref.update({
-        year: editBudget.year,
-        month: editBudget.month,
-        budget: editBudget.budget,
+        ...updateBudget,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
       })
     })

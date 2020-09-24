@@ -38,7 +38,11 @@ const budgetSchema = yup.object({
 })
 
 const schema = yup.object().shape({
-  items: yup.array().of(itemSchema),
+  items: yup
+    .array()
+    .required('お手伝いの項目を1つ以上、設定してください。')
+    .of(itemSchema),
+
   budget: budgetSchema,
 })
 
@@ -74,7 +78,7 @@ const SettingApprover: React.FC<Props> = ({
   }
 
   return (
-    <div className={classes.templateInner}>
+    <Box className={classes.templateInner} px={4}>
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <NextActionText
@@ -99,7 +103,7 @@ const SettingApprover: React.FC<Props> = ({
           </Box>
         </form>
       </FormProvider>
-    </div>
+    </Box>
   )
 }
 
