@@ -1,13 +1,23 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useFormContext, useFieldArray } from 'react-hook-form'
 
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
+import {
+  makeStyles,
+  createStyles,
+  Theme,
+  useTheme,
+} from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
+import IconButton from '@material-ui/core/IconButton'
+import AddCircleIcon from '@material-ui/icons/AddCircle'
+import RemoveCircleIcon from '@material-ui/icons/RemoveCircle'
 
 import { Item } from 'types'
+
+const MAX_ITEMS = 5
 
 export const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -31,37 +41,39 @@ interface Props {
 
 const SettingItems: React.FC<Props> = ({ items }) => {
   const classes = useStyles()
+  const theme = useTheme()
 
-  const { register, errors, control } = useFormContext()
-  const { fields, append } = useFieldArray({
+  const { register, errors, control, setValue } = useFormContext()
+  const { fields, append, remove } = useFieldArray({
     control,
     name: 'items',
   })
 
   useEffect(() => {
-    if (items.length === 0 && fields.length === 0) {
-      append({ label: null, price: null })
-      return
-    }
-    items.forEach((item) => {
-      const sameId = fields.findIndex((fieldItem) => {
-        return fieldItem.itemId === item.itemId
-      })
-      if (sameId === -1) {
-        append({ label: item.label, price: item.price, itemId: item.itemId })
-      }
-    })
-  }, [items, fields, append])
+    setValue('items', items)
+  }, [setValue, items])
+
+  const onAddItem = useCallback(() => {
+    append({ label: null, price: null })
+  }, [append])
+
+  const onRemoveItem = useCallback(
+    (index: number) => {
+      remove(index)
+    },
+    [remove]
+  )
 
   return (
     <>
       <Typography variant="h5" component="h2">
-        お手伝い項目（最大５つ）
+        {`お手伝い項目（最大${MAX_ITEMS}つ）`}
       </Typography>
+      {errors?.items && <p>{errors.items.message}</p>}
       <Box m={1.5}>
         {fields.map((field, index) => {
           return (
-            <Box mt={3} key={index.toString()}>
+            <Box mt={5} position="relative" key={index.toString()}>
               <Grid
                 container
                 spacing={3}
@@ -70,6 +82,7 @@ const SettingItems: React.FC<Props> = ({ items }) => {
               >
                 <Grid item xs={12} sm={6}>
                   <TextField
+                    key={field.id}
                     name={`items[${index.toString()}].label`}
                     label="項目"
                     variant="outlined"
@@ -87,6 +100,7 @@ const SettingItems: React.FC<Props> = ({ items }) => {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
+                    key={field.id}
                     name={`items[${index.toString()}].price`}
                     label="金額"
                     variant="outlined"
@@ -103,9 +117,42 @@ const SettingItems: React.FC<Props> = ({ items }) => {
                   )}
                 </Grid>
               </Grid>
+              <Box
+                position="absolute"
+                top={-1 * theme.spacing(4)}
+                right={-1 * theme.spacing(5)}
+              >
+                <IconButton
+                  color="default"
+                  onClick={() => {
+                    onRemoveItem(index)
+                  }}
+                >
+                  <RemoveCircleIcon fontSize="large" />
+                </IconButton>
+              </Box>
+              <input
+                type="hidden"
+                key={field.id}
+                name={`items[${index.toString()}].itemId`}
+                defaultValue={field.itemId}
+                ref={register()}
+              />
             </Box>
           )
         })}
+      </Box>
+
+      <Box textAlign="center">
+        <IconButton
+          color="primary"
+          disabled={fields.length === MAX_ITEMS}
+          onClick={() => {
+            onAddItem()
+          }}
+        >
+          <AddCircleIcon fontSize="large" />
+        </IconButton>
       </Box>
     </>
   )
