@@ -14,38 +14,6 @@ import NextActionText from 'components/organisms/NextActionText'
 import SettingItems from 'components/organisms/SettingItems'
 import SettingBudget from 'components/organisms/SettingBudget'
 
-const itemSchema = yup.object({
-  label: yup
-    .string()
-    .required('入力してください。')
-    .max(20, '20文字以内で設定してください。'),
-
-  price: yup
-    .number()
-    .typeError('半角数字で入力してください。')
-    .integer('小数点は入力できません。')
-    .positive('1円以上で設定してください。')
-    .max(999, '999円まで設定可能です。'),
-})
-
-const budgetSchema = yup.object({
-  budget: yup
-    .number()
-    .typeError('半角数字で入力してください。')
-    .integer('小数点は入力できません。')
-    .positive('1円以上で設定してください。')
-    .max(9999, '9999円まで設定可能です。'),
-})
-
-const schema = yup.object().shape({
-  items: yup
-    .array()
-    .required('お手伝いの項目を1つ以上、設定してください。')
-    .of(itemSchema),
-
-  budget: budgetSchema,
-})
-
 interface FormInputs {
   items: Item[]
   budget: Budget
@@ -56,6 +24,7 @@ interface Props {
   now: Now
   items: Item[]
   budgets: Budget[]
+  calculatedPrice: number
   settingAssistContentsHandler: (editItems: Item[], editBudget: Budget) => void
 }
 
@@ -65,9 +34,49 @@ const SettingApprover: React.FC<Props> = ({
   items,
   settingAssistContentsHandler,
   budgets,
+  calculatedPrice,
 }) => {
   const classes = useSharedStyles()
   const theme = useTheme()
+
+  const itemSchema = yup.object({
+    label: yup
+      .string()
+      .required('入力してください。')
+      .max(20, '20文字以内で設定してください。'),
+
+    price: yup
+      .number()
+      .typeError('半角数字で入力してください。')
+      .integer('小数点は入力できません。')
+      .positive('1円以上で設定してください。')
+      .max(999, '999円まで設定可能です。'),
+  })
+
+  const minBudget = calculatedPrice === 0 ? 1 : calculatedPrice
+  const minBudgetErrorText =
+    calculatedPrice === 0 ? '' : '取引済みの履歴が存在するので、'
+
+  const budgetSchema = yup.object({
+    budget: yup
+      .number()
+      .typeError('半角数字で入力してください。')
+      .integer('小数点は入力できません。')
+      .min(
+        minBudget,
+        `${minBudgetErrorText}${minBudget}円以上で設定してください。`
+      )
+      .max(9999, `9999円まで設定可能です。`),
+  })
+
+  const schema = yup.object().shape({
+    items: yup
+      .array()
+      .required('お手伝いの項目を1つ以上、設定してください。')
+      .of(itemSchema),
+
+    budget: budgetSchema,
+  })
 
   const methods = useForm<FormInputs>({
     resolver: yupResolver(schema),

@@ -15,6 +15,7 @@ const SettingApproverPage: React.FC = () => {
     now,
     items,
     budgets,
+    calculatedPrice,
   } = useInjection()
 
   const history = useHistory()
@@ -41,6 +42,7 @@ const SettingApproverPage: React.FC = () => {
           now={now}
           items={items}
           budgets={budgets}
+          calculatedPrice={calculatedPrice}
           settingAssistContentsHandler={settingAssistContentsHandler}
         />
       )}
