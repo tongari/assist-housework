@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useContext } from 'react'
 
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import BottomNavigation from '@material-ui/core/BottomNavigation'
@@ -8,7 +8,9 @@ import HistoryIcon from '@material-ui/icons/History'
 import SettingsIcon from '@material-ui/icons/Settings'
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz'
 
+import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 import OtherDrawer from 'components/organisms/OtherDrawer'
+import { Status } from 'types'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -30,6 +32,8 @@ type NavigationValue = 'work' | 'deals' | 'setting'
 
 const Navigation: React.FC = () => {
   const classes = useStyles()
+  const { userInfo } = useContext(AuthorizedContext)
+
   const [navigationValue, setNavigationValue] = useState<NavigationValue>(
     'work'
   )
@@ -46,39 +50,60 @@ const Navigation: React.FC = () => {
     setIsOpenedDrawer(false)
   }, [])
 
+  const CustomBottomNavigation: React.FC = ({ children }) => (
+    <BottomNavigation
+      value={navigationValue}
+      onChange={changeNavigationHandler}
+      showLabels
+      className={classes.root}
+    >
+      {children}
+    </BottomNavigation>
+  )
+
   return (
     <>
-      <BottomNavigation
-        value={navigationValue}
-        onChange={changeNavigationHandler}
-        showLabels
-        className={classes.root}
-      >
-        <BottomNavigationAction
-          label="取引登録"
-          value="work"
-          icon={<AddIcon />}
-        />
-        <BottomNavigationAction
-          label="取引履歴"
-          value="deals"
-          icon={<HistoryIcon />}
-        />
-        <BottomNavigationAction
-          label="取引設定"
-          value="setting"
-          icon={<SettingsIcon />}
-        />
-        <BottomNavigationAction
-          label="その他"
-          value="none"
-          icon={<MoreHorizIcon />}
-          onClick={(e) => {
-            e.preventDefault()
-            setIsOpenedDrawer(true)
-          }}
-        />
-      </BottomNavigation>
+      {userInfo?.state === Status.Running ? (
+        <CustomBottomNavigation>
+          <BottomNavigationAction
+            label="取引登録"
+            value="work"
+            icon={<AddIcon />}
+          />
+          <BottomNavigationAction
+            label="取引履歴"
+            value="deals"
+            icon={<HistoryIcon />}
+          />
+          <BottomNavigationAction
+            label="取引設定"
+            value="setting"
+            icon={<SettingsIcon />}
+          />
+          <BottomNavigationAction
+            label="その他"
+            value="none"
+            icon={<MoreHorizIcon />}
+            onClick={(e) => {
+              e.preventDefault()
+              setIsOpenedDrawer(true)
+            }}
+          />
+        </CustomBottomNavigation>
+      ) : (
+        <CustomBottomNavigation>
+          <BottomNavigationAction
+            label="その他"
+            value="none"
+            icon={<MoreHorizIcon />}
+            onClick={(e) => {
+              e.preventDefault()
+              setIsOpenedDrawer(true)
+            }}
+          />
+        </CustomBottomNavigation>
+      )}
+
       <OtherDrawer isOpen={isOpenedDrawer} closeDrawer={closeDrawer} />
     </>
   )
