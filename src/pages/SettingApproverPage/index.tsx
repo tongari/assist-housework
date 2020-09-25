@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { Redirect } from 'react-router-dom'
+import { Redirect, useHistory } from 'react-router-dom'
 
 import { Paths, Item, Budget } from 'types'
 import { settingAssistContents } from 'domain/firestore'
@@ -17,19 +17,19 @@ const SettingApproverPage: React.FC = () => {
     budgets,
   } = useInjection()
 
+  const history = useHistory()
+
   const settingAssistContentsHandler = useCallback(
     (editItems: Item[], editBudget: Budget) => {
-      settingAssistContents(editItems, editBudget, now)
+      settingAssistContents(editItems, editBudget, now).then(() => {
+        history.push(Paths.WorkApprover)
+      })
     },
-    [now]
+    [now, history]
   )
 
   if (renderType === 'NotFound') {
     return <Redirect to={Paths.NotFound} />
-  }
-
-  if (renderType === 'Running') {
-    return <Redirect to={Paths.WorkApprover} />
   }
 
   return (
