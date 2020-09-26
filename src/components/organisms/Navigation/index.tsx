@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       position: 'fixed',
+      zIndex: theme.zIndex.appBar,
       bottom: 0,
       width: '100vw',
       backgroundColor: theme.palette.primary.light,

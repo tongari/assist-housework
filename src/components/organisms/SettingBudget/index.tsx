@@ -27,7 +27,7 @@ interface Props {
 
 const SettingBudget: React.FC<Props> = ({ month, budget }) => {
   const classes = useStyles()
-  const { register, errors } = useFormContext()
+  const { register, errors, trigger } = useFormContext()
 
   return (
     <Box mt={8} mb={4}>
@@ -42,9 +42,21 @@ const SettingBudget: React.FC<Props> = ({ month, budget }) => {
           fullWidth
           inputProps={{
             placeholder: '9999円まで設定可能です。',
+            autoCorrect: 'off',
+            autoCapitalize: 'off',
+            autoComplete: 'off',
           }}
           defaultValue={budget?.budget ?? ''}
-          inputRef={register}
+          inputRef={register()}
+          onFocus={() => {
+            trigger('budget')
+          }}
+          onChange={() => {
+            trigger('budget')
+          }}
+          onBlur={() => {
+            trigger('budget')
+          }}
         />
         <p>{errors?.budget?.budget?.message}</p>
       </div>
