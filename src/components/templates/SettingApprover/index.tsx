@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react'
+import React, { useState } from 'react'
 import { useTheme } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import Box from '@material-ui/core/Box'
@@ -32,13 +32,15 @@ const SettingApprover: React.FC<Props> = ({
   assistantNickname,
   now,
   items,
-  settingAssistContentsHandler,
   budgets,
   calculatedPrice,
+  settingAssistContentsHandler,
 }) => {
   const classes = useSharedStyles()
   const theme = useTheme()
+  const [schemaItems, setSchemaItems] = useState<Item[] | null>(null)
 
+  // TODO: バリデーションロジックを切り出す？
   const itemSchema = yup.object({
     label: yup
       .string()
@@ -53,7 +55,23 @@ const SettingApprover: React.FC<Props> = ({
       .max(999, '999円まで設定可能です。'),
   })
 
-  const minBudget = calculatedPrice === 0 ? 1 : calculatedPrice
+  const calcMinBudget = () => {
+    const checkItems = schemaItems ?? items
+    const itemPrices = checkItems?.map((item) => {
+      if (item.price) {
+        const convertedNumPrice = parseInt(item.price.toString(), 10)
+        return Number.isInteger(convertedNumPrice) ? convertedNumPrice : 0
+      }
+      return 0
+    }) ?? [0]
+
+    if (calculatedPrice === 0) {
+      return Math.max(1, ...itemPrices)
+    }
+
+    return Math.max(calculatedPrice, ...itemPrices)
+  }
+
   const minBudgetErrorText =
     calculatedPrice === 0 ? '' : '取引済みの履歴が存在するので、'
 
@@ -63,10 +81,10 @@ const SettingApprover: React.FC<Props> = ({
       .typeError('半角数字で入力してください。')
       .integer('小数点は入力できません。')
       .min(
-        minBudget,
-        `${minBudgetErrorText}${minBudget}円以上で設定してください。`
+        calcMinBudget(),
+        `${minBudgetErrorText}${calcMinBudget()}円以上で設定してください。`
       )
-      .max(9999, `9999円まで設定可能です。`),
+      .max(9999, '9999円まで設定可能です。'),
   })
 
   const schema = yup.object().shape({
@@ -89,14 +107,19 @@ const SettingApprover: React.FC<Props> = ({
   return (
     <Box className={classes.templateInner} px={4}>
       <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)}>
+        <form
+          onSubmit={methods.handleSubmit(onSubmit)}
+          onChange={() => {
+            setSchemaItems(methods.getValues().items)
+          }}
+        >
           <NextActionText
             words={[
               { text: `${assistantNickname}`, isEmphasis: true },
               { text: 'さんにお願いするお手伝いの内容を入力してください。' },
             ]}
           />
-          <SettingItems items={items} />
+          <SettingItems items={items} setSchemaItems={setSchemaItems} />
           <SettingBudget month={now.month} budget={budgets[0]} />
 
           <Box m="auto" mb={8} maxWidth={theme.breakpoints.values.sm}>

@@ -37,13 +37,14 @@ export const useStyles = makeStyles((theme: Theme) =>
 
 interface Props {
   items: Item[]
+  setSchemaItems: (params: Item[]) => void
 }
 
-const SettingItems: React.FC<Props> = ({ items }) => {
+const SettingItems: React.FC<Props> = ({ items, setSchemaItems }) => {
   const classes = useStyles()
   const theme = useTheme()
 
-  const { register, errors, control, setValue } = useFormContext()
+  const { register, errors, control, setValue, trigger } = useFormContext()
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'items',
@@ -63,6 +64,10 @@ const SettingItems: React.FC<Props> = ({ items }) => {
     },
     [remove]
   )
+
+  useEffect(() => {
+    setSchemaItems(fields as Item[])
+  }, [fields, setSchemaItems])
 
   return (
     <>
@@ -89,10 +94,17 @@ const SettingItems: React.FC<Props> = ({ items }) => {
                     fullWidth
                     inputProps={{
                       placeholder: '20文字以内で設定してください。',
+                      autoCorrect: 'off',
+                      autoCapitalize: 'off',
+                      autoComplete: 'off',
                     }}
                     className={classes.item}
                     defaultValue={field.label ?? ''}
                     inputRef={register()}
+                    onBlur={() => {
+                      trigger('items')
+                      trigger('budget')
+                    }}
                   />
                   {errors?.items && (
                     <p>{errors.items[index]?.label?.message}</p>
@@ -107,10 +119,17 @@ const SettingItems: React.FC<Props> = ({ items }) => {
                     fullWidth
                     inputProps={{
                       placeholder: '999円まで設定可能です。',
+                      autoCorrect: 'off',
+                      autoCapitalize: 'off',
+                      autoComplete: 'off',
                     }}
                     className={classes.item}
                     defaultValue={field.price ?? ''}
                     inputRef={register()}
+                    onBlur={() => {
+                      trigger('items')
+                      trigger('budget')
+                    }}
                   />
                   {errors?.items && (
                     <p>{errors.items[index]?.price?.message}</p>
@@ -122,14 +141,16 @@ const SettingItems: React.FC<Props> = ({ items }) => {
                 top={-1 * theme.spacing(4)}
                 right={-1 * theme.spacing(5)}
               >
-                <IconButton
-                  color="default"
-                  onClick={() => {
-                    onRemoveItem(index)
-                  }}
-                >
-                  <RemoveCircleIcon fontSize="large" />
-                </IconButton>
+                {fields.length > 1 && (
+                  <IconButton
+                    color="default"
+                    onClick={() => {
+                      onRemoveItem(index)
+                    }}
+                  >
+                    <RemoveCircleIcon fontSize="large" />
+                  </IconButton>
+                )}
               </Box>
               <input
                 type="hidden"
