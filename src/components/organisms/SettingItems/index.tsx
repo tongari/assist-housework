@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useFormContext, useFieldArray } from 'react-hook-form'
 
 import {
@@ -43,6 +43,7 @@ interface Props {
 const SettingItems: React.FC<Props> = ({ items, setSchemaItems }) => {
   const classes = useStyles()
   const theme = useTheme()
+  const [initItems, setInitItems] = useState<Item[]>([])
 
   const { register, errors, control, setValue, trigger } = useFormContext()
   const { fields, append, remove } = useFieldArray({
@@ -51,8 +52,24 @@ const SettingItems: React.FC<Props> = ({ items, setSchemaItems }) => {
   })
 
   useEffect(() => {
-    setValue('items', items)
-  }, [setValue, items])
+    if (items.length === 0) {
+      setInitItems([
+        {
+          itemId: null,
+          label: null,
+          price: null,
+        },
+      ])
+    }
+  }, [items])
+
+  useEffect(() => {
+    setValue('items', initItems)
+  }, [initItems, setValue])
+
+  useEffect(() => {
+    setSchemaItems(fields as Item[])
+  }, [fields, setSchemaItems])
 
   const onAddItem = useCallback(() => {
     append({ label: null, price: null })
@@ -64,10 +81,6 @@ const SettingItems: React.FC<Props> = ({ items, setSchemaItems }) => {
     },
     [remove]
   )
-
-  useEffect(() => {
-    setSchemaItems(fields as Item[])
-  }, [fields, setSchemaItems])
 
   return (
     <>

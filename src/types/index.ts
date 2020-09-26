@@ -38,7 +38,7 @@ export interface Now {
 }
 
 export interface Item {
-  itemId: string
+  itemId: string | null
   label: string | null
   price: number | null
   isWorked?: boolean
