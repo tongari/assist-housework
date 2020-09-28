@@ -19,9 +19,9 @@ export interface InjectionResult {
 
 interface UserInfo {
   role: Roles | null
+  nickname: string
   state: Status | null
   watchId: string | null
-  address?: string
   year?: string
   month?: string
 }
@@ -52,9 +52,9 @@ const useInjection = (): InjectionResult => {
 
     return {
       role: userDoc?.get('roleRef')?.id,
+      nickname: userDoc?.get('nickname'),
       state: userDoc?.get('currentWatchUser')?.statusRef.id,
       watchId: userDoc?.get('currentWatchUser')?.id,
-      address: userDoc?.get('currentWatchUser')?.inviteAddress,
       year: userDoc?.get('currentWatchUser')?.year,
       month: userDoc?.get('currentWatchUser')?.month,
     }

@@ -11,7 +11,7 @@ export type RenderType =
 const useInjection = (): {
   isLoaded: boolean
   renderType: RenderType
-  inviteAddress?: string
+  myNickname: string
 } => {
   const { isAuthorizeContextLoaded, userInfo } = useContext(AuthorizedContext)
   const [renderType, setRenderType] = useState<RenderType>('Register')
@@ -29,7 +29,7 @@ const useInjection = (): {
       return
     }
 
-    if (userInfo.address) {
+    if (userInfo) {
       setRenderType('Pending')
     }
   }, [isAuthorizeContextLoaded, userInfo])
@@ -37,7 +37,7 @@ const useInjection = (): {
   return {
     isLoaded: isAuthorizeContextLoaded,
     renderType,
-    inviteAddress: userInfo?.address,
+    myNickname: userInfo?.nickname ?? '',
   }
 }
 

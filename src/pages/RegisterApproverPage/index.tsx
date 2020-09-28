@@ -9,17 +9,17 @@ import { Paths } from 'types'
 import useInjection from './useInjection'
 
 const RegisterApproverPage: React.FC = () => {
-  const { isLoaded, renderType, inviteAddress } = useInjection()
+  const { isLoaded, renderType, myNickname } = useInjection()
 
   if (renderType === 'NotFound') {
     return <Redirect to={Paths.NotFound} />
   }
 
-  if (renderType === 'Pending' && inviteAddress) {
+  if (renderType === 'Pending') {
     return (
       <>
         <Loader isLoading={!isLoaded} />
-        {isLoaded && <PendingRegisterApprover inviteAddress={inviteAddress} />}
+        {isLoaded && <PendingRegisterApprover myNickname={myNickname} />}
       </>
     )
   }

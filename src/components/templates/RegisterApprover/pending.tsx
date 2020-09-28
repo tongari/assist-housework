@@ -2,23 +2,25 @@ import React from 'react'
 
 import { useSharedStyles } from 'styles'
 import NextActionText from 'components/organisms/NextActionText'
+import InviteAssistant from 'components/organisms/InviteAssistant'
 
 interface Props {
-  inviteAddress: string
+  myNickname: string
 }
-
-const PendingRegisterApprover: React.FC<Props> = ({ inviteAddress }) => {
+const PendingRegisterApprover: React.FC<Props> = ({ myNickname }) => {
   const classes = useSharedStyles()
 
   return (
     <div className={classes.templateInner}>
       <NextActionText
         words={[
-          { text: 'ただいま' },
-          { text: inviteAddress, isEmphasis: true },
-          { text: 'さんの登録待ちです。' },
+          { text: 'お手伝い', isEmphasis: true },
+          { text: 'をお願いする人を' },
+          { text: '招待', isEmphasis: true },
+          { text: 'してください。' },
         ]}
       />
+      <InviteAssistant myNickname={myNickname} />
     </div>
   )
 }

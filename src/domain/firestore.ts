@@ -9,10 +9,7 @@ import {
 
 // NOTE: 模索中(firestoreを直接叩く場合は、redux-toolkit必要ないか？)
 
-export const registerApprovalUser = async (
-  nickname: string,
-  inviteAddress: string
-): Promise<firebase.functions.HttpsCallableResult> => {
+export const registerApprovalUser = async (nickname: string): Promise<void> => {
   const db = firebase.firestore()
   const rolesRef = db.collection('roles')
   const statusRef = db.collection('status')
@@ -25,19 +22,11 @@ export const registerApprovalUser = async (
       nickname,
       currentWatchUser: {
         statusRef: statusRef.doc(Status.Register),
-        inviteAddress,
       },
       roleRef: rolesRef.doc(Roles.Approver),
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     })
-
-  const sendAssistantInviteMail = firebase
-    .functions()
-    .httpsCallable('sendAssistantInviteMail')
-
-  const result = await sendAssistantInviteMail({ inviteAddress, nickname })
-  return result
 }
 
 export const registerAssistantUser = async (
@@ -45,7 +34,7 @@ export const registerAssistantUser = async (
   assistToApproverId: string | null
 ): Promise<void> => {
   if (assistToApproverId === null) {
-    throw new Error('招待されたメールのURLから登録してください')
+    throw new Error('招待されたURLから登録してください')
   }
 
   const addAssistantUserIds = firebase

@@ -9,7 +9,7 @@ import { useSharedStyles } from 'styles'
 import NextActionText from 'components/organisms/NextActionText'
 
 interface Props {
-  registerApprovalUser: (nickname: string, inviteAddress: string) => void
+  registerApprovalUser: (nickname: string) => void
 }
 
 const RegisterApprover: React.FC<Props> = ({ registerApprovalUser }) => {
@@ -17,7 +17,6 @@ const RegisterApprover: React.FC<Props> = ({ registerApprovalUser }) => {
   const theme = useTheme()
 
   const [nickname, setNickname] = useState('')
-  const [inviteAddress, setInviteAddress] = useState('')
 
   return (
     <div className={classes.templateInner}>
@@ -42,22 +41,6 @@ const RegisterApprover: React.FC<Props> = ({ registerApprovalUser }) => {
             setNickname(e.target.value)
           }}
         />
-        <Typography
-          style={{
-            marginTop: theme.spacing(3),
-            marginBottom: theme.spacing(1),
-          }}
-        >
-          お手伝いをお願いする人のメールアドレス
-        </Typography>
-        <TextField
-          variant="outlined"
-          fullWidth
-          value={inviteAddress}
-          onChange={(e) => {
-            setInviteAddress(e.target.value)
-          }}
-        />
       </Box>
 
       <Box my={8} mx="auto" maxWidth={theme.breakpoints.values.sm}>
@@ -67,7 +50,7 @@ const RegisterApprover: React.FC<Props> = ({ registerApprovalUser }) => {
           size="large"
           fullWidth
           onClick={() => {
-            registerApprovalUser(nickname, inviteAddress)
+            registerApprovalUser(nickname)
           }}
         >
           登録
