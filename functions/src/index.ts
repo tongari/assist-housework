@@ -104,3 +104,15 @@ exports.getServerTime = functions.https.onCall(async () => {
     minute,
   }
 })
+
+exports.getInviteOnetimeUrl = functions.https.onCall(async (_, context) => {
+  const uid = context.auth?.uid
+
+  functions.logger.info('getInviteOnetimeUrl', 'generetaed code!!!!!!!')
+
+  return {
+    host: context.rawRequest.headers.origin,
+    uid,
+    token: 'generetaedcode',
+  }
+})

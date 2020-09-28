@@ -29,6 +29,15 @@ export const registerApprovalUser = async (nickname: string): Promise<void> => {
     })
 }
 
+export const fetchInviteOnetimeUrl = async (): Promise<
+  firebase.functions.HttpsCallableResult
+> => {
+  const getInviteOnetimeUrl = firebase
+    .functions()
+    .httpsCallable('getInviteOnetimeUrl')
+  return getInviteOnetimeUrl()
+}
+
 export const registerAssistantUser = async (
   nickname: string,
   assistToApproverId: string | null

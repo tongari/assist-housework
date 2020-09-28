@@ -34,9 +34,14 @@ type TabValue = 'line' | 'mail' | 'clipboard'
 
 interface Props {
   myNickname: string
+  inviteOnetimeUrl: {
+    host: string
+    uid: string
+    token: string
+  } | null
 }
 
-const InviteAssistant: React.FC<Props> = ({ myNickname }) => {
+const InviteAssistant: React.FC<Props> = ({ myNickname, inviteOnetimeUrl }) => {
   const classes = useStyles()
   const theme = useTheme()
 
@@ -49,10 +54,18 @@ const InviteAssistant: React.FC<Props> = ({ myNickname }) => {
     setTabValue(newValue)
   }
 
+  const generateOnetimeUrl = () => {
+    const host = inviteOnetimeUrl?.host ?? ''
+    const uid = inviteOnetimeUrl?.uid ?? ''
+    const token = inviteOnetimeUrl?.token ?? ''
+
+    return `${host}?invite_assistant=${uid}&token=${token}`
+  }
+
   const generateSendHref = () => {
-    const message = encodeURIComponent(`${myNickname}さんからお手伝いのお願いがきています。\n
-    以下、URLより登録してください。\n
-    https://url.com?invite_assistant=xxxxx`)
+    const message = encodeURIComponent(
+      `${myNickname}さんからお手伝いのお願いがきています。\n以下、URLより登録してください。\n${generateOnetimeUrl()}`
+    )
 
     if (tabValue === 'line') {
       return `https://line.me/R/msg/text/?${message}`
@@ -102,7 +115,7 @@ const InviteAssistant: React.FC<Props> = ({ myNickname }) => {
           </Typography>
         ) : (
           <Typography variant="h6" component="h2">
-            以下のメッセージ
+            以下のメッセージを
             <span style={{ color: theme.palette.primary.main }}>
               {tabValue === 'line' ? 'LINE' : 'メール'}
             </span>
@@ -111,12 +124,15 @@ const InviteAssistant: React.FC<Props> = ({ myNickname }) => {
         )}
 
         <Box mt={2} p={2} bgcolor={theme.palette.grey[100]}>
-          <Typography variant="subtitle1">
+          <Typography
+            variant="subtitle1"
+            style={{ overflowWrap: 'break-word' }}
+          >
             {myNickname}さんからお手伝いのお願いがきています。
             <br />
             以下、URLより登録してください。
             <br />
-            https://url.com?invite_assistant=xxxxx
+            {generateOnetimeUrl()}
           </Typography>
         </Box>
 
