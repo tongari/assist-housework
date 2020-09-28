@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useFormContext, useFieldArray } from 'react-hook-form'
 
 import {
@@ -43,16 +43,35 @@ interface Props {
 const SettingItems: React.FC<Props> = ({ items, setSchemaItems }) => {
   const classes = useStyles()
   const theme = useTheme()
+  const [initItems, setInitItems] = useState<Item[]>([])
 
-  const { register, errors, control, setValue, trigger } = useFormContext()
+  const { register, errors, control, setValue } = useFormContext()
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'items',
   })
 
   useEffect(() => {
-    setValue('items', items)
-  }, [setValue, items])
+    if (items.length === 0) {
+      setInitItems([
+        {
+          itemId: null,
+          label: null,
+          price: null,
+        },
+      ])
+      return
+    }
+    setInitItems(items)
+  }, [items])
+
+  useEffect(() => {
+    setValue('items', initItems)
+  }, [initItems, setValue])
+
+  useEffect(() => {
+    setSchemaItems(fields as Item[])
+  }, [fields, setSchemaItems])
 
   const onAddItem = useCallback(() => {
     append({ label: null, price: null })
@@ -64,10 +83,6 @@ const SettingItems: React.FC<Props> = ({ items, setSchemaItems }) => {
     },
     [remove]
   )
-
-  useEffect(() => {
-    setSchemaItems(fields as Item[])
-  }, [fields, setSchemaItems])
 
   return (
     <>
@@ -101,10 +116,6 @@ const SettingItems: React.FC<Props> = ({ items, setSchemaItems }) => {
                     className={classes.item}
                     defaultValue={field.label ?? ''}
                     inputRef={register()}
-                    onBlur={() => {
-                      trigger('items')
-                      trigger('budget')
-                    }}
                   />
                   {errors?.items && (
                     <p>{errors.items[index]?.label?.message}</p>
@@ -126,10 +137,6 @@ const SettingItems: React.FC<Props> = ({ items, setSchemaItems }) => {
                     className={classes.item}
                     defaultValue={field.price ?? ''}
                     inputRef={register()}
-                    onBlur={() => {
-                      trigger('items')
-                      trigger('budget')
-                    }}
                   />
                   {errors?.items && (
                     <p>{errors.items[index]?.price?.message}</p>

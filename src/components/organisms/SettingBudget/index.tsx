@@ -27,7 +27,7 @@ interface Props {
 
 const SettingBudget: React.FC<Props> = ({ month, budget }) => {
   const classes = useStyles()
-  const { register, errors, trigger } = useFormContext()
+  const { register, errors } = useFormContext()
 
   return (
     <Box mt={8} mb={4}>
@@ -48,15 +48,6 @@ const SettingBudget: React.FC<Props> = ({ month, budget }) => {
           }}
           defaultValue={budget?.budget ?? ''}
           inputRef={register()}
-          onFocus={() => {
-            trigger('budget')
-          }}
-          onChange={() => {
-            trigger('budget')
-          }}
-          onBlur={() => {
-            trigger('budget')
-          }}
         />
         <p>{errors?.budget?.budget?.message}</p>
       </div>
