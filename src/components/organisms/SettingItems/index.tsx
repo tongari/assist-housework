@@ -45,7 +45,7 @@ const SettingItems: React.FC<Props> = ({ items, setSchemaItems }) => {
   const theme = useTheme()
   const [initItems, setInitItems] = useState<Item[]>([])
 
-  const { register, errors, control, setValue, trigger } = useFormContext()
+  const { register, errors, control, setValue } = useFormContext()
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'items',
@@ -60,7 +60,9 @@ const SettingItems: React.FC<Props> = ({ items, setSchemaItems }) => {
           price: null,
         },
       ])
+      return
     }
+    setInitItems(items)
   }, [items])
 
   useEffect(() => {
@@ -114,10 +116,6 @@ const SettingItems: React.FC<Props> = ({ items, setSchemaItems }) => {
                     className={classes.item}
                     defaultValue={field.label ?? ''}
                     inputRef={register()}
-                    onBlur={() => {
-                      trigger('items')
-                      trigger('budget')
-                    }}
                   />
                   {errors?.items && (
                     <p>{errors.items[index]?.label?.message}</p>
@@ -139,10 +137,6 @@ const SettingItems: React.FC<Props> = ({ items, setSchemaItems }) => {
                     className={classes.item}
                     defaultValue={field.price ?? ''}
                     inputRef={register()}
-                    onBlur={() => {
-                      trigger('items')
-                      trigger('budget')
-                    }}
                   />
                   {errors?.items && (
                     <p>{errors.items[index]?.price?.message}</p>
