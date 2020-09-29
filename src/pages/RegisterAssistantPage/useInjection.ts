@@ -10,11 +10,13 @@ const useInjection = (): {
   isLoaded: boolean
   renderType: RenderType
   assistToApproverId: string | null
+  inviteToken: string | null
   approverNickname: string | null
 } => {
   // query parameters
   const searchParams = new URLSearchParams(window.location.search)
   const inviteAssistantParams = searchParams.get('invite_assistant') ?? null
+  const inviteTokenParams = searchParams.get('token') ?? null
 
   // context
   const { isAuthorizeContextLoaded, userInfo } = useContext(AuthorizedContext)
@@ -24,6 +26,7 @@ const useInjection = (): {
   const [assistToApproverId, setAssistToApproverId] = useState<string | null>(
     null
   )
+  const [inviteToken, setInviteToken] = useState<string | null>(null)
   const [approverNickname, setApproverNickname] = useState<string | null>(null)
 
   useEffect(() => {
@@ -41,13 +44,14 @@ const useInjection = (): {
   useEffect(() => {
     if (!isAuthorizeContextLoaded) return
 
-    if (!userInfo && !inviteAssistantParams) {
+    if (!userInfo && !inviteAssistantParams && !inviteTokenParams) {
       setRenderType('NotFound')
       return
     }
 
     if (!userInfo) {
       setAssistToApproverId(inviteAssistantParams)
+      setInviteToken(inviteTokenParams)
       return
     }
 
@@ -72,12 +76,18 @@ const useInjection = (): {
     }
 
     setRenderType('Pending')
-  }, [isAuthorizeContextLoaded, userInfo, inviteAssistantParams])
+  }, [
+    isAuthorizeContextLoaded,
+    userInfo,
+    inviteAssistantParams,
+    inviteTokenParams,
+  ])
 
   return {
     isLoaded: isAuthorizeContextLoaded,
     renderType,
     assistToApproverId,
+    inviteToken,
     approverNickname,
   }
 }

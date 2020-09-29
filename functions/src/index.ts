@@ -5,6 +5,11 @@ import { format } from 'date-fns'
 import { utcToZonedTime } from 'date-fns-tz'
 import { ja } from 'date-fns/locale'
 
+import * as jwt from 'jsonwebtoken'
+import { VerifyErrors } from 'jsonwebtoken'
+
+const jwtKey = functions.config().jwt_key
+
 admin.initializeApp()
 
 const success = {
@@ -13,9 +18,10 @@ const success = {
 
 interface AddAssistantUserIdsProps {
   approverId: string
+  inviteToken: string
 }
 exports.addAssistantUserIds = functions.https.onCall(
-  async ({ approverId }: AddAssistantUserIdsProps, context) => {
+  async ({ approverId, inviteToken }: AddAssistantUserIdsProps, context) => {
     const assistantId = context.auth?.uid
     if (!approverId || !assistantId) {
       throw new HttpsError(
@@ -26,17 +32,23 @@ exports.addAssistantUserIds = functions.https.onCall(
 
     const approver = admin.firestore().collection('users').doc(approverId)
     const approverDoc = await approver.get()
-    const assistantAddress = context.auth?.token.email
 
-    if (
-      // TODO: ワンタイムトークン的なもので突合する。
-      assistantAddress !== approverDoc.get('currentWatchUser').inviteAddress
-    ) {
+    if (inviteToken !== approverDoc.get('currentWatchUser').inviteToken) {
       throw new HttpsError(
         'invalid-argument',
         '招待されたURLからログインしてください。'
       )
     }
+
+    // tokenの検証
+    jwt.verify(inviteToken, jwtKey, (err: VerifyErrors | null) => {
+      if (err) {
+        throw new HttpsError(
+          'invalid-argument',
+          'このURLは有効期限切です。招待された方から新しいURLを貰ってください。'
+        )
+      }
+    })
 
     const approverRoleRef = await approverDoc.get('roleRef').get()
     // TODO: フロントと共通のenumを使うなどを考慮
@@ -51,6 +63,7 @@ exports.addAssistantUserIds = functions.https.onCall(
       {
         currentWatchUser: {
           id: assistantId,
+          inviteToken: null,
         },
         assistantUserIds: admin.firestore.FieldValue.arrayUnion(assistantId),
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -107,12 +120,33 @@ exports.getServerTime = functions.https.onCall(async () => {
 
 exports.getInviteOnetimeUrl = functions.https.onCall(async (_, context) => {
   const uid = context.auth?.uid
+  if (!uid) {
+    throw new HttpsError('invalid-argument', 'nothing uid')
+  }
 
-  functions.logger.info('getInviteOnetimeUrl', 'generetaed code!!!!!!!')
+  const approver = admin.firestore().collection('users').doc(uid)
+  const approverDoc = await approver.get()
+
+  let token = approverDoc.get('currentWatchUser').inviteToken
+
+  if (!token) {
+    token = jwt.sign({ uid }, jwtKey, { expiresIn: '1d' })
+    await approver.set(
+      {
+        currentWatchUser: {
+          inviteToken: token,
+        },
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    )
+  }
+
+  functions.logger.info('getInviteOnetimeUrl')
 
   return {
     host: context.rawRequest.headers.origin,
     uid,
-    token: 'generetaedcode',
+    token,
   }
 })

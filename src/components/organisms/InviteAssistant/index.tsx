@@ -59,7 +59,7 @@ const InviteAssistant: React.FC<Props> = ({ myNickname, inviteOnetimeUrl }) => {
     const uid = inviteOnetimeUrl?.uid ?? ''
     const token = inviteOnetimeUrl?.token ?? ''
 
-    return `${host}?invite_assistant=${uid}&token=${token}`
+    return `${host}/login?invite_assistant=${uid}&token=${token}`
   }
 
   const generateSendHref = () => {

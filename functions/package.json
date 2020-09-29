@@ -14,15 +14,16 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@sendgrid/mail": "^7.2.4",
     "date-fns": "^2.16.1",
     "date-fns-tz": "^1.0.10",
     "firebase-admin": "^8.10.0",
-    "firebase-functions": "^3.6.1"
+    "firebase-functions": "^3.6.1",
+    "jsonwebtoken": "^8.5.1"
   },
   "devDependencies": {
-    "typescript": "^3.8.0",
-    "firebase-functions-test": "^0.2.0"
+    "@types/jsonwebtoken": "^8.5.0",
+    "firebase-functions-test": "^0.2.0",
+    "typescript": "^3.8.0"
   },
   "private": true
 }

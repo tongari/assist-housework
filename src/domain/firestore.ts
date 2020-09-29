@@ -40,9 +40,10 @@ export const fetchInviteOnetimeUrl = async (): Promise<
 
 export const registerAssistantUser = async (
   nickname: string,
-  assistToApproverId: string | null
+  assistToApproverId: string | null,
+  inviteToken: string | null
 ): Promise<void> => {
-  if (assistToApproverId === null) {
+  if (assistToApproverId === null || inviteToken === null) {
     throw new Error('招待されたURLから登録してください')
   }
 
@@ -50,7 +51,10 @@ export const registerAssistantUser = async (
     .functions()
     .httpsCallable('addAssistantUserIds')
 
-  await addAssistantUserIds({ approverId: assistToApproverId }).catch((err) => {
+  await addAssistantUserIds({
+    approverId: assistToApproverId,
+    inviteToken,
+  }).catch((err) => {
     throw err
   })
 
@@ -75,16 +79,6 @@ export const registerAssistantUser = async (
     assistToApproverId,
     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-  })
-
-  const sendApproveAssistantToApprover = firebase
-    .functions()
-    .httpsCallable('sendApproveAssistantToApprover')
-
-  await sendApproveAssistantToApprover({
-    approverId: assistToApproverId,
-  }).catch((err) => {
-    throw err
   })
 }
 
