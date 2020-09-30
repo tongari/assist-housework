@@ -10,7 +10,7 @@ import * as yup from 'yup'
 
 import { Now, Item, Budget } from 'types'
 import { useSharedStyles } from 'styles'
-import NextActionText from 'components/organisms/NextActionText'
+import NextActionText from 'components/molecules/NextActionText'
 import SettingItems from 'components/organisms/SettingItems'
 import SettingBudget from 'components/organisms/SettingBudget'
 

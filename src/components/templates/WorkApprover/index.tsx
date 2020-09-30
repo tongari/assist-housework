@@ -6,7 +6,7 @@ import InfoIcon from '@material-ui/icons/Info'
 
 import { Now, GroupDateDeal } from 'types'
 import { useSharedStyles } from 'styles'
-import NextActionText from 'components/organisms/NextActionText'
+import NextActionText from 'components/molecules/NextActionText'
 import CalculatedPriceItems from 'components/organisms/CalculatedPriceItems'
 import Deals from 'components/organisms/Deals'
 

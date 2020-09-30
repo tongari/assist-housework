@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSharedStyles } from 'styles'
-import NextActionText from 'components/organisms/NextActionText'
+import NextActionText from 'components/molecules/NextActionText'
 
 interface Props {
   approverNickname: string
