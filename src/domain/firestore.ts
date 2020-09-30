@@ -29,13 +29,16 @@ export const registerApprovalUser = async (nickname: string): Promise<void> => {
     })
 }
 
-export const fetchInviteOnetimeUrl = async (): Promise<
-  firebase.functions.HttpsCallableResult
-> => {
+interface FetchInviteOnetimeUrlParams {
+  isUpdate?: boolean
+}
+export const fetchInviteOnetimeUrl = async (
+  isUpdate?: boolean
+): Promise<firebase.functions.HttpsCallableResult> => {
   const getInviteOnetimeUrl = firebase
     .functions()
     .httpsCallable('getInviteOnetimeUrl')
-  return getInviteOnetimeUrl()
+  return getInviteOnetimeUrl({ isUpdate })
 }
 
 export const registerAssistantUser = async (

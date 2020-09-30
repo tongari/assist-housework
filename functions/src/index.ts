@@ -118,35 +118,37 @@ exports.getServerTime = functions.https.onCall(async () => {
   }
 })
 
-exports.getInviteOnetimeUrl = functions.https.onCall(async (_, context) => {
-  const uid = context.auth?.uid
-  if (!uid) {
-    throw new HttpsError('invalid-argument', 'nothing uid')
-  }
+exports.getInviteOnetimeUrl = functions.https.onCall(
+  async ({ isUpdate }: { isUpdate?: boolean }, context) => {
+    const uid = context.auth?.uid
+    if (!uid) {
+      throw new HttpsError('invalid-argument', 'nothing uid')
+    }
 
-  const approver = admin.firestore().collection('users').doc(uid)
-  const approverDoc = await approver.get()
+    const approver = admin.firestore().collection('users').doc(uid)
+    const approverDoc = await approver.get()
 
-  let token = approverDoc.get('currentWatchUser').inviteToken
+    let token = approverDoc.get('currentWatchUser').inviteToken
 
-  if (!token) {
-    token = jwt.sign({ uid }, jwtKey, { expiresIn: '1d' })
-    await approver.set(
-      {
-        currentWatchUser: {
-          inviteToken: token,
+    if (!token || isUpdate) {
+      token = jwt.sign({ uid }, jwtKey, { expiresIn: '1d' })
+      await approver.set(
+        {
+          currentWatchUser: {
+            inviteToken: token,
+          },
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         },
-        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-      },
-      { merge: true }
-    )
-  }
+        { merge: true }
+      )
+    }
 
-  functions.logger.info('getInviteOnetimeUrl')
+    functions.logger.info('getInviteOnetimeUrl')
 
-  return {
-    host: context.rawRequest.headers.origin,
-    uid,
-    token,
+    return {
+      host: context.rawRequest.headers.origin,
+      uid,
+      token,
+    }
   }
-})
+)

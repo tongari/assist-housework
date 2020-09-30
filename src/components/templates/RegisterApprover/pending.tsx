@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import { useSharedStyles } from 'styles'
 import Loader from 'components/molecules/Loader'
@@ -24,6 +24,12 @@ const PendingRegisterApprover: React.FC<Props> = ({ myNickname }) => {
     }
   }, [])
 
+  const handleUpdateInviteOnetimeUrl = useCallback(() => {
+    fetchInviteOnetimeUrl(true).then((res) => {
+      setInviteOnetimeUrl(res.data)
+    })
+  }, [])
+
   return (
     <>
       <Loader isLoading={!inviteOnetimeUrl} />
@@ -40,6 +46,7 @@ const PendingRegisterApprover: React.FC<Props> = ({ myNickname }) => {
           <InviteAssistant
             myNickname={myNickname}
             inviteOnetimeUrl={inviteOnetimeUrl}
+            handleUpdateInviteOnetimeUrl={handleUpdateInviteOnetimeUrl}
           />
         </div>
       )}

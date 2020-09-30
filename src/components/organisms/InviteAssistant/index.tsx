@@ -1,6 +1,11 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react'
-import { makeStyles, createStyles, useTheme } from '@material-ui/core/styles'
+import React, { useRef, useEffect } from 'react'
+import {
+  makeStyles,
+  createStyles,
+  useTheme,
+  Theme,
+} from '@material-ui/core/styles'
 import Box from '@material-ui/core/Box'
 import Paper from '@material-ui/core/Paper'
 import Tabs from '@material-ui/core/Tabs'
@@ -8,6 +13,7 @@ import Tab from '@material-ui/core/Tab'
 import EmailIcon from '@material-ui/icons/Email'
 import AssignmentIcon from '@material-ui/icons/Assignment'
 import Typography from '@material-ui/core/Typography'
+import Tooltip, { TooltipProps } from '@material-ui/core/Tooltip'
 import SvgIcon, { SvgIconProps } from '@material-ui/core/SvgIcon'
 
 import Button from '@material-ui/core/Button'
@@ -17,8 +23,31 @@ export const useStyles = makeStyles(() =>
     root: {
       flexGrow: 1,
     },
+    inviteTextArea: {
+      width: 0,
+      height: 0,
+      opacity: 0,
+      resize: 'none',
+      outline: 'none',
+    },
   })
 )
+
+const useStylesBootstrap = makeStyles((theme: Theme) => ({
+  arrow: {
+    color: theme.palette.secondary.light,
+  },
+  tooltip: {
+    backgroundColor: theme.palette.secondary.light,
+    fontSize: theme.typography.subtitle1.fontSize,
+    padding: theme.spacing(2),
+  },
+}))
+
+function BootstrapTooltip(props: TooltipProps) {
+  const classes = useStylesBootstrap()
+  return <Tooltip classes={classes} {...props} />
+}
 
 function LineIcon(props: SvgIconProps) {
   return (
@@ -39,13 +68,28 @@ interface Props {
     uid: string
     token: string
   } | null
+  handleUpdateInviteOnetimeUrl: (isUpdate?: boolean) => void
 }
 
-const InviteAssistant: React.FC<Props> = ({ myNickname, inviteOnetimeUrl }) => {
+const InviteAssistant: React.FC<Props> = ({
+  myNickname,
+  inviteOnetimeUrl,
+  handleUpdateInviteOnetimeUrl,
+}) => {
   const classes = useStyles()
   const theme = useTheme()
 
   const [tabValue, setTabValue] = React.useState<TabValue>('line')
+  const [isShownTooltip, setIsShownTooltip] = React.useState(false)
+  const inviteHiddenRef = useRef<HTMLTextAreaElement>(null)
+
+  useEffect(() => {
+    if (isShownTooltip) {
+      setTimeout(() => {
+        setIsShownTooltip(false)
+      }, 2000)
+    }
+  }, [isShownTooltip])
 
   const handleChange = (
     _: React.ChangeEvent<Record<string, TabValue>>,
@@ -71,7 +115,8 @@ const InviteAssistant: React.FC<Props> = ({ myNickname, inviteOnetimeUrl }) => {
       return `https://line.me/R/msg/text/?${message}`
     }
 
-    return `mailto:?&subject=${myNickname}さんからお手伝いのお願いがきています。&body=${message}`
+    return `mailto:?&subject=
+    ${myNickname}さんからお手伝いのお願いがきています。&body=${message}`
   }
 
   return (
@@ -123,9 +168,10 @@ const InviteAssistant: React.FC<Props> = ({ myNickname, inviteOnetimeUrl }) => {
           </Typography>
         )}
 
-        <Box mt={2} p={2} bgcolor={theme.palette.grey[100]}>
+        <Box mt={2} pt={2} px={2} bgcolor={theme.palette.grey[100]}>
           <Typography
             variant="subtitle1"
+            component="p"
             style={{ overflowWrap: 'break-word' }}
           >
             {myNickname}さんからお手伝いのお願いがきています。
@@ -134,13 +180,49 @@ const InviteAssistant: React.FC<Props> = ({ myNickname, inviteOnetimeUrl }) => {
             <br />
             {generateOnetimeUrl()}
           </Typography>
+          <textarea
+            ref={inviteHiddenRef}
+            className={classes.inviteTextArea}
+            defaultValue={`${myNickname}さんからお手伝いのお願いがきています。\n以下、URLより登録してください。\n${generateOnetimeUrl()}`}
+          />
         </Box>
 
-        <Box m={2} textAlign="center">
+        <Box m={2} display="flex" justifyContent="center">
+          <Button
+            variant="outlined"
+            color="secondary"
+            size="large"
+            style={{ marginRight: theme.spacing(3) }}
+            onClick={() => {
+              handleUpdateInviteOnetimeUrl()
+            }}
+          >
+            URLを更新
+          </Button>
           {tabValue === 'clipboard' ? (
-            <Button variant="contained" color="primary" size="large">
-              コピー
-            </Button>
+            <BootstrapTooltip
+              open={isShownTooltip}
+              title="コピーしました。"
+              arrow
+              placement="top"
+              enterDelay={200}
+              leaveDelay={500}
+            >
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={() => {
+                  if (inviteHiddenRef?.current) {
+                    inviteHiddenRef.current.select()
+                    document.execCommand('copy')
+                    setIsShownTooltip(true)
+                  }
+                }}
+              >
+                コピー
+              </Button>
+            </BootstrapTooltip>
           ) : (
             <Button
               href={generateSendHref()}
@@ -154,6 +236,14 @@ const InviteAssistant: React.FC<Props> = ({ myNickname, inviteOnetimeUrl }) => {
             </Button>
           )}
         </Box>
+        <Typography
+          variant="subtitle2"
+          component="p"
+          color="error"
+          align="center"
+        >
+          ※承認URLの有効期間は24時間となります。
+        </Typography>
       </Box>
     </Box>
   )
