@@ -13,17 +13,20 @@ const RegisterAssistantPage: React.FC = () => {
     isLoaded,
     renderType,
     assistToApproverId,
+    inviteToken,
     approverNickname,
   } = useInjection()
 
   const registerAssistantUserHandler = useCallback(
     (nickname: string) => {
-      registerAssistantUser(nickname, assistToApproverId).catch((err) => {
-        // eslint-disable-next-line no-alert
-        window.alert(err.message)
-      })
+      registerAssistantUser(nickname, assistToApproverId, inviteToken).catch(
+        (err) => {
+          // eslint-disable-next-line no-alert
+          window.alert(err.message)
+        }
+      )
     },
-    [assistToApproverId]
+    [assistToApproverId, inviteToken]
   )
 
   if (renderType === 'NotFound') {
