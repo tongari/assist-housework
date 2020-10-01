@@ -8,7 +8,7 @@ import { ja } from 'date-fns/locale'
 import * as jwt from 'jsonwebtoken'
 import { VerifyErrors } from 'jsonwebtoken'
 
-const jwtKey = functions.config().jwt_key
+const jwtKey = functions.config().jwt.key
 
 admin.initializeApp()
 

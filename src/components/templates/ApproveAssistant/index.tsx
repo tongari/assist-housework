@@ -4,7 +4,7 @@ import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
 
 import { useSharedStyles } from 'styles'
-import NextActionText from 'components/organisms/NextActionText'
+import NextActionText from 'components/molecules/NextActionText'
 
 interface Props {
   assistantNickname: string

@@ -5,7 +5,7 @@ import Box from '@material-ui/core/Box'
 
 import { Now } from 'types'
 import { useSharedStyles } from 'styles'
-import NextActionText from 'components/organisms/NextActionText'
+import NextActionText from 'components/molecules/NextActionText'
 import CalculatedPriceItems from 'components/organisms/CalculatedPriceItems'
 
 interface Props {

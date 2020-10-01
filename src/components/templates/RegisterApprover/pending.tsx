@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 
 import { useSharedStyles } from 'styles'
 import Loader from 'components/molecules/Loader'
-import NextActionText from 'components/organisms/NextActionText'
+import NextActionText from 'components/molecules/NextActionText'
 import InviteAssistant from 'components/organisms/InviteAssistant'
 import { fetchInviteOnetimeUrl } from 'domain/firestore'
 
