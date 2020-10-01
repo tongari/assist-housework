@@ -3,25 +3,12 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers'
 import * as yup from 'yup'
 
-import {
-  makeStyles,
-  createStyles,
-  useTheme,
-  Theme,
-} from '@material-ui/core/styles'
+import { useTheme } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import TextField from '@material-ui/core/TextField'
 import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    error: {
-      marginTop: theme.spacing(1),
-      color: theme.palette.error.main,
-    },
-  })
-)
+import { useSharedStyles } from 'styles'
 
 interface FormInputs {
   nickname: string
@@ -32,7 +19,7 @@ interface Props {
 }
 
 const SettingNickName: React.FC<Props> = ({ handleSubmitForm }) => {
-  const classes = useStyles()
+  const sharedClasses = useSharedStyles()
   const theme = useTheme()
 
   const schema = yup.object().shape({
@@ -74,7 +61,7 @@ const SettingNickName: React.FC<Props> = ({ handleSubmitForm }) => {
           }}
         />
         {errors?.nickname && (
-          <Typography className={classes.error}>
+          <Typography className={sharedClasses.errorMessage}>
             {errors.nickname.message}
           </Typography>
         )}

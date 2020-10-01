@@ -16,6 +16,7 @@ import AddCircleIcon from '@material-ui/icons/AddCircle'
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle'
 
 import { Item } from 'types'
+import { useSharedStyles } from 'styles'
 
 const MAX_ITEMS = 5
 
@@ -42,6 +43,7 @@ interface Props {
 
 const SettingItems: React.FC<Props> = ({ items, setSchemaItems }) => {
   const classes = useStyles()
+  const sharedClasses = useSharedStyles()
   const theme = useTheme()
   const [initItems, setInitItems] = useState<Item[]>([])
 
@@ -89,7 +91,6 @@ const SettingItems: React.FC<Props> = ({ items, setSchemaItems }) => {
       <Typography variant="h5" component="h2">
         {`お手伝い項目（最大${MAX_ITEMS}つ）`}
       </Typography>
-      {errors?.items && <p>{errors.items.message}</p>}
       <Box m={1.5}>
         {fields.map((field, index) => {
           return (
@@ -116,9 +117,12 @@ const SettingItems: React.FC<Props> = ({ items, setSchemaItems }) => {
                     className={classes.item}
                     defaultValue={field.label ?? ''}
                     inputRef={register()}
+                    error={!!errors?.items?.[index]}
                   />
                   {errors?.items && (
-                    <p>{errors.items[index]?.label?.message}</p>
+                    <Typography className={sharedClasses.errorMessage}>
+                      {errors.items[index]?.label?.message}
+                    </Typography>
                   )}
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -137,9 +141,12 @@ const SettingItems: React.FC<Props> = ({ items, setSchemaItems }) => {
                     className={classes.item}
                     defaultValue={field.price ?? ''}
                     inputRef={register()}
+                    error={!!errors?.items?.[index]}
                   />
                   {errors?.items && (
-                    <p>{errors.items[index]?.price?.message}</p>
+                    <Typography className={sharedClasses.errorMessage}>
+                      {errors.items[index]?.price?.message}
+                    </Typography>
                   )}
                 </Grid>
               </Grid>

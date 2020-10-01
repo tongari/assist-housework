@@ -7,6 +7,7 @@ import Box from '@material-ui/core/Box'
 import { useFormContext } from 'react-hook-form'
 
 import { Budget } from 'types'
+import { useSharedStyles } from 'styles'
 
 export const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -27,6 +28,7 @@ interface Props {
 
 const SettingBudget: React.FC<Props> = ({ month, budget }) => {
   const classes = useStyles()
+  const sharedClasses = useSharedStyles()
   const { register, errors } = useFormContext()
 
   return (
@@ -48,8 +50,12 @@ const SettingBudget: React.FC<Props> = ({ month, budget }) => {
           }}
           defaultValue={budget?.budget ?? ''}
           inputRef={register()}
+          error={!!errors.budget?.budget}
         />
-        <p>{errors?.budget?.budget?.message}</p>
+
+        <Typography className={sharedClasses.errorMessage}>
+          {errors?.budget?.budget?.message}
+        </Typography>
       </div>
     </Box>
   )
