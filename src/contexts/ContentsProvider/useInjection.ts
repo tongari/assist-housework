@@ -9,7 +9,7 @@ import {
   dealsCollection,
 } from 'config/firebase'
 
-import { Now, Item, Budget, Deal, Roles } from 'types'
+import { Now, Item, Budget, Deal, Roles, Status } from 'types'
 import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 import {
   convertedItems,
@@ -17,7 +17,7 @@ import {
   convertedDeals,
 } from 'contexts/ContentsProvider/converter'
 
-import { fetchServerTime, fetchNickname } from 'domain/firestore'
+import { fetchNickname, setCalculationState } from 'domain/firestore'
 
 export interface InjectionResult {
   isContentsContextLoaded: boolean
@@ -32,12 +32,13 @@ export interface InjectionResult {
 }
 
 const useInjection = (): InjectionResult => {
-  const { isAuthorizeContextLoaded, userInfo } = useContext(AuthorizedContext)
+  const { isAuthorizeContextLoaded, userInfo, now } = useContext(
+    AuthorizedContext
+  )
 
   // local state
   const [isContentsContextLoaded, setIsContentsContextLoaded] = useState(false)
   const [approverNickname, setApproverNickname] = useState('')
-  const [now, setNow] = useState<Now | null>(null)
 
   // fetch data
   // Only Use Approver
@@ -89,6 +90,12 @@ const useInjection = (): InjectionResult => {
   )
 
   useEffect(() => {
+    if (userInfo?.state === Status.Running) {
+      setCalculationState()
+    }
+  }, [userInfo])
+
+  useEffect(() => {
     let isCleaned = false
     if (isAuthorizeContextLoaded && userInfo?.watchId) {
       fetchNickname(userInfo?.watchId).then((v) => {
@@ -99,12 +106,6 @@ const useInjection = (): InjectionResult => {
       isCleaned = true
     }
   }, [isAuthorizeContextLoaded, userInfo])
-
-  useEffect(() => {
-    fetchServerTime().then((res) => {
-      setNow(res.data)
-    })
-  }, [])
 
   useEffect(() => {
     if (

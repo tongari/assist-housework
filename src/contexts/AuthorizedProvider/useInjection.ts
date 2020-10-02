@@ -1,12 +1,9 @@
-import { useState, useEffect } from 'react'
 import * as firebase from 'firebase/app'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useDocument } from 'react-firebase-hooks/firestore'
 
-import { userDocument } from 'config/firebase'
+import { userDocument, serverTimeDocument } from 'config/firebase'
 import { Roles, Status, Now } from 'types/index'
-
-import { fetchServerTime } from 'domain/firestore'
 
 export interface InjectionResult {
   isAuthorizeContextLoaded: boolean
@@ -31,19 +28,9 @@ const useInjection = (): InjectionResult => {
     firebase.auth()
   )
   const [userDoc, isUserDocLoading] = useDocument(userDocument())
-  const [now, setNow] = useState<Now | null>(null)
-
-  useEffect(() => {
-    let isCleaned = false
-    if (!isAuthLoading) {
-      fetchServerTime().then((res) => {
-        if (!isCleaned) setNow(res.data)
-      })
-    }
-    return () => {
-      isCleaned = true
-    }
-  }, [isAuthLoading])
+  const [serverTimeDoc, isServerTimeDocLoading] = useDocument(
+    serverTimeDocument()
+  )
 
   const convertUserInfo = () => {
     if (!userDoc?.get('roleRef')?.id) {
@@ -62,16 +49,16 @@ const useInjection = (): InjectionResult => {
 
   return {
     isAuthorizeContextLoaded:
-      !isAuthLoading && !isUserDocLoading && now !== null,
+      !isAuthLoading && !isUserDocLoading && !isServerTimeDocLoading,
     authenticated,
     isAuthLoading,
     authError,
     userInfo: convertUserInfo(),
     now: {
-      year: now?.year ?? '',
-      month: now?.month ?? '',
-      date: now?.date ?? '',
-      day: now?.day ?? '',
+      year: serverTimeDoc?.get('year') ?? '',
+      month: serverTimeDoc?.get('month') ?? '',
+      date: serverTimeDoc?.get('date') ?? '',
+      day: serverTimeDoc?.get('day') ?? '',
     },
   }
 }

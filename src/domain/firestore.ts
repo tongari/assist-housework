@@ -1,6 +1,7 @@
 import * as firebase from 'firebase/app'
 import { Roles, Status, Item, Budget, Now } from 'types'
 import {
+  serverTimeDocument,
   userDocument,
   itemsCollection,
   budgetsCollection,
@@ -199,27 +200,24 @@ export const settingAssistContents = async (
   }
 
   const statusRef = firebase.firestore().collection('status')
-  const assistant = userDocument(watchId)
-  await assistant.set(
-    {
-      currentWatchUser: {
-        statusRef: statusRef.doc(Status.Running),
-      },
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  const serverTime = serverTimeDocument()
+  const year = (await serverTime.get()).get('year')
+  const month = (await serverTime.get()).get('month')
+
+  const updateCurrentWatchUser = {
+    currentWatchUser: {
+      statusRef: statusRef.doc(Status.Running),
+      year,
+      month,
     },
-    { merge: true }
-  )
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  }
+
+  const assistant = userDocument(watchId)
+  await assistant.set(updateCurrentWatchUser, { merge: true })
 
   const approver = userDocument()
-  await approver.set(
-    {
-      currentWatchUser: {
-        statusRef: statusRef.doc(Status.Running),
-      },
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-    },
-    { merge: true }
-  )
+  await approver.set(updateCurrentWatchUser, { merge: true })
 }
 
 export const addDeal = async (now: Now, item: Item): Promise<void> => {
@@ -271,54 +269,35 @@ export const fixCalculation = async (now: Now): Promise<void> => {
   await assistant.set(updateData, { merge: true })
 }
 
-export const fetchServerTime = async (): Promise<
-  firebase.functions.HttpsCallableResult
-> => {
+export const setCalculationState = async (): Promise<void> => {
   const userDoc = userDocument()
-  const currentYear = (await userDoc.get()).get('currentWatchUser')?.year
-  const currentMonth = (await userDoc.get()).get('currentWatchUser')?.month
-  const currentState = (await userDoc.get()).get('currentWatchUser')?.statusRef
-    .id
+  const serverTime = serverTimeDocument()
 
-  const getServerTime = firebase.functions().httpsCallable('getServerTime')
-  const result = await getServerTime()
+  const currentWatchYear = (await userDoc.get()).get('currentWatchUser')?.year
+  const currentWatchMonth = (await userDoc.get()).get('currentWatchUser')?.month
+  const currentWatchState = (await userDoc.get()).get('currentWatchUser')
+    ?.statusRef.id
+
+  const serverTimeYear = (await serverTime.get()).get('year')
+  const serverTimeMonth = (await serverTime.get()).get('month')
 
   if (
-    !(currentState === Status.Running) &&
-    !(currentState === Status.Calculation)
+    currentWatchState !== Status.Running ||
+    (serverTimeYear === currentWatchYear &&
+      serverTimeMonth === currentWatchMonth)
   ) {
-    return result
+    return
   }
 
   const statusRef = firebase.firestore().collection('status')
 
-  const { year, month } = result?.data
-
-  if (currentYear && (year !== currentYear || month !== currentMonth)) {
-    await userDoc.set(
-      {
-        currentWatchUser: {
-          statusRef: statusRef.doc(Status.Calculation),
-        },
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  await userDoc.set(
+    {
+      currentWatchUser: {
+        statusRef: statusRef.doc(Status.Calculation),
       },
-      { merge: true }
-    )
-  }
-
-  // 新規ユーザの場合
-  if (!currentYear) {
-    await userDoc.set(
-      {
-        currentWatchUser: {
-          year,
-          month,
-        },
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-      },
-      { merge: true }
-    )
-  }
-
-  return result
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    },
+    { merge: true }
+  )
 }
