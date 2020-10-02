@@ -36,6 +36,10 @@
     "ui": {
       "port": 4000,
       "enabled": true
+    },
+    "pubsub": {
+      "port": "8085"
     }
+
   }
 }

@@ -35,7 +35,7 @@ export const useSharedStyles = makeStyles((theme: Theme) =>
       )}px`,
     },
     errorMessage: {
-      marginTop: theme.spacing(1),
+      paddingTop: theme.spacing(1),
       color: theme.palette.error.main,
     },
   })
