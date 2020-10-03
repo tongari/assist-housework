@@ -33,6 +33,10 @@ const SettingApproverPage: React.FC = () => {
     return <Redirect to={Paths.NotFound} />
   }
 
+  if (renderType === 'Calculation') {
+    return <Redirect to={Paths.CalculationApprover} />
+  }
+
   return (
     <>
       <Loader isLoading={!isLoaded || !assistantNickname} />

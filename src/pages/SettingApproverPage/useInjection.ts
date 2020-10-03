@@ -6,7 +6,7 @@ import { AuthorizedContext } from 'contexts/AuthorizedProvider'
 import { ContentsContext } from 'contexts/ContentsProvider'
 import { InjectionResult as ContentsInjectionsResult } from 'contexts/ContentsProvider/useInjection'
 
-export type RenderType = 'NotFound' | 'Setting' | 'Running'
+export type RenderType = 'NotFound' | 'Setting' | 'Running' | 'Calculation'
 
 type Props = {
   isLoaded: boolean
@@ -48,17 +48,22 @@ const useInjection = (): Props => {
       return
     }
 
+    if (userInfo.state === Status.Setting) {
+      setRenderType('Setting')
+      return
+    }
+
     if (userInfo.state === Status.Running) {
       setRenderType('Running')
       return
     }
 
-    if (
-      !(userInfo.state === Status.Register) &&
-      !(userInfo.state === Status.Setting)
-    ) {
-      setRenderType('NotFound')
+    if (userInfo.state === Status.Calculation) {
+      setRenderType('Calculation')
+      return
     }
+
+    setRenderType('NotFound')
   }, [isAuthorizeContextLoaded, isContentsContextLoaded, userInfo, myUserId])
 
   const calculatedPrice = calculationDeals.reduce(

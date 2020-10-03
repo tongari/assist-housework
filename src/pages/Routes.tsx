@@ -1,6 +1,8 @@
 import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import { ThemeProvider } from '@material-ui/core/styles'
 
+import { approverTheme, assistantTheme } from 'styles/index'
 import { Paths } from 'types'
 
 import AuthorizedProvider from 'contexts/AuthorizedProvider'
@@ -36,67 +38,82 @@ const App: React.FC = () => {
             <Navigation />
             <Switch>
               <Route exact path={Paths.Root} component={RootPage} />
-              <Route
-                exact
-                path={Paths.RegisterApprover}
-                component={RegisterApproverPage}
-              />
-              <Route
-                exact
-                path={Paths.RegisterAssistant}
-                component={RegisterAssistantPage}
-              />
-              <Route
-                exact
-                path={Paths.ApproveAssistant}
-                component={ApproveAssistantPage}
-              />
+
+              <Route exact path={Paths.RegisterApprover}>
+                <ThemeProvider theme={approverTheme}>
+                  <RegisterApproverPage />
+                </ThemeProvider>
+              </Route>
+              <Route exact path={Paths.RegisterAssistant}>
+                <ThemeProvider theme={assistantTheme}>
+                  <RegisterAssistantPage />
+                </ThemeProvider>
+              </Route>
+              <Route exact path={Paths.ApproveAssistant}>
+                <ThemeProvider theme={approverTheme}>
+                  <ApproveAssistantPage />
+                </ThemeProvider>
+              </Route>
               <Route exact path={Paths.SettingApprover}>
-                <ContentsProvider>
-                  <SettingApproverPage />
-                </ContentsProvider>
+                <ThemeProvider theme={approverTheme}>
+                  <ContentsProvider>
+                    <SettingApproverPage />
+                  </ContentsProvider>
+                </ThemeProvider>
               </Route>
               <Route exact path={Paths.WorkAssistant}>
-                <ContentsProvider>
-                  <RunningProvider>
-                    <WorkAssistantPage />
-                  </RunningProvider>
-                </ContentsProvider>
+                <ThemeProvider theme={assistantTheme}>
+                  <ContentsProvider>
+                    <RunningProvider>
+                      <WorkAssistantPage />
+                    </RunningProvider>
+                  </ContentsProvider>
+                </ThemeProvider>
               </Route>
               <Route exact path={Paths.WorkApprover}>
-                <ContentsProvider>
-                  <RunningProvider>
-                    <WorkApproverPage />
-                  </RunningProvider>
-                </ContentsProvider>
+                <ThemeProvider theme={approverTheme}>
+                  <ContentsProvider>
+                    <RunningProvider>
+                      <WorkApproverPage />
+                    </RunningProvider>
+                  </ContentsProvider>
+                </ThemeProvider>
               </Route>
               <Route exact path={Paths.DealsApprover}>
-                <ContentsProvider>
-                  <RunningProvider>
-                    <DealsApproverPage />
-                  </RunningProvider>
-                </ContentsProvider>
+                <ThemeProvider theme={approverTheme}>
+                  <ContentsProvider>
+                    <RunningProvider>
+                      <DealsApproverPage />
+                    </RunningProvider>
+                  </ContentsProvider>
+                </ThemeProvider>
               </Route>
               <Route exact path={Paths.DealsAssistant}>
-                <ContentsProvider>
-                  <RunningProvider>
-                    <DealsAssistantPage />
-                  </RunningProvider>
-                </ContentsProvider>
+                <ThemeProvider theme={assistantTheme}>
+                  <ContentsProvider>
+                    <RunningProvider>
+                      <DealsAssistantPage />
+                    </RunningProvider>
+                  </ContentsProvider>
+                </ThemeProvider>
               </Route>
               <Route exact path={Paths.CalculationAssistant}>
-                <ContentsProvider>
-                  <CalculationProvider>
-                    <CalculationAssistantPage />
-                  </CalculationProvider>
-                </ContentsProvider>
+                <ThemeProvider theme={assistantTheme}>
+                  <ContentsProvider>
+                    <CalculationProvider>
+                      <CalculationAssistantPage />
+                    </CalculationProvider>
+                  </ContentsProvider>
+                </ThemeProvider>
               </Route>
               <Route exact path={Paths.CalculationApprover}>
-                <ContentsProvider>
-                  <CalculationProvider>
-                    <CalculationApproverPage />
-                  </CalculationProvider>
-                </ContentsProvider>
+                <ThemeProvider theme={approverTheme}>
+                  <ContentsProvider>
+                    <CalculationProvider>
+                      <CalculationApproverPage />
+                    </CalculationProvider>
+                  </ContentsProvider>
+                </ThemeProvider>
               </Route>
               <Route
                 path="*"
