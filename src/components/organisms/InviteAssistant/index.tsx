@@ -216,6 +216,7 @@ const InviteAssistant: React.FC<Props> = ({
                   if (inviteHiddenRef?.current) {
                     inviteHiddenRef.current.select()
                     document.execCommand('copy')
+                    inviteHiddenRef.current.blur()
                     setIsShownTooltip(true)
                   }
                 }}
