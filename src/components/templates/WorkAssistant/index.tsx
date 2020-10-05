@@ -33,7 +33,11 @@ const WorkAssistant: React.FC<Props> = ({
         ]}
       />
 
-      <RegisterWorks items={items} addDealHandler={addDealHandler} />
+      <RegisterWorks
+        items={items}
+        budget={budget}
+        addDealHandler={addDealHandler}
+      />
 
       <CalculatedPriceItems
         items={[
