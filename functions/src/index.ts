@@ -106,6 +106,13 @@ exports.getInviteOnetimeUrl = functions.https.onCall(
 
     let token = approverDoc.get('currentWatchUser').inviteToken
 
+    // tokenの検証
+    jwt.verify(token, jwtKey, (err: VerifyErrors | null) => {
+      if (err) {
+        token = null
+      }
+    })
+
     if (!token || isUpdate) {
       token = jwt.sign({ uid }, jwtKey, { expiresIn: '1d' })
       await approver.set(
