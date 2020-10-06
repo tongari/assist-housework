@@ -39,7 +39,7 @@ const OtherDrawer: React.FC<Props> = ({ isOpen, closeDrawer }) => {
           color="secondary"
           onClick={() => {
             firebase.auth().signOut()
-            window.location.href = Paths.Login
+            window.location.href = Paths.Root
           }}
         >
           ログアウト
