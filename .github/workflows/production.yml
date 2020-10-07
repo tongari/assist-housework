@@ -2,7 +2,7 @@ name: Production CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ feature/update-gh-actions ]
 
 jobs:
   build:
