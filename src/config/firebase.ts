@@ -29,6 +29,12 @@ const initializeFirebase = (): void => {
   }
 }
 
+export const serverTimeDocument = (): firebase.firestore.DocumentReference<
+  firebase.firestore.DocumentData
+> => {
+  return firebase.firestore().doc('serverTime/now')
+}
+
 export const userDocument = (
   uid?: string | null
 ): firebase.firestore.DocumentReference<firebase.firestore.DocumentData> => {

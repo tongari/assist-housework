@@ -216,6 +216,7 @@ const InviteAssistant: React.FC<Props> = ({
                   if (inviteHiddenRef?.current) {
                     inviteHiddenRef.current.select()
                     document.execCommand('copy')
+                    inviteHiddenRef.current.blur()
                     setIsShownTooltip(true)
                   }
                 }}
@@ -242,7 +243,7 @@ const InviteAssistant: React.FC<Props> = ({
           color="error"
           align="center"
         >
-          ※承認URLの有効期間は24時間となります。
+          ※招待URLの有効期間は24時間となります。
         </Typography>
       </Box>
     </Box>

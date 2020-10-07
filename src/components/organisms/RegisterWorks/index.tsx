@@ -19,10 +19,11 @@ export const useStyles = makeStyles((theme: Theme) =>
 
 interface Props {
   items: Item[]
+  budget: number
   addDealHandler: (item: Item) => void
 }
 
-const RegisterWorks: React.FC<Props> = ({ items, addDealHandler }) => {
+const RegisterWorks: React.FC<Props> = ({ items, budget, addDealHandler }) => {
   const classes = useStyles()
 
   return (
@@ -35,7 +36,7 @@ const RegisterWorks: React.FC<Props> = ({ items, addDealHandler }) => {
               color="primary"
               size="large"
               fullWidth
-              disabled={item.isWorked}
+              disabled={item.isWorked || budget < (item.price ?? 0)}
               onClick={() => {
                 addDealHandler(item)
               }}

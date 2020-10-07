@@ -94,30 +94,6 @@ exports.getNickname = functions.https.onCall(
   }
 )
 
-exports.getServerTime = functions.https.onCall(async () => {
-  const serverDate = admin.firestore.Timestamp.now().toDate()
-
-  const timeZone = 'Asia/Tokyo'
-  const zonedDate = utcToZonedTime(serverDate, timeZone)
-
-  const year = format(zonedDate, 'yyyy', { locale: ja })
-  const month = format(zonedDate, 'M', { locale: ja })
-  const date = format(zonedDate, 'd', { locale: ja })
-  const day = format(zonedDate, 'E', { locale: ja })
-  const hour = format(zonedDate, 'HH', { locale: ja })
-  const minute = format(zonedDate, 'm', { locale: ja })
-
-  return {
-    original: zonedDate.toUTCString(),
-    year,
-    month,
-    date,
-    day,
-    hour,
-    minute,
-  }
-})
-
 exports.getInviteOnetimeUrl = functions.https.onCall(
   async ({ isUpdate }: { isUpdate?: boolean }, context) => {
     const uid = context.auth?.uid
@@ -129,6 +105,13 @@ exports.getInviteOnetimeUrl = functions.https.onCall(
     const approverDoc = await approver.get()
 
     let token = approverDoc.get('currentWatchUser').inviteToken
+
+    // tokenの検証
+    jwt.verify(token, jwtKey, (err: VerifyErrors | null) => {
+      if (err) {
+        token = null
+      }
+    })
 
     if (!token || isUpdate) {
       token = jwt.sign({ uid }, jwtKey, { expiresIn: '1d' })
@@ -152,3 +135,27 @@ exports.getInviteOnetimeUrl = functions.https.onCall(
     }
   }
 )
+
+exports.scheduledUpdateServeTime = functions.pubsub
+  .schedule('0 0 * * *')
+  .timeZone('Asia/Tokyo')
+  .onRun(() => {
+    const serverDate = admin.firestore.Timestamp.now().toDate()
+
+    const timeZone = 'Asia/Tokyo'
+    const zonedDate = utcToZonedTime(serverDate, timeZone)
+
+    const year = format(zonedDate, 'yyyy', { locale: ja })
+    const month = format(zonedDate, 'M', { locale: ja })
+    const date = format(zonedDate, 'd', { locale: ja })
+    const day = format(zonedDate, 'E', { locale: ja })
+
+    const serverTime = admin.firestore().collection('serverTime').doc('now')
+    serverTime.set({
+      year,
+      month,
+      date,
+      day,
+    })
+    return null
+  })

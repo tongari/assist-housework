@@ -20,6 +20,10 @@ service cloud.firestore {
     function isApprover() {
       return get(getUser(request.auth.uid).data.roleRef).id == '2'
     }
+
+     match /serverTime/now {
+      allow read: if isAnyAuthenticated()
+    }
     
     match /roles/{roleId} {
       allow read: if isAnyAuthenticated()
