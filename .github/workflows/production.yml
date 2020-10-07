@@ -23,8 +23,10 @@ jobs:
         java-version: ${{ matrix.java-version }}
     - name: Install Firebase
       run: npm install -g firebase-tools
-    - name: Install Dependencies
+    - name: Install Client Dependencies
       run: yarn install
+    - name: Install Functions Dependencies
+      run: cd ./functions && npm install
     - name: yarn run test
       run: yarn run test
     - name: Build Client app
