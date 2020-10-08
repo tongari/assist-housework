@@ -1,4 +1,4 @@
-name: Production CI
+name: Pull request CI
 
 on:
   pull_request:
