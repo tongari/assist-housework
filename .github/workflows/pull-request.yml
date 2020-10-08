@@ -1,13 +1,8 @@
-# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-
-name: Node.js CI
+name: Pull request CI
 
 on:
-  push:
+  pull_request:
     branches: [ master ]
-  # pull_request:
-  #   branches: [ master ]
 
 jobs:
   build:
@@ -32,20 +27,11 @@ jobs:
       run: yarn install
     - name: yarn run test
       run: yarn run test
-    # TODO: 後ほど、buildは追記改修  
-    # - name: Build Next.js
-    #   run: npm run export
-    # - name: Deploy to Firebase Hosting
-    #   run: firebase deploy --token $FIREBASE_TOKEN
-    #   env:
-    #     FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
     - name: Slack Notification
       uses: rtCamp/action-slack-notify@master
       env:
         SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
         SLACK_COLOR: '#3278BD'
-        # SLACK_ICON: https://github.com/rtCamp.png?size=48
-        SLACK_MESSAGE: 'Merged Master branch'
-        # SLACK_TITLE: Post Title
+        SLACK_MESSAGE: 'Open pull request to master branch'
         SLACK_USERNAME: Github Actions
         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
