@@ -1,7 +1,8 @@
 {
-  "name": "app",
+  "name": "assist-housework",
   "version": "0.1.0",
   "private": true,
+  "author": "Tongari",
   "dependencies": {
     "@firebase/testing": "^0.20.11",
     "@hookform/resolvers": "^0.1.1",
