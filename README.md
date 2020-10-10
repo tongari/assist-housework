@@ -1,46 +1,67 @@
 ![Production CI](https://github.com/tongari/assist-housework/workflows/Production%20CI/badge.svg?branch=master)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 家事お手伝いプロトタイプなアプリ
 
-## Available Scripts
+## コンセプト
+- 家族内のお手伝いを加速させる。
+- `TeamSpirit`や`IEYASU`みたいな勤務管理ツールのように、ワンクリックで作業申請・承認できるよう設計。
+- お手伝い状況の可視化。
 
-In the project directory, you can run:
+## 説明
+- 我が家の家事を加速させるためのプロトタイプのアプリです。
+- プライベートで運用しながら、ブラッシュアップするかもしれません。
+- 気分次第でFirestoreを全削除したりしますのでご了承ください。
+- とりあえず、プロトタイプということで。
+- [TODO](#TODO)があります。
 
-### `yarn start`
+## ワイヤーフレーム
+![wf](readme_img/miro.png)
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## システム構成図
+![sys](readme_img/sys.png)
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+## 利用技術やライブラリなど
 
-### `yarn test`
+### 言語
+- TypeScript
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### ライブラリ
+- React
+- React hooks
+- React context
+- react-hook-form / yup
+- react-firebase-hooks
+- Material-UI
+- などなど。
 
-### `yarn build`
+### サーバレス
+- Firebase Authentication
+- Cloud Firestore
+- Firebase Hosting
+- Cloud Functions for Firebase
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### その他
+- Github actions
+- Docker
+- Firebase Local Emulator Suite
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+## TODO
+- 第2フェーズとしてこっそりとプライベートレポジトリで、`Next.js`で書き換える。
+- domain以下がひどいのでリファクタする。（第2フェーズリポジトリ）
+- functionsもリファクタ検討する。（第2フェーズリポジトリ）
+- FirebaseUIからの脱却。（第2フェーズリポジトリ）
+- 細かい修正や機能追加など。（第2フェーズリポジトリ）
+- アプリケーション側のテストを書かないと（第2フェーズリポジトリ）
+  - `firestore.rules`のテストは書いてます。
+- 第3フェーズで、ガワネイティブしてプッシュ通知受け取るかは全く未定です。（おそらくやりません）
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 作成してみて感じたこと
+- `Redux` 必要なかった。
+  - 個人的には`Context + useStateやuseReducer`で問題ない気がしてきました。
+  - `react-firebase-hooks` 使ったら尚更いらならないと感じました...
+- なぜか、SendGridからアカウント停止された...（サポートにも連絡したのに復活しない。） が別手法のほうがユーザ体験良かったので、必要なくなった。
+- SendGridやAmazon SES使うにしても`バウンス対策`って結構面倒だということがわかった。
+- 検証のため`Create React App` で頑張ったけど、素直に`webpack.config`で再構築しようかなぁと思ったこと多数。
+  - `react-app-rewired` に手を出しそうだったけどなんとか踏みとどまりました。
+- ~~`Formik（ver1）`には苦い思い出があるので~~ `react-hook-form` 使いました。最高でした。
+- 上記はゲキ弱エンジニアのひとりごとです。
