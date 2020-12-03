@@ -29,3 +29,4 @@ ui-debug.log
 .emulators_data
 .runtimeconfig.json
 pubsub-debug.log
+.eslintcache
