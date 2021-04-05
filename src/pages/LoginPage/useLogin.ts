@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import * as firebase from 'firebase/app'
+import firebase from 'firebase/app'
 import * as firebaseui from 'firebaseui'
 import 'firebaseui/dist/firebaseui.css'
 import { useAuthState } from 'react-firebase-hooks/auth'
@@ -21,7 +21,7 @@ const uiConfig = {
 }
 
 const useLogin = (): [
-  firebase.User | undefined,
+  firebase.User | undefined | null,
   boolean,
   firebase.auth.Error | undefined
 ] => {

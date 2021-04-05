@@ -1,4 +1,4 @@
-import * as firebase from 'firebase/app'
+import firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/functions'
 
@@ -25,13 +25,11 @@ const initializeFirebase = (): void => {
       host: 'localhost:8080',
       ssl: false,
     })
-    functions.useFunctionsEmulator('http://localhost:5001')
+    functions.useEmulator('http://localhost', 5001)
   }
 }
 
-export const serverTimeDocument = (): firebase.firestore.DocumentReference<
-  firebase.firestore.DocumentData
-> => {
+export const serverTimeDocument = (): firebase.firestore.DocumentReference<firebase.firestore.DocumentData> => {
   return firebase.firestore().doc('serverTime/now')
 }
 

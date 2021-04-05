@@ -1,3 +1,4 @@
+import firebase from 'firebase/app'
 import { Item, Budget, Deal } from 'types'
 
 type Props =
