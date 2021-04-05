@@ -1,18 +1,9 @@
-import * as firebase from 'firebase/app'
+import firebase from 'firebase/app'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useDocument } from 'react-firebase-hooks/firestore'
 
 import { userDocument, serverTimeDocument } from 'config/firebase'
 import { Roles, Status, Now } from 'types/index'
-
-export interface InjectionResult {
-  isAuthorizeContextLoaded: boolean
-  authenticated: firebase.User | undefined
-  isAuthLoading: boolean
-  authError: firebase.auth.Error | undefined
-  userInfo: UserInfo | null
-  now: Now
-}
 
 interface UserInfo {
   role: Roles | null
@@ -21,6 +12,14 @@ interface UserInfo {
   watchId: string | null
   year?: string
   month?: string
+}
+export interface InjectionResult {
+  isAuthorizeContextLoaded: boolean
+  authenticated: firebase.User | undefined | null
+  isAuthLoading: boolean
+  authError: firebase.auth.Error | undefined
+  userInfo: UserInfo | null
+  now: Now
 }
 
 const useInjection = (): InjectionResult => {

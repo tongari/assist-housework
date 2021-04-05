@@ -1,4 +1,4 @@
-import * as firebase from 'firebase/app'
+import firebase from 'firebase/app'
 import { Roles, Status, Item, Budget, Now } from 'types'
 import {
   serverTimeDocument,
@@ -30,9 +30,6 @@ export const registerApprovalUser = async (nickname: string): Promise<void> => {
     })
 }
 
-interface FetchInviteOnetimeUrlParams {
-  isUpdate?: boolean
-}
 export const fetchInviteOnetimeUrl = async (
   isUpdate?: boolean
 ): Promise<firebase.functions.HttpsCallableResult> => {
