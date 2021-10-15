@@ -1,8 +1,9 @@
 name: Production CI
 
 on:
+  workflow_dispatch:
   push:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   build:
@@ -12,42 +13,42 @@ jobs:
         node-version: [10.x]
         java-version: [13]
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: Use java ${{ matrix.java-version }}
-      uses: actions/setup-java@v1
-      with:
-        java-version: ${{ matrix.java-version }}
-    - name: Install Firebase
-      run: npm install -g firebase-tools
-    - name: Install Client Dependencies
-      run: yarn install
-    - name: Install Functions Dependencies
-      run: cd ./functions && npm install
-    - name: yarn run test
-      run: yarn run test
-    - name: Build Client app
-      run: yarn run build
-      env:
-        REACT_APP_FIREBASE_CONFIG_API_KEY: ${{ secrets.REACT_APP_FIREBASE_CONFIG_API_KEY }}
-        REACT_APP_FIREBASE_CONFIG_AUTH_DOMAIN: ${{ secrets.REACT_APP_FIREBASE_CONFIG_AUTH_DOMAIN }}
-        REACT_APP_FIREBASE_CONFIG_DATABASE_URL: ${{ secrets.REACT_APP_FIREBASE_CONFIG_DATABASE_URL }}
-        REACT_APP_FIREBASE_CONFIG_PROJECT_ID: ${{ secrets.REACT_APP_FIREBASE_CONFIG_PROJECT_ID }}
-        REACT_APP_FIREBASE_CONFIG_STORAGE_BUCKET: ${{ secrets.REACT_APP_FIREBASE_CONFIG_STORAGE_BUCKET }}
-        REACT_APP_FIREBASE_CONFIG_MESSAGING_SENDER_ID: ${{ secrets.REACT_APP_FIREBASE_CONFIG_MESSAGING_SENDER_ID }}
-        REACT_APP_FIREBASE_CONFIG_APP_ID: ${{ secrets.REACT_APP_FIREBASE_CONFIG_APP_ID }}
-    - name: Deploy to Firebase
-      run: firebase deploy --token $FIREBASE_TOKEN
-      env:
-        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-    - name: Slack Notification
-      uses: rtCamp/action-slack-notify@master
-      env:
-        SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-        SLACK_COLOR: '#3278BD'
-        SLACK_MESSAGE: 'Merged master branch'
-        SLACK_USERNAME: Github Actions
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Use java ${{ matrix.java-version }}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java-version }}
+      - name: Install Firebase
+        run: npm install -g firebase-tools
+      - name: Install Client Dependencies
+        run: yarn install
+      - name: Install Functions Dependencies
+        run: cd ./functions && npm install
+      - name: yarn run test
+        run: yarn run test
+      - name: Build Client app
+        run: yarn run build
+        env:
+          REACT_APP_FIREBASE_CONFIG_API_KEY: ${{ secrets.REACT_APP_FIREBASE_CONFIG_API_KEY }}
+          REACT_APP_FIREBASE_CONFIG_AUTH_DOMAIN: ${{ secrets.REACT_APP_FIREBASE_CONFIG_AUTH_DOMAIN }}
+          REACT_APP_FIREBASE_CONFIG_DATABASE_URL: ${{ secrets.REACT_APP_FIREBASE_CONFIG_DATABASE_URL }}
+          REACT_APP_FIREBASE_CONFIG_PROJECT_ID: ${{ secrets.REACT_APP_FIREBASE_CONFIG_PROJECT_ID }}
+          REACT_APP_FIREBASE_CONFIG_STORAGE_BUCKET: ${{ secrets.REACT_APP_FIREBASE_CONFIG_STORAGE_BUCKET }}
+          REACT_APP_FIREBASE_CONFIG_MESSAGING_SENDER_ID: ${{ secrets.REACT_APP_FIREBASE_CONFIG_MESSAGING_SENDER_ID }}
+          REACT_APP_FIREBASE_CONFIG_APP_ID: ${{ secrets.REACT_APP_FIREBASE_CONFIG_APP_ID }}
+      - name: Deploy to Firebase
+        run: firebase deploy --token $FIREBASE_TOKEN
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@master
+        env:
+          SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+          SLACK_COLOR: '#3278BD'
+          SLACK_MESSAGE: 'Merged master branch'
+          SLACK_USERNAME: Github Actions
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
