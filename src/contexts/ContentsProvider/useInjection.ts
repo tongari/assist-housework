@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react'
-import * as firebase from 'firebase/app'
+import firebase from 'firebase/app'
 
 import { useCollection, useDocument } from 'react-firebase-hooks/firestore'
 import {

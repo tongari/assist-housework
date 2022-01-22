@@ -4,10 +4,6 @@ import { useSharedStyles } from 'styles'
 import SettingNickName from 'components/molecules/SettingNickName'
 import NextActionText from 'components/molecules/NextActionText'
 
-interface FormInputs {
-  nickname: string
-}
-
 interface Props {
   registerApprovalUser: (nickname: string) => void
 }

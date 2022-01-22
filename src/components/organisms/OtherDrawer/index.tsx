@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import * as firebase from 'firebase/app'
+import firebase from 'firebase/app'
 
 import { useTheme } from '@material-ui/core/styles'
 import Drawer from '@material-ui/core/Drawer'
